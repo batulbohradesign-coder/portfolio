@@ -50,7 +50,6 @@ Personal portfolio for bb, UI/UX designer focused on mobile consumer apps.
 
 ## Known UX gaps to fix
 
-- No footer on case study pages — visitors arriving directly can't reach contact or socials
 - Page transitions abrupt — index has enter animations, case studies don't
 - skincare.html and redesign.html linked on homepage but don't exist yet
 - Resume link in footer is # placeholder

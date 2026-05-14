@@ -52,7 +52,19 @@
     .nav__link::after{ content:''; position:absolute; bottom:-2px; left:0; width:0; height:1px; background:var(--accent); transition:width 300ms var(--ease); }
     .nav__link:hover{ color:var(--text); }
     .nav__link:hover::after{ width:100%; }
-    @media(max-width:767px){ .nav__inner{padding:0 16px;} .nav__links{gap:24px;} .nav__link{font-size:14px;} }
+    .hamburger{ display:none; flex-direction:column; gap:5px; cursor:pointer; padding:4px; background:none; border:none; }
+    .hamburger span{ display:block; width:22px; height:1.5px; background:var(--text); border-radius:2px; transition:transform 300ms var(--ease),opacity 200ms; }
+    .hamburger.is-open span:nth-child(1){ transform:translateY(6.5px) rotate(45deg); }
+    .hamburger.is-open span:nth-child(2){ opacity:0; }
+    .hamburger.is-open span:nth-child(3){ transform:translateY(-6.5px) rotate(-45deg); }
+    @media(max-width:767px){
+      .hamburger{ display:flex; margin-left:auto; }
+      .nav__inner{ padding:0 var(--px); }
+      .nav__links{ display:none; flex-direction:column; gap:0; position:absolute; top:64px; left:0; right:0; background:var(--bg); border-bottom:1px solid var(--border); padding:8px 0; z-index:200; }
+      .nav__links.is-open{ display:flex; }
+      .nav__link{ padding:14px var(--px); font-size:18px; }
+      .nav__link::after{ display:none; }
+    }
 
     /* HERO */
     .hero{ padding:64px 0 48px; }
@@ -145,14 +157,14 @@
     .persona__body{ font-size:16px; font-weight:300; color:var(--text-2); line-height:1.75; }
 
     /* INSIGHT — offset to align with right column */
-    .insight-section{ padding:48px 0; }
+    .insight-section{ padding-top:48px; padding-bottom:48px; }
     .insight{ background:var(--text); color:var(--bg); border-radius:20px; padding:40px; margin-left:var(--col-offset); }
     .insight__lbl{ font-size:11px; font-weight:500; letter-spacing:.10em; text-transform:uppercase; color:var(--dark-accent); margin-bottom:20px; }
     .insight__text{ font-family:var(--f-head); font-size:28px; font-weight:500; line-height:1.4; letter-spacing:-.01em; }
     .insight__text em{ color:var(--dark-accent); font-style:normal; }
 
     /* PRINCIPLE — offset to align with right column */
-    .principle-section{ padding:0 0 48px; }
+    .principle-section{ padding-bottom:48px; }
     .principle{ background:var(--accent); border-radius:20px; padding:40px; margin-left:var(--col-offset); }
     .principle__lbl{ font-size:11px; font-weight:500; letter-spacing:.10em; text-transform:uppercase; color:rgba(255,255,255,.5); margin-bottom:20px; }
     .principle__text{ font-family:var(--f-head); font-size:clamp(20px,2.8vw,28px); font-weight:400; line-height:1.55; color:rgba(255,255,255,.65); }
@@ -234,7 +246,7 @@
     .next-project__lbl{ font-size:11px; letter-spacing:.10em; text-transform:uppercase; color:rgba(250,248,246,.35); }
     .next-project__row{ display:flex; justify-content:space-between; align-items:center; }
     .next-project__name{ font-family:var(--f-head); font-size:20px; font-weight:500; letter-spacing:-.02em; }
-    .next-project__arrow{ font-size:24px; color:var(--dark-accent); transition:transform 300ms var(--ease); }
+    .next-project__arrow{ font-size:24px; color:#C85C3A; transition:transform 300ms var(--ease); }
     .next-project:hover .next-project__arrow{ transform:translateX(6px); }
 
     /* BACK LINK */
@@ -249,6 +261,12 @@
     .reveal{ opacity:0; transform:translateY(16px); transition:opacity 550ms var(--ease),transform 550ms var(--ease); }
     .reveal.visible{ opacity:1; transform:translateY(0); }
     .d1{ transition-delay:80ms; } .d2{ transition-delay:160ms; }
+    .cs-footer{ background:#0D0D0D; color:#FAF8F6; padding:48px 0; border-radius:24px 24px 0 0; }
+    .cs-footer__inner{ max-width:920px; margin:0 auto; padding:0 32px; display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:16px; }
+    .cs-footer__link{ font-family:var(--f-body); font-size:18px; font-weight:300; color:rgba(250,248,246,.55); text-decoration:none; transition:color 150ms,transform 150ms; }
+    .cs-footer__link:hover{ color:#FAF8F6; transform:translateX(4px); }
+    .cs-footer__links-r{ display:flex; gap:32px; }
+    @media(max-width:600px){ .cs-footer__inner{ flex-direction:column; align-items:flex-start; gap:12px; } .cs-footer__links-r{ flex-direction:column; gap:12px; } }
   </style>
 </head>
 <body>
@@ -258,8 +276,11 @@
     <a href="../index.html" class="nav__logo">
       <span>b</span><span class="nav__logo-rest">atul.design</span><span class="nav__logo-dot">.</span>
     </a>
+    <button class="hamburger" id="hamburger" aria-label="Toggle menu">
+      <span></span><span></span><span></span>
+    </button>
     <nav>
-      <ul class="nav__links">
+      <ul class="nav__links" id="navLinks">
         <li><a href="../index.html#work"    class="nav__link nav__link--active">work</a></li>
         <li><a href="../index.html#about"   class="nav__link">about</a></li>
         <li><a href="../index.html#contact" class="nav__link">contact</a></li>
@@ -501,7 +522,26 @@
 
 </main>
 
+<footer class="cs-footer">
+  <div class="cs-footer__inner">
+    <a href="mailto:batulbohra.design@gmail.com" class="cs-footer__link">batulbohra.design@gmail.com</a>
+    <div class="cs-footer__links-r">
+      <a href="https://www.linkedin.com/in/batul-bohra-0336b3179" class="cs-footer__link" target="_blank" rel="noopener">linkedin</a>
+      <a href="https://read.cv/YOUR_USERNAME" class="cs-footer__link" target="_blank" rel="noopener">resume</a>
+    </div>
+  </div>
+</footer>
+
 <script>
+  (function(){
+    var btn=document.getElementById('hamburger'), links=document.getElementById('navLinks');
+    if(!btn||!links) return;
+    btn.addEventListener('click',function(){btn.classList.toggle('is-open');links.classList.toggle('is-open');});
+    links.querySelectorAll('a').forEach(function(a){
+      a.addEventListener('click',function(){btn.classList.remove('is-open');links.classList.remove('is-open');});
+    });
+  })();
+
   /* SCROLL REVEAL */
   var obs = new IntersectionObserver(function(entries){
     entries.forEach(function(e){
