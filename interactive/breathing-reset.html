@@ -394,9 +394,15 @@
 
     /* ─── Completion chime (audio note) ─── */
     /* Chime is generated via Web Audio API — no external file needed */
+
+    /* ─── Close link ─── */
+    .close-link { position: fixed; top: 16px; right: 16px; z-index: 200; display: inline-flex; align-items: center; gap: 5px; font-size: 12px; font-weight: 300; color: var(--charcoal-light); background: rgba(250,247,242,0.88); backdrop-filter: blur(4px); border: 1px solid rgba(0,0,0,0.08); border-radius: 100px; padding: 8px 14px; text-decoration: none; font-family: var(--font-body); letter-spacing: 0.04em; transition: color 0.2s, background 0.2s; }
+    .close-link:hover { color: var(--charcoal); background: rgba(250,247,242,0.97); }
   </style>
 </head>
 <body>
+
+  <a href="../index.html" class="close-link">← close</a>
 
   <!-- ─── Modal (always visible) ─── -->
   <div id="modal-overlay" role="main">

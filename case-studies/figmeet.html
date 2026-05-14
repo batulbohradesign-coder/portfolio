@@ -684,6 +684,14 @@
     .next-project__arrow { font-size: 24px; color: var(--accent); transition: transform 300ms var(--ease); }
     .next-project:hover .next-project__arrow { transform: translateX(6px); }
 
+    /* ─── BACK LINK ─── */
+    .back-link { display: inline-flex; align-items: center; gap: 4px; font-size: 13px; color: var(--text-2); padding-top: 20px; transition: color 150ms var(--ease), transform 150ms var(--ease); }
+    .back-link:hover { color: var(--accent); transform: translateX(-2px); }
+
+    /* ─── ACTIVE NAV ─── */
+    .nav__link--active { color: var(--text); }
+    .nav__link--active::after { width: 100%; }
+
     /* ─── REVEAL ─── */
     .reveal {
       opacity: 0; transform: translateY(16px);
@@ -707,20 +715,25 @@
 <!-- NAV -->
 <header class="nav">
   <div class="nav__inner">
-    <a href="index.html" class="nav__logo">
+    <a href="../index.html" class="nav__logo">
       <span>b</span><span class="nav__logo-rest">atul.design</span><span class="nav__logo-dot">.</span>
     </a>
     <nav>
       <ul class="nav__links">
-        <li><a href="index.html#work"    class="nav__link">work</a></li>
-        <li><a href="index.html#about"   class="nav__link">about</a></li>
-        <li><a href="index.html#contact" class="nav__link">contact</a></li>
+        <li><a href="../index.html#work"    class="nav__link nav__link--active">work</a></li>
+        <li><a href="../index.html#about"   class="nav__link">about</a></li>
+        <li><a href="../index.html#contact" class="nav__link">contact</a></li>
       </ul>
     </nav>
   </div>
 </header>
 
 <main>
+
+  <!-- BACK LINK -->
+  <div class="wrap" style="padding-bottom:0">
+    <a href="../index.html#work" class="back-link">← back to work</a>
+  </div>
 
   <!-- HERO -->
   <div class="wrap">

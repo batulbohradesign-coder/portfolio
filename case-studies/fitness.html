@@ -7,7 +7,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,300;12..96,400;12..96,500;12..96,600&family=Figtree:ital,wght@0,300;0,400;0,500;1,300&display=swap" rel="stylesheet">
-  <link rel="icon" type="image/png" href="logo.png">
+  <link rel="icon" type="image/png" href="../assets/images/logo.png">
   <style>
     :root {
       --bg:          #FAF8F6;
@@ -237,6 +237,14 @@
     .next-project__arrow{ font-size:24px; color:var(--dark-accent); transition:transform 300ms var(--ease); }
     .next-project:hover .next-project__arrow{ transform:translateX(6px); }
 
+    /* BACK LINK */
+    .back-link { display: inline-flex; align-items: center; gap: 4px; font-size: 13px; color: var(--text-2); padding-top: 20px; transition: color 150ms var(--ease), transform 150ms var(--ease); }
+    .back-link:hover { color: var(--accent); transform: translateX(-2px); }
+
+    /* ACTIVE NAV */
+    .nav__link--active { color: var(--text); }
+    .nav__link--active::after { width: 100%; }
+
     /* REVEAL */
     .reveal{ opacity:0; transform:translateY(16px); transition:opacity 550ms var(--ease),transform 550ms var(--ease); }
     .reveal.visible{ opacity:1; transform:translateY(0); }
@@ -247,20 +255,25 @@
 
 <header class="nav">
   <div class="nav__inner">
-    <a href="index.html" class="nav__logo">
+    <a href="../index.html" class="nav__logo">
       <span>b</span><span class="nav__logo-rest">atul.design</span><span class="nav__logo-dot">.</span>
     </a>
     <nav>
       <ul class="nav__links">
-        <li><a href="index.html#work"    class="nav__link">work</a></li>
-        <li><a href="index.html#about"   class="nav__link">about</a></li>
-        <li><a href="index.html#contact" class="nav__link">contact</a></li>
+        <li><a href="../index.html#work"    class="nav__link nav__link--active">work</a></li>
+        <li><a href="../index.html#about"   class="nav__link">about</a></li>
+        <li><a href="../index.html#contact" class="nav__link">contact</a></li>
       </ul>
     </nav>
   </div>
 </header>
 
 <main>
+
+  <!-- BACK LINK -->
+  <div class="wrap" style="padding-bottom:0">
+    <a href="../index.html#work" class="back-link">← back to work</a>
+  </div>
 
   <!-- HERO -->
   <div class="wrap">
@@ -283,25 +296,25 @@
 
       <!-- Screen 1 — Comeback Entry -->
       <div class="hero-phone">
-        <img src="m-s1.png" alt="Comeback Entry">
+        <img src="../assets/images/m-s1.png" alt="Comeback Entry">
         <div class="hero-phone-label">comeback</div>
       </div>
 
       <!-- Screen 2 — Suggestion -->
       <div class="hero-phone">
-        <img src="m-s2.png" alt="Suggestion Engine">
+        <img src="../assets/images/m-s2.png" alt="Suggestion Engine">
         <div class="hero-phone-label">suggestion</div>
       </div>
 
       <!-- Screen 3A — Active Timer (with animated timer) -->
       <div class="hero-phone" style="z-index:3; transform:scale(1.06); box-shadow:0 28px 64px rgba(0,0,0,.8);">
-        <img src="m-s3a.png" alt="Active Timer">
+        <img src="../assets/images/m-s3a.png" alt="Active Timer">
         <div class="hero-phone-label">active</div>
       </div>
 
       <!-- Screen 3B — Completion (with tick animation) -->
       <div class="hero-phone">
-        <img src="m-s3b.png" alt="Completion">
+        <img src="../assets/images/m-s3b.png" alt="Completion">
         <div class="hero-phone-label">done</div>
       </div>
 
@@ -399,7 +412,7 @@
         <div class="flow-row__phone">
           <div class="flow-phone-wrap">
             <div class="flow-phone-frame">
-              <img src="m-s1.png" alt="Comeback Entry">
+              <img src="../assets/images/m-s1.png" alt="Comeback Entry">
             </div>
           </div>
         </div>
@@ -420,7 +433,7 @@
         <div class="flow-row__phone">
           <div class="flow-phone-wrap">
             <div class="flow-phone-frame">
-              <img src="m-s2.png" alt="Suggestion Engine">
+              <img src="../assets/images/m-s2.png" alt="Suggestion Engine">
             </div>
           </div>
         </div>
@@ -431,7 +444,7 @@
         <div class="flow-row__phone">
           <div class="flow-phone-wrap">
             <div class="flow-phone-frame flow-phone-frame--dark">
-              <img src="m-s3a.png" alt="Active Timer">
+              <img src="../assets/images/m-s3a.png" alt="Active Timer">
             </div>
           </div>
         </div>
@@ -452,7 +465,7 @@
         <div class="flow-row__phone">
           <div class="flow-phone-wrap">
             <div class="flow-phone-frame">
-              <img src="m-s3b.png" alt="Completion">
+              <img src="../assets/images/m-s3b.png" alt="Completion">
             </div>
           </div>
         </div>

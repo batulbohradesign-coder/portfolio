@@ -8,7 +8,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,300;12..96,400;12..96,500;12..96,600&family=Figtree:wght@300;400;500&family=Caveat:wght@400;500;600;700&display=swap" rel="stylesheet">
-  <link rel="icon" type="image/png" href="logo.png">
+  <link rel="icon" type="image/png" href="assets/images/logo.png">
   <style>
     :root {
       --bg:#FAF8F6; --text:#1A1A1A; --text-2:#555555; --text-3:#888888;
@@ -48,6 +48,8 @@
     .nav__link::after{content:'';position:absolute;bottom:-2px;left:0;width:0;height:1px;background:var(--accent);transition:width 300ms var(--ease);}
     .nav__link:hover{color:var(--text);}
     .nav__link:hover::after{width:100%;}
+    .nav__link--active{color:var(--text);}
+    .nav__link--active::after{width:100%;background:var(--text);}
 
     /* HAMBURGER */
     .hamburger{display:none;flex-direction:column;gap:5px;cursor:pointer;padding:4px;}
@@ -267,7 +269,7 @@
             </div>
             <div class="work-item__body">
               <p class="work-item__desc">signals is a mobile app for those first 90 days. it combines structured daily challenges with an anonymous campus feed, giving students a low-stakes way to act, and a real-time way to know they are not the only one struggling.</p>
-              <a href="signals.html" class="link-arrow">read more →</a>
+              <a href="case-studies/signals.html" class="link-arrow">read more →</a>
               <div class="work-item__visual-mobile" style="background:#C9D5C2"></div>
             </div>
           </div>
@@ -279,7 +281,7 @@
             </div>
             <div class="work-item__body">
               <p class="work-item__desc">a post-diagnosis skincare tool designed around empathy. built for patients navigating skincare after medical treatment, with flows that feel gentle and human.</p>
-              <a href="skincare.html" class="link-arrow">read more →</a>
+              <a href="case-studies/skincare.html" class="link-arrow">read more →</a>
               <div class="work-item__visual-mobile" style="background:#E8D5C4"></div>
             </div>
           </div>
@@ -291,7 +293,7 @@
             </div>
             <div class="work-item__body">
               <p class="work-item__desc">a daily fitness companion that meets you where you are. designed to make movement feel accessible, not intimidating, whether you're a beginner or getting back on track.</p>
-              <a href="fitness.html" class="link-arrow">read more →</a>
+              <a href="case-studies/fitness.html" class="link-arrow">read more →</a>
               <div class="work-item__visual-mobile" style="background:#D4E4D0"></div>
             </div>
           </div>
@@ -303,7 +305,7 @@
             </div>
             <div class="work-item__body">
               <p class="work-item__desc">a collaboration plugin designed for design teams in figma. figmeet makes it easier to run async design reviews, leave structured feedback, and keep everyone aligned without endless meetings.</p>
-              <a href="figmeet-final.html" class="link-arrow">read more →</a>
+              <a href="case-studies/figmeet.html" class="link-arrow">read more →</a>
               <div class="work-item__visual-mobile" style="background:#C8D4E0"></div>
             </div>
           </div>
@@ -315,7 +317,7 @@
             </div>
             <div class="work-item__body">
               <p class="work-item__desc">a ground-up rethink of spotify's music sharing flow. the redesign focuses on making sharing feel personal and intentional — not an afterthought buried in a menu.</p>
-              <a href="redesign.html" class="link-arrow">read more →</a>
+              <a href="case-studies/redesign.html" class="link-arrow">read more →</a>
               <div class="work-item__visual-mobile" style="background:#E0D4C8"></div>
             </div>
           </div>
@@ -339,10 +341,10 @@
         </article>
 
         <article class="tile tile--play tile--polaroid tile--play-bg" tabindex="0"
-          onclick="openOverlay('polaroid.html')"
-          onkeydown="if(event.key==='Enter')openOverlay('polaroid.html')">
+          onclick="openOverlay('interactive/polaroid.html')"
+          onkeydown="if(event.key==='Enter')openOverlay('interactive/polaroid.html')">
           <span class="tile__hint">tap to smile</span>
-          <img src="polaroid_thumbnail.png" alt="Polaroid camera">
+          <img src="assets/images/polaroid_thumbnail.png" alt="Polaroid camera">
         </article>
 
         <article class="tile tile--alt tile--content">
@@ -353,8 +355,8 @@
         </article>
 
         <article class="tile tile--play tile--play-bg" tabindex="0"
-          onclick="openOverlay('speed-scramble.html')"
-          onkeydown="if(event.key==='Enter')openOverlay('speed-scramble.html')">
+          onclick="openOverlay('interactive/speed-scramble.html')"
+          onkeydown="if(event.key==='Enter')openOverlay('interactive/speed-scramble.html')">
           <span class="tile__hint">tap to play</span>
           <div class="tile__preview">
             <div class="tile__word">unscramble.</div>
@@ -370,8 +372,8 @@
         </article>
 
         <article class="tile tile--play tile--play-bg" tabindex="0"
-          onclick="openOverlay('breathing-reset.html')"
-          onkeydown="if(event.key==='Enter')openOverlay('breathing-reset.html')">
+          onclick="openOverlay('interactive/breathing-reset.html')"
+          onkeydown="if(event.key==='Enter')openOverlay('interactive/breathing-reset.html')">
           <span class="tile__hint">tap to breathe</span>
           <div class="tile__preview">
             <div class="orb"></div>
@@ -479,7 +481,7 @@
       requestAnimationFrame(draw);
     }
     img.onload=draw; img.onerror=function(){console.warn('giraffe-clean.png not found');};
-    img.src='giraffe-clean.png';
+    img.src='assets/images/giraffe-clean.png';
     function track(mx,my){
       EYES.forEach(function(e,i){
         var cx=e.fx*S,cy=e.fy*S,max=(e.fr*S-e.pr*S)*.58;
@@ -514,7 +516,7 @@
       });
       requestAnimationFrame(draw);
     }
-    img.src='giraffe-clean.png'; draw();
+    img.src='assets/images/giraffe-clean.png'; draw();
     var hero=document.querySelector('.hero'), footer=document.querySelector('.footer');
     window.addEventListener('scroll',function(){
       if(!hero||!footer) return;
@@ -645,6 +647,29 @@
   }
 
   document.addEventListener('keydown',function(e){if(e.key!=='Escape')return;closeOverlay();closeModal();});
+
+  /* NAV ACTIVE STATE */
+  (function(){
+    var sectionIds=['work','about','contact'];
+    var navLinks={};
+    document.querySelectorAll('.nav__link').forEach(function(a){
+      var href=a.getAttribute('href')||'';
+      var id=href.split('#')[1];
+      if(id) navLinks[id]=a;
+    });
+    var sections=sectionIds.map(function(id){return document.getElementById(id);}).filter(Boolean);
+    var current=null;
+    function setActive(id){
+      if(current===id) return;
+      current=id;
+      Object.keys(navLinks).forEach(function(k){navLinks[k].classList.remove('nav__link--active');});
+      if(navLinks[id]) navLinks[id].classList.add('nav__link--active');
+    }
+    var obs=new IntersectionObserver(function(entries){
+      entries.forEach(function(e){if(e.isIntersecting) setActive(e.target.id);});
+    },{threshold:0.25});
+    sections.forEach(function(s){obs.observe(s);});
+  })();
 </script>
 
 </body>

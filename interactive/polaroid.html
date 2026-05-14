@@ -442,6 +442,9 @@
   }
   footer span { color: var(--accent-warm); }
 
+  .close-link { position: fixed; top: 16px; right: 16px; z-index: 200; display: inline-flex; align-items: center; gap: 5px; font-size: 12px; font-weight: 400; color: var(--ink-soft); background: rgba(253,251,244,0.88); backdrop-filter: blur(4px); border: 1px solid rgba(154,143,128,0.2); border-radius: 100px; padding: 8px 14px; text-decoration: none; font-family: 'DM Sans', sans-serif; letter-spacing: 0.02em; transition: color 0.15s ease, background 0.15s ease; }
+  .close-link:hover { color: var(--ink); background: rgba(253,251,244,0.97); }
+
   @media (max-width: 540px) {
     .top-controls { top: 18px; left: 16px; }
     .icon-btn { width: 32px; height: 32px; }
@@ -489,6 +492,8 @@
 </style>
 </head>
 <body>
+
+<a href="../index.html" class="close-link">← close</a>
 
 <div class="paper-grain"></div>
 

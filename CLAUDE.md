@@ -50,11 +50,8 @@ Personal portfolio for bb, UI/UX designer focused on mobile consumer apps.
 
 ## Known UX gaps to fix
 
-- No "back to work" link on case studies (only logo links home)
 - No footer on case study pages — visitors arriving directly can't reach contact or socials
-- No active state on nav links
 - Page transitions abrupt — index has enter animations, case studies don't
-- Interactive pages have no nav back to portfolio if opened directly
 - skincare.html and redesign.html linked on homepage but don't exist yet
 - Resume link in footer is # placeholder
 - figmeet.html missing favicon
