@@ -1,0 +1,676 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Breathing Reset</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;1,300;1,400&family=Caveat:wght@400;500&family=DM+Sans:ital,opsz,wght@0,9..40,200;0,9..40,300;1,9..40,200&display=swap" rel="stylesheet">
+
+  <style>
+    /* ─── Design Tokens ─── */
+    :root {
+      --cream:        #f5f0e8;
+      --cream-dark:   #ede6d8;
+      --parchment:    #faf7f2;
+      --charcoal:     #2c2825;
+      --charcoal-mid: #4a4440;
+      --charcoal-light:#7a706a;
+      --sage:         #92aec4;
+      --sage-light:   #bdd3e3;
+      --sage-glow:    rgba(146,174,196,0.25);
+      --terracotta:   #b8704a;
+      --shadow-soft:  0 8px 40px rgba(44,40,37,0.10);
+      --shadow-tile:  0 4px 24px rgba(44,40,37,0.08);
+      --radius-tile:  20px;
+      --radius-modal: 28px;
+      --font-display: 'Cormorant Garamond', Georgia, serif;
+      --font-hand:    'Caveat', cursive;
+      --font-body:    'DM Sans', sans-serif;
+    }
+
+    /* ─── Base ─── */
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      height: 100%;
+      width: 100%;
+      background: var(--cream);
+      font-family: var(--font-body);
+      color: var(--charcoal);
+      margin: 0;
+      padding: 0;
+      overflow: hidden;
+    }
+
+    /* Grain overlay on body */
+    body::before {
+      content: '';
+      position: fixed; inset: 0;
+      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.04'/%3E%3C/svg%3E");
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    /* ─── Modal Card (standalone, always visible) ─── */
+    #modal-overlay {
+      position: relative;
+      z-index: 1;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      width: 100%;
+    }
+
+    /* ─── Modal Card ─── */
+    #modal {
+      background: var(--parchment);
+      border-radius: 0;
+      box-shadow: 0 32px 80px rgba(44,40,37,0.14), 0 0 0 1px rgba(255,255,255,0.6) inset;
+      position: fixed;
+      inset: 0;
+      padding: 52px 40px 28px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 0;
+      overflow: hidden;
+    }
+
+    /* Paper grain on modal */
+    #modal::before {
+      content: '';
+      position: absolute; inset: 0;
+      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 300 300' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.04'/%3E%3C/svg%3E");
+      pointer-events: none;
+      z-index: 0;
+      border-radius: inherit;
+    }
+
+    #modal > *:not(.modal-credit) { position: relative; z-index: 1; }
+
+    /* Close button */
+    #close-btn {
+      position: absolute;
+      top: 18px;
+      right: 20px;
+      width: 32px;
+      height: 32px;
+      border: none;
+      background: transparent;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: 50%;
+      color: var(--charcoal-light);
+      transition: background 0.2s, color 0.2s;
+      z-index: 2;
+    }
+
+    #close-btn:hover {
+      background: var(--cream-dark);
+      color: var(--charcoal);
+    }
+
+    /* ─── States (screens) ─── */
+    .screen {
+      display: none;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      width: 100%;
+      flex: 1;
+    }
+
+    .screen.active {
+      display: flex;
+    }
+
+    /* ─── Idle Screen ─── */
+    .modal-title {
+      font-family: var(--font-display);
+      font-size: 42px;
+      font-weight: 300;
+      font-style: italic;
+      letter-spacing: -0.01em;
+      color: var(--charcoal);
+      margin-bottom: 6px;
+      line-height: 1;
+    }
+
+    .modal-subtitle {
+      font-family: var(--font-body);
+      font-size: 12px;
+      font-weight: 200;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      color: var(--charcoal-light);
+      margin-bottom: 44px;
+    }
+
+    /* Breathing Circle */
+    .circle-wrap {
+      position: relative;
+      width: 160px;
+      height: 160px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-bottom: 44px;
+    }
+
+    .breath-circle {
+      width: 120px;
+      height: 120px;
+      border-radius: 50%;
+      background: radial-gradient(circle at 38% 36%, var(--sage-light), var(--sage));
+      box-shadow: 0 0 0 16px var(--sage-glow), 0 8px 32px rgba(146,174,196,0.3);
+      will-change: transform;
+      position: relative;
+      z-index: 1;
+    }
+
+    /* Ring hint around circle */
+    .circle-ring {
+      position: absolute;
+      inset: -4px;
+      border-radius: 50%;
+      border: 1.5px solid rgba(143,168,140,0.18);
+      animation: ring-idle 3s ease-in-out infinite;
+    }
+
+    @keyframes ring-idle {
+      0%, 100% { opacity: 0.3; transform: scale(1); }
+      50%       { opacity: 0.8; transform: scale(1.04); }
+    }
+
+    /* CTA Button */
+    .btn-begin {
+      font-family: var(--font-body);
+      font-size: 12px;
+      font-weight: 300;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      color: var(--parchment);
+      background: var(--charcoal);
+      border: none;
+      border-radius: 100px;
+      padding: 14px 40px;
+      cursor: pointer;
+      transition: background 0.25s, transform 0.2s;
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    .btn-begin:hover {
+      background: var(--charcoal-mid);
+      transform: translateY(-1px);
+    }
+
+    .btn-begin:active { transform: translateY(0); }
+
+    /* ─── Active Session Screen ─── */
+    #screen-active .circle-wrap {
+      width: 200px;
+      height: 200px;
+      margin-bottom: 36px;
+    }
+
+    #screen-active .breath-circle {
+      width: 140px;
+      height: 140px;
+    }
+
+    .phase-label {
+      font-family: var(--font-display);
+      font-size: 36px;
+      font-weight: 300;
+      font-style: italic;
+      color: var(--charcoal);
+      letter-spacing: -0.01em;
+      margin-bottom: 10px;
+      min-height: 46px;
+      text-align: center;
+      transition: opacity 0.4s ease;
+    }
+
+    .cycle-indicator {
+      font-family: var(--font-body);
+      font-size: 11px;
+      font-weight: 200;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      color: var(--charcoal-light);
+      margin-bottom: 36px;
+    }
+
+    /* Dots progress */
+    .dot-row {
+      display: flex;
+      gap: 8px;
+      margin-bottom: 28px;
+    }
+
+    .dot {
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      background: var(--cream-dark);
+      transition: background 0.4s ease;
+    }
+
+    .dot.done  { background: var(--sage); }
+    .dot.active { background: var(--sage-light); }
+
+    /* Pause btn */
+    .btn-pause {
+      font-family: var(--font-body);
+      font-size: 11px;
+      font-weight: 300;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      color: var(--charcoal-light);
+      background: transparent;
+      border: 1px solid var(--cream-dark);
+      border-radius: 100px;
+      padding: 10px 28px;
+      cursor: pointer;
+      transition: border-color 0.2s, color 0.2s;
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    .btn-pause:hover {
+      border-color: var(--charcoal-light);
+      color: var(--charcoal);
+    }
+
+    /* ─── End Screen ─── */
+    .end-title {
+      font-family: var(--font-display);
+      font-size: 40px;
+      font-weight: 300;
+      font-style: italic;
+      color: var(--charcoal);
+      letter-spacing: -0.01em;
+      margin-bottom: 6px;
+    }
+
+    .end-hand {
+      font-family: var(--font-hand);
+      font-size: 18px;
+      color: var(--terracotta);
+      margin-bottom: 44px;
+      opacity: 0.85;
+    }
+
+    #screen-end .breath-circle {
+      animation: end-glow 3s ease-in-out infinite !important;
+    }
+
+    @keyframes end-glow {
+      0%, 100% { box-shadow: 0 0 0 16px var(--sage-glow), 0 8px 32px rgba(146,174,196,0.3); }
+      50%       { box-shadow: 0 0 0 28px rgba(146,174,196,0.18), 0 8px 40px rgba(146,174,196,0.4); }
+    }
+
+    .btn-again {
+      font-family: var(--font-body);
+      font-size: 12px;
+      font-weight: 300;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      color: var(--charcoal);
+      background: transparent;
+      border: 1.5px solid var(--charcoal);
+      border-radius: 100px;
+      padding: 13px 38px;
+      cursor: pointer;
+      transition: background 0.25s, color 0.25s, transform 0.2s;
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    .btn-again:hover {
+      background: var(--charcoal);
+      color: var(--parchment);
+      transform: translateY(-1px);
+    }
+
+    /* ─── Mobile Bottom Sheet ─── */
+    @media (max-width: 520px) {
+      #modal {
+        min-height: unset;
+        padding: 44px 28px 32px;
+      }
+
+      .modal-title { font-size: 36px; }
+
+      #screen-active .circle-wrap {
+        width: 170px;
+        height: 170px;
+      }
+
+      #screen-active .breath-circle {
+        width: 120px;
+        height: 120px;
+      }
+    }
+
+    /* ─── Breathing animations ─── */
+    @keyframes inhale {
+      from { transform: scale(1); }
+      to   { transform: scale(1.55); }
+    }
+
+    @keyframes exhale {
+      from { transform: scale(1.55); }
+      to   { transform: scale(1); }
+    }
+
+    @keyframes hold-scale {
+      from { transform: scale(1.55); }
+      to   { transform: scale(1.55); }
+    }
+
+    /* Phase text transition */
+    .phase-fade-out { opacity: 0; transform: translateY(-4px); transition: opacity 0.3s ease, transform 0.3s ease; }
+    .phase-fade-in  { opacity: 1; transform: translateY(0);    transition: opacity 0.4s ease 0.1s, transform 0.4s ease 0.1s; }
+
+    /* ─── Credit line ─── */
+    .modal-credit {
+      font-family: var(--font-hand);
+      font-size: 15px;
+      color: var(--charcoal-light);
+      opacity: 0.6;
+      display: flex;
+      align-items: center;
+      gap: 4px;
+      position: absolute;
+      bottom: 16px;
+      left: 50%;
+      transform: translateX(-50%);
+      white-space: nowrap;
+    }
+    .modal-credit .heart { color: var(--terracotta); opacity: 1; }
+
+    /* ─── Completion chime (audio note) ─── */
+    /* Chime is generated via Web Audio API — no external file needed */
+  </style>
+</head>
+<body>
+
+  <!-- ─── Modal (always visible) ─── -->
+  <div id="modal-overlay" role="main">
+    <div id="modal">
+
+      <button id="close-btn" aria-label="Close" onclick="closeModal()" style="display:none">
+        <svg width="14" height="14" viewBox="0 0 14 14" fill="none">
+          <path d="M1 1l12 12M13 1L1 13" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/>
+        </svg>
+      </button>
+
+      <!-- ── Idle Screen ── -->
+      <div class="screen active" id="screen-idle">
+        <h1 class="modal-title" id="modal-heading">breathe</h1>
+        <p class="modal-subtitle">take 30 seconds for yourself</p>
+
+        <div class="circle-wrap">
+          <div class="circle-ring"></div>
+          <div class="breath-circle" id="idle-circle"></div>
+        </div>
+
+        <button class="btn-begin" onclick="beginSession()">Begin</button>
+      </div>
+
+      <!-- ── Active Screen ── -->
+      <div class="screen" id="screen-active">
+        <div class="circle-wrap">
+          <div class="circle-ring" style="display:none"></div>
+          <div class="breath-circle" id="active-circle"></div>
+        </div>
+
+        <div class="phase-label phase-fade-in" id="phase-text">inhale</div>
+        <div class="cycle-indicator" id="cycle-text">cycle 1 of 3</div>
+
+        <div class="dot-row" id="dot-row">
+          <div class="dot active" id="dot-0"></div>
+          <div class="dot" id="dot-1"></div>
+          <div class="dot" id="dot-2"></div>
+        </div>
+
+        <button class="btn-pause" id="pause-btn" onclick="togglePause()">Pause</button>
+      </div>
+
+      <!-- ── End Screen ── -->
+      <div class="screen" id="screen-end">
+        <div class="end-title">nice reset.</div>
+        <div class="end-hand">breathe a little :)</div>
+
+        <div class="circle-wrap">
+          <div class="breath-circle" id="end-circle" style="transform:scale(1)"></div>
+        </div>
+
+        <div style="margin-top:36px">
+          <button class="btn-again" onclick="restartSession()">Again</button>
+        </div>
+      </div>
+
+      <!-- ── Credit ── -->
+      <div class="modal-credit">made with <span class="heart">♡</span> by bb</div>
+
+    </div>
+  </div>
+
+  <script>
+    /* ─── State ─── */
+    const PHASES = [
+      { name: 'inhale', duration: 4000,  animName: 'inhale',     easing: 'cubic-bezier(0.4,0,0.2,1)' },
+      { name: 'hold',   duration: 2000,  animName: 'hold-scale', easing: 'linear' },
+      { name: 'exhale', duration: 6000,  animName: 'exhale',     easing: 'cubic-bezier(0.4,0,0.6,1)' },
+    ];
+    const TOTAL_CYCLES = 3;
+
+    let sessionActive = false;
+    let paused        = false;
+    let currentCycle  = 0;
+    let currentPhase  = 0;
+    let phaseTimer    = null;
+    let pauseStart    = null;
+    let phaseRemaining = 0;
+
+    /* ─── Modal open/close ─── */
+    function openModal() { /* no-op — modal is always visible */ }
+    function closeModal() { showScreen('idle'); stopSession(); }
+
+    /* ─── Screen management ─── */
+    function showScreen(name) {
+      document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+      document.getElementById('screen-' + name).classList.add('active');
+    }
+
+    /* ─── Session control ─── */
+    function beginSession() {
+      currentCycle = 0;
+      currentPhase = 0;
+      paused = false;
+      sessionActive = true;
+      showScreen('active');
+      updateDots();
+      runPhase();
+    }
+
+    function stopSession() {
+      sessionActive = false;
+      paused = false;
+      clearTimeout(phaseTimer);
+      const circle = document.getElementById('active-circle');
+      if (circle) {
+        circle.style.animation = 'none';
+        circle.style.transform = 'scale(1)';
+      }
+    }
+
+    function restartSession() {
+      showScreen('idle');
+    }
+
+    function togglePause() {
+      const btn = document.getElementById('pause-btn');
+      const circle = document.getElementById('active-circle');
+
+      if (!paused) {
+        paused = true;
+        btn.textContent = 'Resume';
+        pauseStart = Date.now();
+        clearTimeout(phaseTimer);
+        // Freeze circle by computing current scale and applying inline
+        const computedStyle = getComputedStyle(circle);
+        const transform = computedStyle.transform;
+        circle.style.animation = 'none';
+        circle.style.transform = transform === 'none' ? 'scale(1)' : transform;
+      } else {
+        paused = false;
+        btn.textContent = 'Pause';
+        const elapsed = Date.now() - pauseStart;
+        phaseRemaining = Math.max(0, phaseRemaining - elapsed);
+        resumePhase(phaseRemaining);
+      }
+    }
+
+    /* ─── Breathing logic ─── */
+    function runPhase() {
+      if (!sessionActive) return;
+
+      const phase = PHASES[currentPhase];
+      phaseRemaining = phase.duration;
+
+      // Animate phase label
+      const phaseEl = document.getElementById('phase-text');
+      phaseEl.classList.remove('phase-fade-in');
+      phaseEl.classList.add('phase-fade-out');
+      setTimeout(() => {
+        phaseEl.textContent = phase.name;
+        phaseEl.classList.remove('phase-fade-out');
+        phaseEl.classList.add('phase-fade-in');
+      }, 300);
+
+      // Update cycle text
+      document.getElementById('cycle-text').textContent =
+        `cycle ${currentCycle + 1} of ${TOTAL_CYCLES}`;
+
+      // Animate circle
+      const circle = document.getElementById('active-circle');
+      circle.style.animation = 'none';
+      // Force reflow
+      void circle.offsetWidth;
+      circle.style.animation = `${phase.animName} ${phase.duration}ms ${phase.easing} forwards`;
+
+      // Schedule next
+      phaseTimer = setTimeout(advancePhase, phase.duration);
+    }
+
+    function resumePhase(remaining) {
+      if (!sessionActive || paused) return;
+
+      const phase = PHASES[currentPhase];
+      const elapsed = phase.duration - remaining;
+      const progress = elapsed / phase.duration;
+
+      // Reconstruct scale at pause point
+      let startScale, endScale;
+      if (phase.name === 'inhale')     { startScale = 1;    endScale = 1.55; }
+      else if (phase.name === 'hold')  { startScale = 1.55; endScale = 1.55; }
+      else                              { startScale = 1.55; endScale = 1;    }
+
+      const currentScale = startScale + (endScale - startScale) * progress;
+
+      const circle = document.getElementById('active-circle');
+
+      // Create a dynamic keyframe from current position
+      const styleId = 'dynamic-anim';
+      let styleEl = document.getElementById(styleId);
+      if (!styleEl) {
+        styleEl = document.createElement('style');
+        styleEl.id = styleId;
+        document.head.appendChild(styleEl);
+      }
+      styleEl.textContent = `
+        @keyframes resume-phase {
+          from { transform: scale(${currentScale}); }
+          to   { transform: scale(${endScale}); }
+        }
+      `;
+
+      circle.style.animation = 'none';
+      void circle.offsetWidth;
+      circle.style.animation = `resume-phase ${remaining}ms ${phase.easing} forwards`;
+
+      phaseTimer = setTimeout(advancePhase, remaining);
+    }
+
+    function advancePhase() {
+      if (!sessionActive || paused) return;
+
+      currentPhase++;
+      if (currentPhase >= PHASES.length) {
+        currentPhase = 0;
+        currentCycle++;
+        if (currentCycle >= TOTAL_CYCLES) {
+          endSession();
+          return;
+        }
+        updateDots();
+      }
+      runPhase();
+    }
+
+    function updateDots() {
+      for (let i = 0; i < TOTAL_CYCLES; i++) {
+        const dot = document.getElementById('dot-' + i);
+        dot.classList.remove('done', 'active');
+        if (i < currentCycle)      dot.classList.add('done');
+        else if (i === currentCycle) dot.classList.add('active');
+      }
+    }
+
+    function endSession() {
+      sessionActive = false;
+      playCompletionChime();
+      // Mark all dots done
+      for (let i = 0; i < TOTAL_CYCLES; i++) {
+        const dot = document.getElementById('dot-' + i);
+        dot.classList.remove('active');
+        dot.classList.add('done');
+      }
+      setTimeout(() => showScreen('end'), 400);
+    }
+
+    /* ─── Completion chime (Web Audio, silent by default) ─── */
+    function playCompletionChime() {
+      try {
+        const ctx = new (window.AudioContext || window.webkitAudioContext)();
+        const notes = [523.25, 659.25, 783.99]; // C5, E5, G5 — gentle major chord
+
+        notes.forEach((freq, i) => {
+          const osc  = ctx.createOscillator();
+          const gain = ctx.createGain();
+          osc.connect(gain);
+          gain.connect(ctx.destination);
+          osc.type = 'sine';
+          osc.frequency.value = freq;
+
+          const startTime = ctx.currentTime + i * 0.18;
+          gain.gain.setValueAtTime(0, startTime);
+          gain.gain.linearRampToValueAtTime(0.07, startTime + 0.05);
+          gain.gain.exponentialRampToValueAtTime(0.0001, startTime + 2.2);
+
+          osc.start(startTime);
+          osc.stop(startTime + 2.5);
+        });
+      } catch(e) {
+        // Audio not available — silent graceful fallback
+      }
+    }
+  </script>
+
+</body>
+</html>

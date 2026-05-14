@@ -1,0 +1,1017 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>polaroid</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Caveat:wght@400;500;600&family=DM+Sans:wght@300;400;500&family=Lora:ital,wght@0,400;0,500;1,400&display=swap" rel="stylesheet" />
+<style>
+  :root {
+    --cream: #FAF4E8;
+    --paper: #FDFBF4;
+    --ink: #2A2520;
+    --ink-soft: #5C544B;
+    --ink-faded: #9A8F80;
+    --sage: #B5C4A4;
+    --sage-deep: #94A684;
+    --sage-shadow: #6F8163;
+    --accent-warm: #C97D5D;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html, body { height: 100%; }
+
+  body {
+    font-family: 'DM Sans', sans-serif;
+    background: var(--cream);
+    color: var(--ink);
+    height: 100vh;
+    overflow: hidden;
+    position: relative;
+  }
+
+  /* Paper grain */
+  .paper-grain {
+    position: fixed;
+    inset: 0;
+    z-index: 0;
+    pointer-events: none;
+    background-image:
+      radial-gradient(ellipse at 15% 20%, rgba(201, 125, 93, 0.05) 0%, transparent 50%),
+      radial-gradient(ellipse at 85% 75%, rgba(122, 142, 108, 0.06) 0%, transparent 50%);
+  }
+  .paper-grain::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='300' height='300'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='3' stitchTiles='stitch' seed='5'/><feColorMatrix values='0 0 0 0 0.18  0 0 0 0 0.15  0 0 0 0 0.12  0 0 0 0.55 0'/></filter><rect width='100%25' height='100%25' filter='url(%23n)'/></svg>");
+    background-size: 300px 300px;
+    opacity: 0.45;
+    mix-blend-mode: multiply;
+  }
+  .paper-grain::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='600' height='600'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.015' numOctaves='2' stitchTiles='stitch' seed='3'/><feColorMatrix values='0 0 0 0 0.85  0 0 0 0 0.78  0 0 0 0 0.65  0 0 0 0.3 0'/></filter><rect width='100%25' height='100%25' filter='url(%23n)'/></svg>");
+    background-size: 600px 600px;
+    opacity: 0.45;
+    mix-blend-mode: multiply;
+  }
+
+  /* Top LEFT controls — avoids overlap with iframe close button (top-right) */
+  .top-controls {
+    position: absolute;
+    top: 16px;
+    left: 16px;
+    z-index: 10;
+    display: flex;
+    gap: 8px;
+    align-items: center;
+  }
+  .icon-btn {
+    background: transparent;
+    border: 1.5px solid var(--ink-faded);
+    color: var(--ink-soft);
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0;
+  }
+  .icon-btn:hover {
+    border-color: var(--ink-soft);
+    background: var(--paper);
+  }
+  .icon-btn svg { width: 18px; height: 18px; }
+  .info-btn {
+    font-style: italic;
+    font-family: 'Lora', serif;
+    font-size: 17px;
+    font-weight: 500;
+  }
+
+  .info-popover {
+    position: absolute;
+    top: 48px;
+    left: 44px; /* aligns under the i button, not the volume button */
+    background: var(--paper);
+    border: 1px solid rgba(154,143,128,0.25); /* soft border, no black stroke */
+    border-radius: 14px;
+    padding: 16px 18px;
+    width: 240px;
+    font-family: 'Caveat', cursive;
+    font-size: 19px;
+    line-height: 1.35;
+    color: var(--ink);
+    box-shadow: 0 8px 24px rgba(42, 37, 32, 0.12);
+    opacity: 0;
+    transform: translateY(-6px) scale(0.96);
+    pointer-events: none;
+    transition: opacity 0.2s ease, transform 0.2s ease;
+    z-index: 11;
+  }
+  .info-popover.visible {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+    pointer-events: auto;
+  }
+  .info-popover::before {
+    content: '';
+    position: absolute;
+    top: -7px;
+    left: 14px;
+    width: 12px;
+    height: 12px;
+    background: var(--paper);
+    border-left: 1px solid rgba(154,143,128,0.25);
+    border-top: 1px solid rgba(154,143,128,0.25);
+    transform: rotate(45deg);
+  }
+
+  /* Stage */
+  .stage {
+    height: 100vh;
+    overflow: visible; /* allow footer outside stage to show */
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 56px 24px 48px;
+    position: relative;
+    z-index: 1;
+  }
+
+  .scene {
+    position: relative;
+    width: 600px;
+    max-width: 100%;
+    height: 460px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  /* Camera wrap holds camera SVG + click hint, both positioned absolutely so they share coords */
+  .camera-wrap {
+    position: relative;
+    width: 280px;
+    height: 260px;
+    z-index: 2;
+    cursor: default;
+    transition: transform 0.3s ease;
+  }
+  .camera-wrap:hover {
+    transform: translateY(-6px) rotate(0.5deg);
+  }
+
+  .camera-svg {
+    display: block;
+    width: 280px;
+    height: auto;
+    animation: idle-breath 4.5s ease-in-out infinite;
+    transform-origin: center;
+  }
+  @keyframes idle-breath {
+    0%, 100% { transform: translateY(0) rotate(-1deg); }
+    50% { transform: translateY(-3px) rotate(-0.4deg); }
+  }
+  .camera-svg.pressing {
+    animation: shutter-press 0.5s ease;
+  }
+  @keyframes shutter-press {
+    0% { transform: translateY(0) rotate(-1deg); }
+    25% { transform: translateY(3px) scale(0.985) rotate(-1deg); }
+    65% { transform: translateY(-5px) rotate(0deg); }
+    100% { transform: translateY(0) rotate(-1deg); }
+  }
+
+  .shutter-hit {
+    cursor: pointer;
+  }
+  .shutter-hit:hover #shutter-inner {
+    fill: var(--accent-warm);
+    transition: fill 0.2s ease;
+  }
+  .shutter-hit.disabled {
+    cursor: wait;
+    pointer-events: none;
+  }
+
+  /* CLICK HINT — small, positioned just above-left of the shutter button.
+     Camera SVG is 280×260; shutter is at SVG (78, 130). Hint shifted 12px left of original. */
+  .click-hint {
+    position: absolute;
+    left: -22px;
+    top: 60px;
+    width: 90px;
+    height: 70px;
+    pointer-events: none;
+    transition: opacity 0.4s ease;
+    z-index: 4;
+  }
+  .click-hint.hidden { opacity: 0; }
+  .click-hint.fade { opacity: 0.45; }
+
+  .click-hint .hint-text {
+    position: absolute;
+    top: 0;
+    left: 8px;
+    font-family: 'Caveat', cursive;
+    font-size: 23px;
+    color: var(--accent-warm);
+    transform: rotate(-8deg);
+    line-height: 1;
+  }
+  .click-hint .hint-arrow {
+    position: absolute;
+    top: 22px;
+    left: 30px;
+    width: 55px;
+    height: auto;
+    display: block;
+    user-select: none;
+    -webkit-user-drag: none;
+  }
+
+  /* Polaroid */
+  .polaroid {
+    position: absolute;
+    width: 180px;
+    background: var(--paper);
+    padding: 10px 10px 38px 10px;
+    box-shadow:
+      0 1px 2px rgba(42, 37, 32, 0.08),
+      0 8px 24px rgba(42, 37, 32, 0.15);
+    border-radius: 2px;
+    z-index: 1;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -25%) rotate(0deg) scale(0.92);
+    opacity: 0;
+    pointer-events: none;
+    transition: transform 0.9s cubic-bezier(0.25, 1.0, 0.5, 1.0), opacity 0.4s ease;
+  }
+  .polaroid.emerged {
+    opacity: 1;
+    transform: translate(-50%, -130%) rotate(-1deg) scale(1);
+  }
+  .polaroid.settled {
+    z-index: 3;
+    transform: translate(60%, -45%) rotate(7deg) scale(1);
+    transition: transform 1.0s cubic-bezier(0.34, 1.05, 0.64, 1);
+    pointer-events: auto;
+  }
+
+  .polaroid-photo {
+    width: 160px;
+    height: 160px;
+    background: #1a1814;
+    overflow: hidden;
+    position: relative;
+    border-radius: 1px;
+  }
+  .polaroid-photo img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+    filter: contrast(1.05) saturate(0.92) brightness(1.02);
+  }
+  /* Veil DEFAULTS to opaque white; .developed fades it away */
+  .polaroid-photo .develop-veil {
+    position: absolute;
+    inset: 0;
+    background: var(--paper);
+    z-index: 2;
+    opacity: 1;
+    transition: opacity 1.8s ease;
+  }
+  .polaroid-photo.developed .develop-veil {
+    opacity: 0;
+  }
+
+  /* Stamp — smaller font so longest phrase fits with heart */
+  .stamp {
+    position: absolute;
+    bottom: 8px;
+    left: 4px;
+    right: 4px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 5px;
+    font-family: 'Caveat', cursive;
+    font-size: 16px;
+    color: var(--ink);
+    opacity: 0;
+    transform: rotate(-1.5deg) scale(0.8);
+    transition: opacity 0.3s ease, transform 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);
+    pointer-events: none;
+    line-height: 1.1;
+    white-space: nowrap;
+  }
+  .stamp.visible {
+    opacity: 0.92;
+    transform: rotate(-1.5deg) scale(1);
+  }
+  .stamp svg {
+    width: 12px;
+    height: 12px;
+    flex-shrink: 0;
+    transform: translateY(0);
+  }
+
+  .flash {
+    position: fixed;
+    inset: 0;
+    background: white;
+    z-index: 100;
+    opacity: 0;
+    pointer-events: none;
+  }
+  .flash.fire {
+    animation: flash-fire 0.45s ease-out;
+  }
+  @keyframes flash-fire {
+    0% { opacity: 0; }
+    15% { opacity: 0.8; }
+    100% { opacity: 0; }
+  }
+
+  .actions {
+    position: absolute;
+    bottom: 16px;
+    left: 50%;
+    transform: translateX(-50%);
+    display: flex;
+    gap: 16px;
+    align-items: center;
+    justify-content: center;
+    opacity: 0;
+    transition: opacity 0.5s ease 0.3s;
+    pointer-events: none;
+    flex-wrap: wrap;
+    z-index: 5;
+  }
+  .actions.visible {
+    opacity: 1;
+    pointer-events: auto;
+  }
+  .action-btn {
+    background: transparent;
+    border: 1.5px solid var(--ink);
+    padding: 9px 22px;
+    font-family: 'Caveat', cursive;
+    font-size: 20px;
+    color: var(--ink);
+    cursor: pointer;
+    border-radius: 100px;
+    transition: all 0.2s ease;
+    text-decoration: none;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    white-space: nowrap;
+  }
+  .action-btn:hover {
+    background: var(--ink);
+    color: var(--cream);
+    transform: translateY(-2px);
+  }
+  .action-btn.primary {
+    background: var(--ink);
+    color: var(--cream);
+  }
+  .action-btn.primary:hover {
+    background: var(--sage-shadow);
+    border-color: var(--sage-shadow);
+  }
+
+  .error-msg {
+    position: fixed;
+    bottom: 48px;
+    left: 50%;
+    transform: translateX(-50%);
+    font-family: 'Caveat', cursive;
+    font-size: 21px;
+    color: var(--accent-warm);
+    text-align: center;
+    max-width: 320px;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+    pointer-events: none;
+    z-index: 20;
+    background: var(--paper);
+    padding: 12px 20px;
+    border-radius: 16px;
+    box-shadow: 0 4px 16px rgba(42,37,32,0.12);
+    white-space: nowrap;
+  }
+  .error-msg.visible { opacity: 1; }
+  .error-msg span { display: block; font-size: 16px; color: var(--ink-faded); margin-top: 4px; }
+
+  #video {
+    position: fixed;
+    bottom: 0;
+    right: 0;
+    width: 2px;
+    height: 2px;
+    opacity: 0.01;
+    pointer-events: none;
+    z-index: -1;
+  }
+
+  footer {
+    position: absolute;
+    bottom: 4px;
+    left: 50%;
+    transform: translateX(-50%);
+    font-family: 'Caveat', cursive;
+    font-size: 16px;
+    color: var(--ink-soft);
+    text-align: center;
+    z-index: 5;
+    opacity: 0.75;
+  }
+  footer span { color: var(--accent-warm); }
+
+  @media (max-width: 540px) {
+    .top-controls { top: 18px; left: 16px; }
+    .icon-btn { width: 32px; height: 32px; }
+    .icon-btn svg { width: 16px; height: 16px; }
+    .info-btn { font-size: 15px; }
+    .info-popover { width: 200px; font-size: 16px; }
+
+    /* Stage: no overflow hidden on mobile so polaroid doesn't get clipped */
+    .stage {
+      overflow: visible;
+      align-items: flex-start;
+      padding: 80px 16px 140px;
+    }
+
+    .scene { height: 320px; width: 100%; }
+    .camera-wrap { width: 190px; height: 176px; }
+    .camera-svg { width: 190px; }
+
+    /* Hide click hint on mobile — not needed */
+    .click-hint { display: none; }
+
+    /* Polaroid stays within scene — no offset beyond scene width */
+    .polaroid { width: 130px; padding: 8px 8px 30px 8px; }
+    .polaroid-photo { width: 114px; height: 114px; }
+    .polaroid.settled {
+      transform: translate(20%, -50%) rotate(6deg) scale(1);
+    }
+
+    /* CTAs fixed to bottom — stacked vertically, clear of footer */
+    .actions {
+      position: fixed;
+      bottom: 48px;
+      left: 0; right: 0;
+      transform: none;
+      flex-direction: column;
+      gap: 10px;
+      padding: 0 24px;
+      width: 100%;
+    }
+    .action-btn { width: 100%; justify-content: center; font-size: 18px; }
+
+    .stamp { font-size: 13px; }
+    footer { font-size: 15px; bottom: 16px; }
+  }
+</style>
+</head>
+<body>
+
+<div class="paper-grain"></div>
+
+<div class="top-controls">
+  <button class="icon-btn" id="soundToggle" aria-label="toggle sound">
+    <svg id="soundOnIcon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+      <polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5" fill="currentColor" stroke="currentColor"/>
+      <path d="M15.54 8.46a5 5 0 0 1 0 7.07"/>
+      <path d="M19.07 4.93a10 10 0 0 1 0 14.14"/>
+    </svg>
+    <svg id="soundOffIcon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" style="display:none;">
+      <polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5" fill="currentColor" stroke="currentColor"/>
+      <line x1="22" y1="9" x2="16" y2="15"/>
+      <line x1="16" y1="9" x2="22" y2="15"/>
+    </svg>
+  </button>
+  <button class="icon-btn info-btn" id="infoBtn" aria-label="about this project">i</button>
+  <div class="info-popover" id="infoPopover">
+    a side project i built to remind you to smile today
+  </div>
+</div>
+
+<div class="stage">
+  <div class="scene" id="scene">
+
+    <div class="camera-wrap" id="cameraWrap">
+      <svg class="camera-svg" id="camera" viewBox="0 0 280 260" xmlns="http://www.w3.org/2000/svg" aria-label="polaroid camera">
+        <ellipse cx="140" cy="248" rx="105" ry="6" fill="#2A2520" opacity="0.1"/>
+
+        <path d="
+          M 38 38
+          Q 36 28, 46 26
+          C 90 22, 195 22, 238 26
+          Q 246 28, 244 38
+          C 248 70, 250 100, 248 135
+          C 250 175, 248 208, 240 230
+          Q 238 238, 230 238
+          C 192 242, 88 242, 50 238
+          Q 40 238, 38 230
+          C 30 200, 30 165, 32 135
+          C 30 100, 32 65, 38 38
+          Z
+        " fill="#B5C4A4" stroke="#2A2520" stroke-width="2.2" stroke-linejoin="round" stroke-linecap="round"/>
+
+        <path d="
+          M 42 42
+          Q 42 32, 50 32
+          C 92 28, 192 28, 232 32
+          Q 240 32, 240 42
+          C 244 72, 246 102, 244 135
+          C 246 173, 244 205, 236 226
+          Q 234 232, 228 232
+          C 192 236, 88 236, 52 232
+          Q 44 232, 42 226
+          C 34 198, 34 165, 36 135
+          C 34 102, 36 68, 42 42
+          Z
+        " fill="none" stroke="#2A2520" stroke-width="0.6" opacity="0.25"/>
+
+        <path d="M 105 38 Q 103 130, 108 235" stroke="#2A2520" stroke-width="1.5" fill="none" opacity="0.55" stroke-linecap="round"/>
+
+        <line x1="62" y1="32" x2="218" y2="32" stroke="#2A2520" stroke-width="1.5" opacity="0.5" stroke-linecap="round"/>
+
+        <rect x="125" y="46" width="28" height="56" rx="13" fill="#FDFBF4" stroke="#2A2520" stroke-width="1.8"/>
+        <rect x="131" y="54" width="16" height="40" rx="7" fill="#FFFFFF" opacity="0.9"/>
+
+        <rect x="62" y="58" width="28" height="22" rx="4" fill="#FDFBF4" stroke="#2A2520" stroke-width="1.8"/>
+        <rect x="69" y="64" width="14" height="10" rx="1" fill="#2A2520"/>
+
+        <ellipse cx="196" cy="68" rx="9" ry="13" fill="none" stroke="#2A2520" stroke-width="1.5" opacity="0.9"/>
+        <circle cx="196" cy="62" r="2.5" fill="#2A2520"/>
+        <circle cx="196" cy="74" r="2.5" fill="#2A2520"/>
+
+        <g class="shutter-hit" id="shutterBtn">
+          <circle cx="78" cy="130" r="20" fill="transparent"/>
+          <circle cx="78" cy="130" r="11" fill="#FDFBF4" stroke="#2A2520" stroke-width="1.8"/>
+          <circle id="shutter-inner" cx="78" cy="130" r="5.5" fill="#FDFBF4" stroke="#2A2520" stroke-width="1"/>
+        </g>
+
+        <circle cx="172" cy="158" r="62" fill="#B5C4A4" stroke="#2A2520" stroke-width="2"/>
+        <circle cx="172" cy="158" r="50" fill="#FDFBF4" stroke="#2A2520" stroke-width="1.5"/>
+        <circle cx="172" cy="158" r="38" fill="#B5C4A4" stroke="#2A2520" stroke-width="1.5"/>
+        <circle cx="172" cy="158" r="26" fill="#2A2520" stroke="#2A2520" stroke-width="1.5"/>
+        <path d="M 158 148 Q 150 158, 158 170" stroke="#FDFBF4" stroke-width="3" fill="none" stroke-linecap="round"/>
+        <rect x="152" y="148" width="11" height="11" rx="1.5" fill="#FDFBF4"/>
+
+        <g transform="translate(218, 52) rotate(8)" opacity="0.9">
+          <path d="M 0 -10 Q 1.5 -2, 10 0 Q 1.5 2, 0 10 Q -1.5 2, -10 0 Q -1.5 -2, 0 -10 Z"
+                fill="#2A2520" stroke="#2A2520" stroke-width="0.5" stroke-linejoin="round"/>
+        </g>
+        <circle cx="232" cy="44" r="1.4" fill="#2A2520" opacity="0.7"/>
+      </svg>
+
+      <!-- CLICK HINT — handwritten "click!" with hand-drawn arrow PNG pointing at the shutter -->
+      <div class="click-hint" id="clickHint">
+        <span class="hint-text">click!</span>
+        <img class="hint-arrow" src="data:image/png;base64,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" alt="" />
+      </div>
+    </div>
+
+    <!-- Polaroid -->
+    <div class="polaroid" id="polaroid">
+      <div class="polaroid-photo" id="polaroidPhoto">
+        <img id="polaroidImg" alt="" />
+        <div class="develop-veil"></div>
+      </div>
+      <div class="stamp" id="polaroidStamp">
+        <span id="stampText"></span>
+        <svg viewBox="0 0 24 24" fill="none" stroke="#2A2520" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M12 21s-7-4.5-9.5-9C1 8.5 3 4.5 7 4.5c2 0 3.5 1 5 3 1.5-2 3-3 5-3 4 0 6 4 4.5 7.5C19 16.5 12 21 12 21z"/>
+        </svg>
+      </div>
+    </div>
+
+    <div class="actions" id="actions">
+      <a href="#" class="action-btn primary" id="downloadBtn" download="polaroid-photo.png">↓ download</a>
+      <button class="action-btn" id="retakeBtn">take another?</button>
+    </div>
+
+    <div class="error-msg" id="errorMsg">
+      i need camera access to work :(
+      <span>check your browser permissions and try again</span>
+    </div>
+
+  </div>
+
+  <footer>made with <span>♡</span> by bb</footer>
+
+</div>
+
+<div class="flash" id="flash"></div>
+
+<video id="video" autoplay playsinline muted></video>
+
+<script>
+  // ===== STATE — two-state shutter =====
+  // mode: 'needs-permission' | 'ready' | 'busy'
+  const state = {
+    soundOn: true,
+    stream: null,
+    videoReady: false,
+    mode: 'needs-permission',
+  };
+
+  const phrases = [
+    "save this one for later",
+    "look at you, look at you",
+    "you look so good today",
+    "okay but the lighting tho",
+    "in my soft era, clearly",
+  ];
+
+  const camera = document.getElementById('camera');
+  const cameraWrap = document.getElementById('cameraWrap');
+  const shutterBtn = document.getElementById('shutterBtn');
+  const polaroid = document.getElementById('polaroid');
+  const polaroidPhoto = document.getElementById('polaroidPhoto');
+  const polaroidImg = document.getElementById('polaroidImg');
+  const polaroidStamp = document.getElementById('polaroidStamp');
+  const stampText = document.getElementById('stampText');
+  const flash = document.getElementById('flash');
+  const video = document.getElementById('video');
+  const actions = document.getElementById('actions');
+  const downloadBtn = document.getElementById('downloadBtn');
+  const retakeBtn = document.getElementById('retakeBtn');
+  const soundToggle = document.getElementById('soundToggle');
+  const soundOnIcon = document.getElementById('soundOnIcon');
+  const soundOffIcon = document.getElementById('soundOffIcon');
+  const infoBtn = document.getElementById('infoBtn');
+  const infoPopover = document.getElementById('infoPopover');
+  const clickHint = document.getElementById('clickHint');
+  const errorMsg = document.getElementById('errorMsg');
+
+  // ===== SOUND — version 1 synthesized shutter =====
+  let audioCtx = null;
+  function getAudioCtx() {
+    if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+    return audioCtx;
+  }
+  function playShutter() {
+    if (!state.soundOn) return;
+    try {
+      const ctx = getAudioCtx();
+      if (ctx.state === 'suspended') ctx.resume();
+      const now = ctx.currentTime;
+
+      // Sharp click — square wave high-to-low transient
+      const o1 = ctx.createOscillator();
+      const g1 = ctx.createGain();
+      o1.type = 'square';
+      o1.frequency.setValueAtTime(2200, now);
+      o1.frequency.exponentialRampToValueAtTime(800, now + 0.04);
+      g1.gain.setValueAtTime(0.0001, now);
+      g1.gain.exponentialRampToValueAtTime(0.18, now + 0.005);
+      g1.gain.exponentialRampToValueAtTime(0.0001, now + 0.05);
+      o1.connect(g1).connect(ctx.destination);
+      o1.start(now); o1.stop(now + 0.05);
+
+      // Low thud — sine wave for mechanism return
+      const o2 = ctx.createOscillator();
+      const g2 = ctx.createGain();
+      o2.type = 'sine';
+      o2.frequency.setValueAtTime(180, now + 0.06);
+      o2.frequency.exponentialRampToValueAtTime(80, now + 0.12);
+      g2.gain.setValueAtTime(0.0001, now + 0.06);
+      g2.gain.exponentialRampToValueAtTime(0.15, now + 0.07);
+      g2.gain.exponentialRampToValueAtTime(0.0001, now + 0.13);
+      o2.connect(g2).connect(ctx.destination);
+      o2.start(now + 0.06); o2.stop(now + 0.13);
+
+      // White noise burst for "fwip" of mechanism
+      const bufferSize = ctx.sampleRate * 0.08;
+      const buffer = ctx.createBuffer(1, bufferSize, ctx.sampleRate);
+      const data = buffer.getChannelData(0);
+      for (let i = 0; i < bufferSize; i++) {
+        data[i] = (Math.random() * 2 - 1) * Math.pow(1 - i / bufferSize, 2);
+      }
+      const noise = ctx.createBufferSource();
+      noise.buffer = buffer;
+      const ng = ctx.createGain();
+      ng.gain.value = 0.08;
+      const filter = ctx.createBiquadFilter();
+      filter.type = 'highpass';
+      filter.frequency.value = 1200;
+      noise.connect(filter).connect(ng).connect(ctx.destination);
+      noise.start(now + 0.01);
+    } catch (e) {}
+  }
+
+  soundToggle.addEventListener('click', () => {
+    state.soundOn = !state.soundOn;
+    soundOnIcon.style.display = state.soundOn ? '' : 'none';
+    soundOffIcon.style.display = state.soundOn ? 'none' : '';
+    soundToggle.setAttribute('aria-label', state.soundOn ? 'sound on' : 'sound off');
+  });
+
+  // ===== INFO POPOVER =====
+  let infoOpen = false;
+  function setInfo(open) {
+    infoOpen = open;
+    infoPopover.classList.toggle('visible', open);
+  }
+  infoBtn.addEventListener('click', (e) => {
+    e.stopPropagation();
+    setInfo(!infoOpen);
+  });
+  document.addEventListener('click', (e) => {
+    if (infoOpen && !infoPopover.contains(e.target) && e.target !== infoBtn) {
+      setInfo(false);
+    }
+  });
+
+  // ===== WEBCAM PERMISSION FLOW =====
+  // First click: request permission only. Once granted, mode becomes 'ready'.
+  // Subsequent clicks (when mode === 'ready'): take the photo.
+  async function requestPermission() {
+    try {
+      state.stream = await navigator.mediaDevices.getUserMedia({
+        video: { width: { ideal: 720 }, height: { ideal: 720 }, facingMode: 'user' },
+        audio: false,
+      });
+      video.srcObject = state.stream;
+      await video.play().catch(() => {});
+
+      // Wait for actual video frame data
+      await new Promise((resolve, reject) => {
+        const timeout = setTimeout(() => reject(new Error('video timeout')), 8000);
+        const check = () => {
+          if (video.readyState >= 2 && video.videoWidth > 0 && video.videoHeight > 0) {
+            clearTimeout(timeout);
+            resolve();
+          } else {
+            requestAnimationFrame(check);
+          }
+        };
+        check();
+      });
+      // Warmup frames
+      for (let i = 0; i < 4; i++) {
+        await new Promise(r => requestAnimationFrame(r));
+      }
+      state.videoReady = true;
+      return true;
+    } catch (err) {
+      console.error('permission denied or camera error', err);
+      errorMsg.classList.add('visible');
+      setTimeout(() => errorMsg.classList.remove('visible'), 4500);
+      return false;
+    }
+  }
+
+  function captureFrame() {
+    if (!video.videoWidth || !video.videoHeight) return null;
+    const canvas = document.createElement('canvas');
+    const size = 720;
+    canvas.width = size; canvas.height = size;
+    const ctx = canvas.getContext('2d');
+    const vw = video.videoWidth, vh = video.videoHeight;
+    const side = Math.min(vw, vh);
+    const sx = (vw - side) / 2, sy = (vh - side) / 2;
+    ctx.translate(size, 0);
+    ctx.scale(-1, 1);
+    try {
+      ctx.drawImage(video, sx, sy, side, side, 0, 0, size, size);
+    } catch (e) { return null; }
+    return canvas.toDataURL('image/png');
+  }
+
+  function buildDownloadablePolaroid(photoDataUrl, phrase) {
+    return new Promise((resolve, reject) => {
+      const canvas = document.createElement('canvas');
+      const W = 600, H = 720;
+      canvas.width = W; canvas.height = H;
+      const ctx = canvas.getContext('2d');
+
+      ctx.fillStyle = '#FDFBF4';
+      ctx.fillRect(0, 0, W, H);
+      const grain = ctx.createImageData(W, H);
+      for (let i = 0; i < grain.data.length; i += 4) {
+        const v = 250 + Math.random() * 5 - 2;
+        grain.data[i] = v;
+        grain.data[i+1] = v - 2;
+        grain.data[i+2] = v - 8;
+        grain.data[i+3] = 8;
+      }
+      ctx.putImageData(grain, 0, 0);
+
+      const img = new Image();
+      img.onload = () => {
+        try {
+          const padX = 36, padTop = 36;
+          const photoSize = W - padX * 2;
+          ctx.drawImage(img, padX, padTop, photoSize, photoSize);
+
+          ctx.save();
+          ctx.globalAlpha = 0.05;
+          ctx.fillStyle = '#C97D5D';
+          ctx.fillRect(padX, padTop, photoSize, photoSize);
+          ctx.restore();
+
+          const margin_y = padTop + photoSize + (H - padTop - photoSize - padX) / 2;
+          ctx.save();
+          ctx.translate(W/2, margin_y);
+          ctx.rotate(-1.5 * Math.PI / 180);
+
+          // Smaller font that fits all phrases (proportionally same as on-screen 16px)
+          ctx.fillStyle = '#2A2520';
+          ctx.font = '600 36px "Caveat", cursive';
+          ctx.textBaseline = 'middle';
+          const heartSize = 24;
+          const gap = 10;
+          const textWidth = ctx.measureText(phrase).width;
+          const totalWidth = textWidth + gap + heartSize;
+          const startX = -totalWidth / 2;
+
+          ctx.textAlign = 'left';
+          ctx.fillText(phrase, startX, 0);
+
+          // Outlined heart matching the SVG one
+          drawHeart(ctx, startX + textWidth + gap, -heartSize/2, heartSize);
+
+          ctx.restore();
+          resolve(canvas.toDataURL('image/png'));
+        } catch (e) { reject(e); }
+      };
+      img.onerror = () => reject(new Error('image load failed'));
+      img.src = photoDataUrl;
+    });
+  }
+
+  function drawHeart(ctx, x, y, size) {
+    ctx.save();
+    ctx.translate(x + size/2, y + size/2);
+    const s = size / 24;
+    ctx.scale(s, s);
+    ctx.strokeStyle = '#2A2520';
+    ctx.lineWidth = 2 / s * 1.5;
+    ctx.lineCap = 'round';
+    ctx.lineJoin = 'round';
+    ctx.beginPath();
+    // Heart path matching the SVG: M12 21s-7-4.5-9.5-9C1 8.5 3 4.5 7 4.5c2 0 3.5 1 5 3 1.5-2 3-3 5-3 4 0 6 4 4.5 7.5C19 16.5 12 21 12 21z
+    // Recentered around (0,0) with original at (12, 12.5)
+    ctx.moveTo(0, 8.5);
+    ctx.bezierCurveTo(-7, 4, -11, -1, -9.5, -3.5);
+    ctx.bezierCurveTo(-9, -7, -5, -8, -5, -8);
+    ctx.bezierCurveTo(-3, -8, -1.5, -7, 0, -5);
+    ctx.bezierCurveTo(1.5, -7, 3, -8, 5, -8);
+    ctx.bezierCurveTo(9, -8, 11, -4, 9.5, -0.5);
+    ctx.bezierCurveTo(7, 4, 0, 8.5, 0, 8.5);
+    ctx.closePath();
+    ctx.stroke();
+    ctx.restore();
+  }
+
+  // ===== MAIN — two-step shutter =====
+  async function handleShutterClick() {
+    if (state.mode === 'busy') return;
+
+    if (state.mode === 'needs-permission') {
+      // First click: request permission only, no sound, no capture sequence
+      shutterBtn.classList.add('disabled');
+      const granted = await requestPermission();
+      shutterBtn.classList.remove('disabled');
+
+      if (granted) {
+        state.mode = 'ready';
+        // Auto-continue: kick off the capture sequence right after permission granted.
+        // No second click needed.
+        await takePhoto();
+      }
+      return;
+    }
+
+    if (state.mode === 'ready') {
+      await takePhoto();
+    }
+  }
+
+  async function takePhoto() {
+    state.mode = 'busy';
+    clickHint.classList.add('hidden');
+    actions.classList.remove('visible');
+
+    // EVERYTHING happens immediately on click: sound, press animation, flash, capture
+    playShutter();
+    camera.classList.add('pressing');
+
+    flash.classList.remove('fire');
+    void flash.offsetWidth;
+    flash.classList.add('fire');
+
+    // Brief moment for flash to peak before capturing the frame
+    await new Promise(r => setTimeout(r, 80));
+
+    let photoDataUrl = captureFrame();
+    if (!photoDataUrl) {
+      await new Promise(r => setTimeout(r, 200));
+      photoDataUrl = captureFrame();
+    }
+
+    setTimeout(() => camera.classList.remove('pressing'), 500);
+
+    if (!photoDataUrl) {
+      errorMsg.classList.add('visible');
+      setTimeout(() => errorMsg.classList.remove('visible'), 4500);
+      state.mode = 'ready';
+      clickHint.classList.remove('hidden');
+      return;
+    }
+
+    const phrase = phrases[Math.floor(Math.random() * phrases.length)];
+
+    // Pre-load the polaroid image content while we wait
+    polaroidImg.src = photoDataUrl;
+    stampText.textContent = phrase;
+
+    // 1.5s anticipation pause — capture has happened, but polaroid hasn't emerged yet.
+    // The camera "thinks" before ejecting the print, like a real polaroid.
+    await new Promise(r => setTimeout(r, 1500));
+
+    // Stage 1: emerge straight up
+    requestAnimationFrame(() => {
+      requestAnimationFrame(() => {
+        polaroid.classList.add('emerged');
+      });
+    });
+
+    // Stage 2: drift down-right to settled position
+    setTimeout(() => {
+      polaroid.classList.add('settled');
+    }, 1400);
+
+    // Develop the photo
+    setTimeout(() => {
+      polaroidPhoto.classList.add('developed');
+    }, 600);
+
+    // Stamp lands
+    setTimeout(() => {
+      polaroidStamp.classList.add('visible');
+    }, 2600);
+
+    // Build downloadable composite
+    try {
+      const downloadUrl = await buildDownloadablePolaroid(photoDataUrl, phrase);
+      downloadBtn.href = downloadUrl;
+      downloadBtn.download = 'polaroid-photo.png';
+    } catch (e) {
+      downloadBtn.href = photoDataUrl;
+      downloadBtn.download = 'polaroid-photo.png';
+    }
+
+    setTimeout(() => {
+      actions.classList.add('visible');
+      // Don't reset mode here — user clicks "take another" to reset
+    }, 3000);
+  }
+
+  // RESET — clean slate, user clicks shutter themselves
+  function reset() {
+    polaroid.classList.remove('emerged', 'settled');
+    polaroidPhoto.classList.remove('developed');
+    polaroidStamp.classList.remove('visible');
+    actions.classList.remove('visible');
+    clickHint.classList.remove('hidden', 'fade');
+    // mode goes back to 'ready' (permission already granted)
+    state.mode = 'ready';
+  }
+
+  shutterBtn.addEventListener('click', handleShutterClick);
+  retakeBtn.addEventListener('click', reset);
+
+  window.addEventListener('beforeunload', () => {
+    if (state.stream) state.stream.getTracks().forEach(t => t.stop());
+  });
+
+  // Soft fade of click hint after a while if untouched
+  setTimeout(() => {
+    if (state.mode !== 'busy' && !polaroid.classList.contains('emerged')) {
+      clickHint.classList.add('fade');
+    }
+  }, 8000);
+</script>
+
+</body>
+</html>

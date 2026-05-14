@@ -1,0 +1,814 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Speed Scramble</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Caveat:wght@400;500;600;700&family=DM+Sans:ital,wght@0,300;0,400;0,500;1,400&family=Lora:ital@1&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --cream: #FAF4E8;
+    --paper: #FDFBF4;
+    --ink: #2A2520;
+    --ink-soft: #5C544B;
+    --ink-faded: #9A8F80;
+    --sage: #B5C4A4;
+    --sage-deep: #94A684;
+    --sage-shadow: #6F8163;
+    --accent: #C97D5D;
+    --accent-light: rgba(201,125,93,0.10);
+    --sage-light: rgba(148,166,132,0.14);
+    --sage-glow: rgba(148,166,132,0.22);
+  }
+
+  html, body {
+    height: 100%;
+    width: 100%;
+    background: var(--cream);
+    font-family: 'DM Sans', sans-serif;
+    overflow: hidden;
+    margin: 0;
+    padding: 0;
+  }
+
+  body::before {
+    content: '';
+    position: fixed; inset: 0;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='300' height='300'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.75' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='300' height='300' filter='url(%23n)' opacity='0.4'/%3E%3C/svg%3E");
+    opacity: 0.42;
+    mix-blend-mode: multiply;
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  body::after {
+    content: '';
+    position: fixed; inset: 0;
+    background:
+      radial-gradient(ellipse 65% 55% at 0% 0%, rgba(201,125,93,0.09) 0%, transparent 65%),
+      radial-gradient(ellipse 55% 65% at 100% 100%, rgba(181,196,164,0.16) 0%, transparent 65%);
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  /* ── CARD ── */
+  .scene {
+    position: fixed;
+    inset: 0;
+    background: transparent;
+    padding: 56px 44px 32px;
+    display: flex;
+    flex-direction: column;
+    z-index: 1;
+    overflow: hidden;
+  }
+
+  .scene::before { display: none; }
+
+  /* ── TOP BAR ── */
+  .top-bar {
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    gap: 8px;
+    position: relative;
+    height: 28px;
+    margin-bottom: 0;
+  }
+
+  .info-wrap {
+    position: relative;
+  }
+
+  .info-btn {
+    background: transparent;
+    border: 1.5px solid var(--ink-faded);
+    color: var(--ink-soft);
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0;
+    font-style: italic;
+    font-family: 'Lora', serif;
+    font-size: 17px;
+    font-weight: 500;
+  }
+  .info-btn:hover {
+    border-color: var(--ink-soft);
+    background: var(--paper);
+  }
+
+  .overlay-close {
+    width: 28px; height: 28px;
+    border: 1.5px solid rgba(154,143,128,0.28);
+    border-radius: 50%;
+    background: transparent;
+    cursor: pointer;
+    display: flex; align-items: center; justify-content: center;
+    transition: all 0.18s ease;
+    color: var(--ink-faded);
+    margin-left: 8px;
+  }
+  .overlay-close:hover {
+    border-color: var(--ink-soft);
+    color: var(--ink-soft);
+    background: rgba(154,143,128,0.08);
+  }
+
+  .popover {
+    position: absolute;
+    top: 40px; left: 0;
+    background: var(--paper);
+    border: 1px solid rgba(154,143,128,0.25);
+    border-radius: 14px;
+    padding: 9px 14px;
+    white-space: nowrap;
+    box-shadow: 0 8px 28px rgba(42,37,32,0.09);
+    font-family: 'Caveat', cursive;
+    font-size: 15px;
+    color: var(--ink-soft);
+    line-height: 1.5;
+    opacity: 0;
+    pointer-events: none;
+    transform: translateY(-5px) scale(0.97);
+    transition: all 0.2s cubic-bezier(0.34,1.5,0.64,1);
+    z-index: 20;
+    text-align: left;
+  }
+  .popover.visible { opacity: 1; pointer-events: auto; transform: translateY(0) scale(1); }
+  .popover::before {
+    content: '';
+    position: absolute;
+    top: -5px; left: 8px;
+    width: 9px; height: 9px;
+    background: var(--paper);
+    border: 1px solid rgba(154,143,128,0.25);
+    border-bottom: none; border-right: none;
+    transform: rotate(45deg);
+  }
+
+  /* ── MAIN ── */
+  .main {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+  }
+
+  .state { width: 100%; display: flex; flex-direction: column; align-items: center; }
+  .state.hidden { display: none; }
+
+  /* ═══════════════════
+     IDLE STATE
+  ═══════════════════ */
+  #idleState { gap: 0; }
+
+  .idle-eyebrow {
+    font-family: 'DM Sans', sans-serif;
+    font-size: 11px;
+    font-weight: 500;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--ink-faded);
+    margin-bottom: 14px;
+  }
+
+  .idle-title {
+    font-family: 'Caveat', cursive;
+    font-size: 68px;
+    font-weight: 700;
+    color: var(--ink);
+    line-height: 0.92;
+    letter-spacing: -0.01em;
+  }
+
+  .idle-rule {
+    width: 32px;
+    height: 1.5px;
+    background: rgba(154,143,128,0.28);
+    border-radius: 2px;
+    margin: 22px auto;
+  }
+
+  .idle-desc {
+    font-family: 'DM Sans', sans-serif;
+    font-size: 14px;
+    font-weight: 300;
+    color: var(--ink-soft);
+    line-height: 1.65;
+    max-width: 290px;
+  }
+
+  .idle-chips {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+    justify-content: center;
+    margin-top: 24px;
+    margin-bottom: 32px;
+  }
+
+  .chip {
+    font-family: 'DM Sans', sans-serif;
+    font-size: 11px;
+    font-weight: 400;
+    color: var(--ink-faded);
+    background: rgba(154,143,128,0.08);
+    border: 1px solid rgba(154,143,128,0.14);
+    padding: 5px 12px;
+    border-radius: 100px;
+    letter-spacing: 0.02em;
+  }
+
+  .btn-primary {
+    font-family: 'DM Sans', sans-serif;
+    font-size: 15px;
+    font-weight: 500;
+    color: var(--paper);
+    background: var(--ink);
+    border: none;
+    border-radius: 14px;
+    padding: 15px 56px;
+    cursor: pointer;
+    letter-spacing: 0.04em;
+    transition: all 0.2s ease;
+    box-shadow: 0 4px 18px rgba(42,37,32,0.20);
+  }
+  .btn-primary:hover { transform: translateY(-2px); box-shadow: 0 8px 26px rgba(42,37,32,0.24); }
+  .btn-primary:active { transform: translateY(0); }
+
+  /* ═══════════════════
+     GAME STATE
+  ═══════════════════ */
+  #gameState { gap: 0; }
+
+  .game-stats {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-end;
+    width: 100%;
+    margin-bottom: 16px;
+  }
+
+  .stat-group { display: flex; flex-direction: column; }
+  .stat-group.right { align-items: flex-end; }
+
+  .stat-lbl {
+    font-family: 'DM Sans', sans-serif;
+    font-size: 10px;
+    font-weight: 500;
+    letter-spacing: 0.11em;
+    text-transform: uppercase;
+    color: var(--ink-faded);
+    margin-bottom: 1px;
+  }
+
+  .stat-val {
+    font-family: 'Caveat', cursive;
+    font-size: 58px;
+    font-weight: 700;
+    color: var(--ink);
+    line-height: 1;
+  }
+
+  #scoreVal.pop { animation: scorePop 0.36s cubic-bezier(0.34,1.56,0.64,1); }
+  @keyframes scorePop {
+    0%   { transform: scale(1); }
+    45%  { transform: scale(1.28); color: var(--sage-deep); }
+    100% { transform: scale(1); color: var(--ink); }
+  }
+  #timerVal.urgent { color: var(--accent); }
+
+  .timer-track {
+    width: 100%;
+    height: 2px;
+    background: rgba(154,143,128,0.14);
+    border-radius: 100px;
+    overflow: hidden;
+    margin-bottom: 44px;
+  }
+  .timer-fill {
+    height: 100%;
+    background: var(--sage-deep);
+    border-radius: 100px;
+    transition: width 1s linear, background 0.6s ease;
+  }
+  .timer-fill.urgent { background: var(--accent); }
+
+  /* The word */
+  .word-zone {
+    position: relative;
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 80px;
+    margin-bottom: 40px;
+  }
+
+  .success-bg {
+    position: absolute;
+    inset: -14px -20px;
+    background: var(--sage-light);
+    border-radius: 18px;
+    opacity: 0;
+    pointer-events: none;
+  }
+  .success-bg.flash { animation: bgFlash 0.45s ease forwards; }
+  @keyframes bgFlash {
+    0%  { opacity: 0; transform: scale(0.96); }
+    28% { opacity: 1; transform: scale(1); }
+    100%{ opacity: 0; }
+  }
+
+  .scrambled-word {
+    font-family: 'DM Sans', sans-serif;
+    font-size: 50px;
+    font-weight: 300;
+    color: var(--ink);
+    letter-spacing: 0.24em;
+    text-transform: uppercase;
+    position: relative;
+    z-index: 1;
+  }
+  .scrambled-word.exit  { animation: wordOut 0.15s ease forwards; }
+  .scrambled-word.enter { animation: wordIn  0.26s cubic-bezier(0.34,1.2,0.64,1) forwards; }
+  @keyframes wordOut {
+    to { opacity: 0; transform: translateY(-8px) scale(0.97); }
+  }
+  @keyframes wordIn {
+    from { opacity: 0; transform: translateY(10px) scale(0.96); }
+    to   { opacity: 1; transform: translateY(0)    scale(1); }
+  }
+
+  /* Input */
+  .input-area {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 14px;
+  }
+
+  .input-row {
+    position: relative;
+    width: 100%;
+  }
+
+  .answer-input {
+    width: 100%;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 19px;
+    font-weight: 400;
+    color: var(--ink);
+    background: #F0E6D3;
+    border: 1.5px solid rgba(154,143,128,0.45);
+    border-radius: 16px;
+    padding: 18px 58px 18px 24px;
+    outline: none;
+    transition: border-color 0.2s ease, background 0.2s ease, box-shadow 0.2s ease;
+    letter-spacing: 0.04em;
+    caret-color: var(--accent);
+  }
+  .answer-input::placeholder {
+    color: var(--ink-faded);
+    font-weight: 300;
+    font-size: 15px;
+    letter-spacing: 0.02em;
+  }
+  .answer-input:focus {
+    border-color: var(--sage-deep);
+    background: rgba(148,166,132,0.07);
+    box-shadow: 0 0 0 3px var(--sage-glow);
+  }
+  .answer-input.shake {
+    animation: shake 0.36s ease;
+    border-color: rgba(201,125,93,0.45) !important;
+    box-shadow: none !important;
+  }
+  .answer-input.correct {
+    border-color: var(--sage-deep) !important;
+    background: rgba(148,166,132,0.10) !important;
+  }
+  @keyframes shake {
+    0%,100% { transform: translateX(0); }
+    18%  { transform: translateX(-7px); }
+    36%  { transform: translateX(6px); }
+    54%  { transform: translateX(-4px); }
+    72%  { transform: translateX(3px); }
+    90%  { transform: translateX(-1px); }
+  }
+
+  .skip-btn {
+    position: absolute;
+    right: 16px; top: 50%;
+    transform: translateY(-50%);
+    background: none; border: none;
+    cursor: pointer;
+    color: var(--ink-faded);
+    padding: 4px;
+    transition: color 0.15s ease;
+    display: flex; align-items: center;
+  }
+  .skip-btn:hover { color: var(--accent); }
+
+  .check-badge {
+    position: absolute;
+    right: -40px; top: 50%;
+    transform: translateY(-50%) scale(0);
+    width: 28px; height: 28px;
+    background: var(--sage-deep);
+    border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    opacity: 0;
+  }
+  .check-badge.show { animation: checkPop 0.38s cubic-bezier(0.34,1.56,0.64,1) forwards; }
+  @keyframes checkPop {
+    from { opacity: 0; transform: translateY(-50%) scale(0.3); }
+    60%  { opacity: 1; transform: translateY(-50%) scale(1.15); }
+    to   { opacity: 1; transform: translateY(-50%) scale(1); }
+  }
+
+  .hint-row {
+    display: flex;
+    gap: 20px;
+    align-items: center;
+  }
+  .hint {
+    font-family: 'DM Sans', sans-serif;
+    font-size: 12px;
+    color: var(--ink-faded);
+    font-weight: 300;
+  }
+  .hint kbd {
+    font-family: inherit;
+    font-size: 11px;
+    background: rgba(154,143,128,0.10);
+    border: 1px solid rgba(154,143,128,0.18);
+    border-radius: 5px;
+    padding: 1px 6px;
+    color: var(--ink-soft);
+    font-weight: 400;
+  }
+
+  /* ═══════════════════
+     END STATE
+  ═══════════════════ */
+  #endState { gap: 0; }
+
+  .end-title {
+    font-family: 'Caveat', cursive;
+    font-size: 72px;
+    font-weight: 700;
+    color: var(--ink);
+    line-height: 0.9;
+  }
+  .end-sub {
+    font-family: 'Caveat', cursive;
+    font-size: 18px;
+    color: var(--accent);
+    margin-top: 8px;
+    margin-bottom: 32px;
+  }
+
+  .end-stats {
+    display: flex;
+    gap: 14px;
+    margin-bottom: 36px;
+  }
+  .end-stat {
+    display: flex; flex-direction: column; align-items: center; gap: 4px;
+    background: rgba(154,143,128,0.07);
+    border: 1px solid rgba(154,143,128,0.13);
+    border-radius: 18px;
+    padding: 18px 32px;
+    min-width: 120px;
+  }
+  .end-stat-num {
+    font-family: 'Caveat', cursive;
+    font-size: 54px;
+    font-weight: 700;
+    color: var(--ink);
+    line-height: 1;
+  }
+  .end-stat.best .end-stat-num { color: var(--sage-shadow); }
+  .end-stat-lbl {
+    font-family: 'DM Sans', sans-serif;
+    font-size: 10px;
+    font-weight: 500;
+    text-transform: uppercase;
+    letter-spacing: 0.10em;
+    color: var(--ink-faded);
+  }
+
+  /* ── FOOTER ── */
+  .footer {
+    text-align: center;
+    margin-top: 26px;
+    font-family: 'Caveat', cursive;
+    font-size: 15px;
+    color: var(--ink-faded);
+  }
+  .footer .heart { color: var(--accent); }
+
+  /* ── TRANSITIONS ── */
+  .fade-in { animation: fadeIn 0.35s ease forwards; }
+  @keyframes fadeIn {
+    from { opacity: 0; transform: translateY(8px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+</style>
+</head>
+<body>
+
+<div class="scene">
+
+  <!-- i button top-left, matches polaroid layout -->
+  <div class="info-wrap" style="position:absolute;top:16px;left:16px;z-index:10;">
+    <button class="info-btn" id="infoBtn" aria-label="About">i</button>
+    <div class="popover" id="popover">created for the love of words &#x2726;</div>
+  </div>
+
+  <div class="main">
+
+    <!-- IDLE -->
+    <div class="state" id="idleState">
+      <p class="idle-eyebrow">a word game</p>
+      <h1 class="idle-title">unscramble.</h1>
+      <div class="idle-rule"></div>
+      <p class="idle-desc">Design words, shuffled out of order.<br>Solve as many as you can in 20 seconds.</p>
+      <button class="btn-primary" id="startBtn" style="margin-top:28px;">Start</button>
+    </div>
+
+    <!-- GAME -->
+    <div class="state hidden" id="gameState">
+
+      <div class="game-stats">
+        <div class="stat-group">
+          <span class="stat-lbl">solved</span>
+          <span class="stat-val" id="scoreVal">0</span>
+        </div>
+        <div class="stat-group right">
+          <span class="stat-lbl">time left</span>
+          <span class="stat-val" id="timerVal">20</span>
+        </div>
+      </div>
+
+      <div class="timer-track">
+        <div class="timer-fill" id="timerFill" style="width:100%"></div>
+      </div>
+
+      <div class="word-zone">
+        <div class="success-bg" id="successBg"></div>
+        <div class="scrambled-word" id="scrambledWord"></div>
+      </div>
+
+      <div class="input-area">
+        <div class="input-row">
+          <input
+            type="text"
+            class="answer-input"
+            id="answerInput"
+            placeholder="type the word here"
+            autocomplete="off"
+            autocorrect="off"
+            autocapitalize="off"
+            spellcheck="false"
+          >
+          <button class="skip-btn" id="skipBtn" aria-label="Skip">
+            <svg width="18" height="18" viewBox="0 0 18 18" fill="none">
+              <path d="M4 9h10M10 5l4 4-4 4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+          </button>
+          <div class="check-badge" id="checkBadge">
+            <svg width="14" height="14" viewBox="0 0 14 14" fill="none">
+              <path d="M3 7l3 3 5-5" stroke="white" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+          </div>
+        </div>
+        <div class="hint-row">
+          <span class="hint"><kbd>↵</kbd> to submit</span>
+          <span class="hint">→ to skip</span>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- END -->
+    <div class="state hidden" id="endState">
+      <div class="end-title">it's time!</div>
+      <div class="end-sub">pencils down ✦</div>
+      <div class="end-stats">
+        <div class="end-stat">
+          <span class="end-stat-num" id="finalScore">0</span>
+          <span class="end-stat-lbl">solved</span>
+        </div>
+        <div class="end-stat best">
+          <span class="end-stat-num" id="bestScoreEl">0</span>
+          <span class="end-stat-lbl">best</span>
+        </div>
+      </div>
+      <button class="btn-primary" id="againBtn">Play again</button>
+    </div>
+
+  </div>
+
+  <div class="footer" style="font-family:'Caveat',cursive;font-size:16px;color:var(--ink-soft);opacity:0.75;text-align:center;position:absolute;bottom:4px;left:50%;transform:translateX(-50%);white-space:nowrap;">made with <span style="color:var(--accent)">♡</span> by bb</div>
+
+</div>
+
+<script>
+  // 4–6 letter design words only — easy-moderate difficulty
+  const WORDS = [
+    'form','flow','mark','grid','line','icon','bold','type','tone','font',
+    'size','view','crop','mode','card','loop','node','data','code','wire',
+    'align','layer','blend','shape','color','block','space','scale','frame',
+    'draft','brand','style','focus','voice','craft','build','clean','curve',
+    'serif','glyph','proof','white','depth','sketch','rhythm','anchor',
+    'canvas','shadow','design','pixels','motion','visual','signal','detail',
+    'intent','layout'
+  ];
+
+  const DURATION = 20;
+  let currentWord = '', score = 0, timeLeft = DURATION;
+  let timerInterval = null, gameActive = false;
+  let usedWords = new Set();
+  let bestScore = parseInt(localStorage.getItem('ss_best') || '0');
+
+  const idleState   = document.getElementById('idleState');
+  const gameState   = document.getElementById('gameState');
+  const endState    = document.getElementById('endState');
+  const scrambledEl = document.getElementById('scrambledWord');
+  const answerInput = document.getElementById('answerInput');
+  const scoreVal    = document.getElementById('scoreVal');
+  const timerVal    = document.getElementById('timerVal');
+  const timerFill   = document.getElementById('timerFill');
+  const successBg   = document.getElementById('successBg');
+  const checkBadge  = document.getElementById('checkBadge');
+  const finalScore  = document.getElementById('finalScore');
+  const bestScoreEl = document.getElementById('bestScoreEl');
+  const infoBtn     = document.getElementById('infoBtn');
+  const popover     = document.getElementById('popover');
+  const startBtn    = document.getElementById('startBtn');
+  const skipBtn     = document.getElementById('skipBtn');
+  const againBtn    = document.getElementById('againBtn');
+
+  // Info popover
+  let popOpen = false;
+  infoBtn.addEventListener('click', e => {
+    e.stopPropagation();
+    popOpen = !popOpen;
+    popover.classList.toggle('visible', popOpen);
+  });
+  document.addEventListener('click', () => { popOpen = false; popover.classList.remove('visible'); });
+
+
+  function scramble(word) {
+    const arr = word.split('');
+    let out, tries = 0;
+    do {
+      for (let i = arr.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [arr[i], arr[j]] = [arr[j], arr[i]];
+      }
+      out = arr.join('');
+      tries++;
+    } while (out === word && tries < 30);
+    return out.toUpperCase();
+  }
+
+  function pickWord() {
+    const pool = WORDS.filter(w => !usedWords.has(w));
+    if (!pool.length) { usedWords.clear(); return pickWord(); }
+    const w = pool[Math.floor(Math.random() * pool.length)];
+    usedWords.add(w);
+    return w;
+  }
+
+  function setWord(animate) {
+    currentWord = pickWord();
+    const sc = scramble(currentWord);
+    if (!animate) { scrambledEl.textContent = sc; return; }
+    scrambledEl.classList.add('exit');
+    setTimeout(() => {
+      scrambledEl.classList.remove('exit');
+      scrambledEl.textContent = sc;
+      void scrambledEl.offsetWidth;
+      scrambledEl.classList.add('enter');
+      setTimeout(() => scrambledEl.classList.remove('enter'), 280);
+    }, 150);
+  }
+
+  function showState(id) {
+    [idleState, gameState, endState].forEach(el => el.classList.add('hidden'));
+    const el = document.getElementById(id);
+    el.classList.remove('hidden');
+    el.classList.add('fade-in');
+    setTimeout(() => el.classList.remove('fade-in'), 400);
+  }
+
+  function startGame() {
+    score = 0; timeLeft = DURATION;
+    usedWords.clear(); gameActive = true;
+
+    scoreVal.textContent = '0';
+    timerVal.textContent = DURATION;
+    timerVal.classList.remove('urgent');
+    timerFill.style.width = '100%';
+    timerFill.classList.remove('urgent');
+
+    showState('gameState');
+    setWord(false);
+    answerInput.value = '';
+    setTimeout(() => answerInput.focus(), 100);
+
+    timerInterval = setInterval(() => {
+      timeLeft--;
+      timerVal.textContent = timeLeft;
+      timerFill.style.width = `${(timeLeft / DURATION) * 100}%`;
+      if (timeLeft <= 5) {
+        timerVal.classList.add('urgent');
+        timerFill.classList.add('urgent');
+      }
+      if (timeLeft <= 0) endGame();
+    }, 1000);
+  }
+
+  function endGame() {
+    clearInterval(timerInterval);
+    gameActive = false;
+    if (score > bestScore) { bestScore = score; localStorage.setItem('ss_best', bestScore); }
+    finalScore.textContent = score;
+    bestScoreEl.textContent = bestScore;
+    showState('endState');
+  }
+
+  function onCorrect() {
+    score++;
+    scoreVal.textContent = score;
+    scoreVal.classList.remove('pop'); void scoreVal.offsetWidth; scoreVal.classList.add('pop');
+    successBg.classList.remove('flash'); void successBg.offsetWidth; successBg.classList.add('flash');
+    answerInput.classList.add('correct');
+    checkBadge.classList.remove('show'); void checkBadge.offsetWidth; checkBadge.classList.add('show');
+    setTimeout(() => {
+      answerInput.classList.remove('correct');
+      checkBadge.classList.remove('show');
+      answerInput.value = '';
+      setWord(true);
+      answerInput.focus();
+    }, 320);
+  }
+
+  function onWrong() {
+    answerInput.classList.remove('shake');
+    void answerInput.offsetWidth;
+    answerInput.classList.add('shake');
+    setTimeout(() => answerInput.classList.remove('shake'), 360);
+  }
+
+  answerInput.addEventListener('keydown', e => {
+    if (e.key === 'Enter' && gameActive) {
+      const val = answerInput.value.trim().toLowerCase();
+      if (!val) return;
+      if (val === currentWord) onCorrect();
+      else onWrong();
+    }
+  });
+
+  function doSkip() {
+    if (!gameActive) return;
+    answerInput.value = '';
+    setWord(true);
+    answerInput.focus();
+  }
+
+  skipBtn.addEventListener('mousedown', function(e) {
+    e.preventDefault(); /* prevents input blur before skip fires */
+    doSkip();
+  });
+  skipBtn.addEventListener('touchstart', function(e) {
+    e.preventDefault();
+    doSkip();
+  }, {passive: false});
+
+  // Arrow key also skips
+  document.addEventListener('keydown', function(e) {
+    if (e.key === 'ArrowRight' && gameActive) doSkip();
+  });
+
+  startBtn.addEventListener('click', startGame);
+  againBtn.addEventListener('click', () => { showState('idleState'); setTimeout(startGame, 60); });
+</script>
+</body>
+</html>

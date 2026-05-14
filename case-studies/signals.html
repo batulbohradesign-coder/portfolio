@@ -1,0 +1,750 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>signals — work</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,300;12..96,400;12..96,500;12..96,600&family=Figtree:wght@300;400;500&family=Caveat:wght@400;500&display=swap" rel="stylesheet">
+  <link rel="icon" type="image/png" href="logo.png">
+  <style>
+    /* ─── TOKENS ─── */
+    :root {
+      --bg:      #FAF8F6;
+      --text:    #1A1A1A;
+      --text-2:  #555555;
+      --text-3:  #888888;
+      --accent:  #C85C3A;
+      --border:  rgba(17,17,17,0.10);
+      --surface: #EEEAE4;
+      --surf-2:  #E4E0D9;
+      --f-head:  'Bricolage Grotesque', sans-serif;
+      --f-body:  'Figtree', sans-serif;
+      --ease:    cubic-bezier(0.16,1,0.3,1);
+      --max:     920px;
+      --px:      24px;
+    }
+    @media (min-width: 640px) { :root { --px: 40px; } }
+
+    /* ─── RESET ─── */
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; }
+    body {
+      background: var(--bg); color: var(--text);
+      font-family: var(--f-body); font-size: 16px;
+      line-height: 1.7; -webkit-font-smoothing: antialiased;
+      overflow-x: hidden;
+    }
+    a { color: inherit; text-decoration: none; }
+    img { max-width: 100%; display: block; }
+
+    /* ─── CONTAINER ─── */
+    .wrap {
+      width: 100%; max-width: var(--max);
+      margin: 0 auto;
+      padding-left: var(--px); padding-right: var(--px);
+    }
+
+    /* ─── NAV ─── */
+    .nav {
+      position: sticky; top: 0; z-index: 100;
+      background: var(--bg); border-bottom: 1px solid var(--border);
+    }
+    .nav__inner {
+      max-width: 1280px; margin: 0 auto;
+      padding: 0 64px;
+      display: flex; justify-content: space-between;
+      align-items: center; height: 64px;
+    }
+    .nav__logo {
+      font-family: var(--f-head); font-size: 20px; font-weight: 500;
+      letter-spacing: -0.03em; display: inline-flex; align-items: baseline; overflow: hidden;
+    }
+    .nav__logo-rest {
+      display: inline-block; max-width: 0; opacity: 0; overflow: hidden; white-space: nowrap;
+      transition: max-width 700ms var(--ease), opacity 500ms var(--ease) 100ms;
+    }
+    .nav__logo-dot { display: inline-block; transition: opacity 400ms ease, width 400ms ease; }
+    .nav__logo:hover .nav__logo-rest { max-width: 200px; opacity: 1; }
+    .nav__logo:hover .nav__logo-dot  { opacity: 0; width: 0; overflow: hidden; }
+    .nav__links { display: flex; gap: 40px; list-style: none; }
+    .nav__link {
+      font-size: 16px; color: var(--text-2);
+      position: relative; transition: color 150ms var(--ease);
+    }
+    .nav__link::after {
+      content: ''; position: absolute; bottom: -2px; left: 0;
+      width: 0; height: 1px; background: var(--accent);
+      transition: width 300ms var(--ease);
+    }
+    .nav__link:hover { color: var(--text); }
+    .nav__link:hover::after { width: 100%; }
+
+    /* ─── HERO ─── */
+    .hero {
+      padding: 64px 0 48px;
+    }
+    .hero__tags {
+      display: flex; gap: 0; flex-wrap: wrap;
+      margin-bottom: 16px; align-items: center;
+    }
+    .hero__tag {
+      font-size: 12px; font-weight: 500; letter-spacing: 0.08em;
+      text-transform: uppercase; color: var(--accent);
+    }
+    .hero__tag-dot {
+      font-size: 12px; color: var(--accent); margin: 0 8px;
+    }
+    .hero__title {
+      font-family: var(--f-head);
+      font-size: clamp(48px, 8vw, 80px);
+      font-weight: 500; line-height: 0.92; letter-spacing: -0.03em;
+    }
+
+    /* ─── APP UI CARD ─── */
+    .app-card {
+      background: var(--surface);
+      border-radius: 24px;
+      padding: 48px;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 32px;
+      align-items: center;
+      margin-bottom: 0;
+    }
+    @media (max-width: 599px) { .app-card { grid-template-columns: 1fr; padding: 24px; } }
+    .app-card__phone {
+      aspect-ratio: 9/16;
+      background: var(--surf-2);
+      border-radius: 20px;
+      display: flex; align-items: center; justify-content: center;
+      max-width: 240px; margin: 0 auto; width: 100%;
+    }
+    .app-card__phone span { font-size: 11px; color: var(--text-3); }
+    .app-card__bubble {
+      background: white;
+      border-radius: 16px;
+      padding: 24px 28px;
+      font-size: 16px; font-weight: 300;
+      line-height: 1.7; color: var(--text);
+      align-self: flex-start;
+    }
+
+    /* ─── TWO-COL ROW ─── */
+    /*
+      From PDF pixel analysis on 1440px canvas:
+        label col starts at x=301
+        content col starts at x=585
+        ratio: 301/1140 ≈ 26% for label, 74% for content
+        We use: 160px fixed label, 1fr content
+    */
+    .row {
+      display: grid;
+      grid-template-columns: 160px 1fr;
+      gap: 0 40px;
+      padding: 48px 0;
+      align-items: start;
+    }
+    .row__label {
+      padding-top: 2px;
+      position: sticky; top: 72px;
+    }
+    .row__label-text {
+      font-size: 11px; font-weight: 500;
+      letter-spacing: 0.08em; text-transform: uppercase;
+      color: var(--text-2); white-space: nowrap;
+    }
+    @media (max-width: 599px) {
+      .row { grid-template-columns: 1fr; gap: 12px; padding: 56px 0; }
+      .row__label { position: static; }
+      .row__label-text { white-space: normal; }
+    }
+
+    /* ─── TYPOGRAPHY — right column ─── */
+    .body-text {
+      font-size: 16px; font-weight: 300;
+      line-height: 1.75; color: var(--text);
+    }
+    .body-text + .body-text { margin-top: 16px; }
+
+    /* ─── THE PROBLEM ─── */
+    .problem-statement {
+      display: flex; gap: 20px; align-items: stretch;
+    }
+    .problem-bar {
+      width: 3px; background: var(--accent);
+      border-radius: 2px; flex-shrink: 0;
+    }
+    .problem-text {
+      font-family: var(--f-head);
+      font-size: 32px;
+      font-weight: 500; line-height: 1.25;
+      letter-spacing: -0.02em; color: var(--text);
+    }
+
+    /* ─── STATS ─── */
+    .stats {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 4px;
+      margin-top: 40px;
+      border-radius: 16px; overflow: visible;
+    }
+    @media (max-width: 599px) { .stats { grid-template-columns: 1fr; } }
+    .stat { background: var(--surface); border-radius: 0; padding: 32px; height: 248px; display: flex; flex-direction: column; transition: transform 250ms var(--ease); }
+    @media (max-width: 599px) { .stat { height: auto; } }
+    .stat:hover { transform: translateY(-3px); }
+    .stat:first-child { border-radius: 16px 0 0 16px; }
+    .stat:last-child  { border-radius: 0 16px 16px 0; }
+    .stat__num {
+      font-family: var(--f-head);
+      font-size: 32px; font-weight: 600;
+      letter-spacing: -0.03em; color: var(--accent);
+      line-height: 1; margin-bottom: 12px;
+    }
+    .stat__text { font-size: 14px; font-weight: 300; color: var(--text); line-height: 1.55; flex: 1; }
+
+    /* ─── PERSONA ─── */
+    .persona {
+      background: white; border-radius: 16px; padding: 36px; width: 100%;
+    }
+    .persona__head { display: flex; gap: 20px; align-items: flex-start; margin-bottom: 24px; }
+    .persona__avatar {
+      width: 56px; height: 56px; border-radius: 50%;
+      background: #EDD5CA; color: var(--accent);
+      font-family: var(--f-head); font-size: 24px; font-weight: 500;
+      display: flex; align-items: center; justify-content: center; flex-shrink: 0;
+    }
+    .persona__name { font-family: var(--f-head); font-size: 28px; font-weight: 600; letter-spacing: -0.02em; color: var(--text); line-height: 1; }
+    .persona__sub  { font-size: 15px; color: var(--text-2); font-weight: 300; margin-top: 6px; line-height: 1.5; }
+    .persona__divider { height: 1px; background: var(--border); margin-bottom: 24px; }
+    .persona__cols { display: grid; grid-template-columns: 1fr 1fr; gap: 32px; }
+    @media (max-width: 480px) { .persona__cols { grid-template-columns: 1fr; } }
+    .persona__col-lbl {
+      font-size: 11px; font-weight: 500; letter-spacing: 0.10em;
+      text-transform: uppercase; color: var(--text-3); margin-bottom: 16px;
+    }
+    .persona__list { list-style: none; display: flex; flex-direction: column; gap: 12px; }
+    .persona__list li {
+      font-size: 16px; font-weight: 300; color: var(--text);
+      padding-left: 16px; position: relative; line-height: 1.5;
+    }
+    .persona__list li::before {
+      content: '·'; position: absolute; left: 0;
+      color: var(--text); font-size: 20px; line-height: 1.2;
+    }
+
+    /* Insight sits outside rows — needs matching vertical rhythm */
+    .insight-section { padding: 48px 0; }
+
+    /* ─── CORE INSIGHT ─── */
+    .insight {
+      background: var(--text); color: var(--bg);
+      border-radius: 20px; padding: 40px;
+    }
+    .insight__lbl {
+      font-size: 11px; font-weight: 500; letter-spacing: 0.10em;
+      text-transform: uppercase; color: var(--accent);
+      margin-bottom: 20px; font-family: var(--f-body);
+    }
+    .insight__text {
+      font-family: var(--f-head);
+      font-size: 28px; font-weight: 500;
+      line-height: 1.4; letter-spacing: -0.01em;
+    }
+    .insight__text em { color: var(--accent); font-style: normal; }
+
+    /* ─── COMPETITORS — 4px gap, outer corners only rounded ─── */
+    .competitors {
+      display: grid; grid-template-columns: 1fr 1fr;
+      gap: 4px;
+      border-radius: 20px; overflow: hidden;
+    }
+    @media (max-width: 480px) {
+      .competitors { grid-template-columns: 1fr; border-radius: 0; overflow: visible; }
+      .competitor { border-radius: 16px !important; }
+    }
+    .competitor {
+      background: var(--surface);
+      padding: 32px;
+      border-radius: 0;
+      transition: transform 250ms var(--ease);
+    }
+    .competitor:hover { transform: translateY(-3px); }
+    .competitor--accent { background: var(--accent); color: var(--bg); }
+    .competitor__name {
+      font-family: var(--f-head); font-size: 28px;
+      font-weight: 500; letter-spacing: -0.02em;
+      margin-bottom: 8px; color: var(--text);
+    }
+    .competitor--accent .competitor__name { color: var(--bg); }
+    .competitor__sub {
+      font-size: 15px; font-weight: 500; color: var(--text);
+      margin-bottom: 16px;
+    }
+    .competitor--accent .competitor__sub { color: rgba(250,248,246,0.9); }
+    .competitor__gap-body {
+      font-size: 15px; font-weight: 300;
+      line-height: 1.6; color: var(--text-2);
+    }
+    .competitor--accent .competitor__gap-body { color: rgba(250,248,246,0.75); }
+
+    /* ─── THREE FLOWS — full 840px width ─── */
+    .flows {
+      display: grid; grid-template-columns: repeat(3, 1fr);
+      gap: 16px;
+    }
+    @media (max-width: 600px) {
+      .flows { grid-template-columns: 1fr; gap: 32px; }
+    }
+    .flow { display: flex; flex-direction: column; transition: opacity 350ms var(--ease); }
+    .flows.has-hover .flow:not(.is-focused) { opacity: 0.35; }
+    .flow.is-focused { opacity: 1; }
+    .flow__card {
+      background: var(--surf-2); border-radius: 20px; overflow: hidden;
+      margin-bottom: 16px; position: relative; cursor: pointer;
+    }
+    .flow__screen {
+      width: 100%; aspect-ratio: 9/16;
+      display: flex; align-items: center; justify-content: center;
+      position: relative;
+    }
+    @media (max-width: 600px) {
+      .flow__screen { aspect-ratio: 3/4; }
+    }
+    .flow__video {
+      position: absolute; inset: 0; width: 100%; height: 100%;
+      object-fit: cover; display: none;
+    }
+    .flow__video.has-src { display: block; }
+    .flow__placeholder { font-size: 11px; color: var(--text-3); position: relative; z-index: 1; }
+    .flow__name {
+      font-family: var(--f-head); font-size: 22px; font-weight: 600;
+      letter-spacing: -0.02em; color: var(--text); margin-bottom: 6px;
+    }
+    .flow__desc { font-size: 14px; font-weight: 300; color: var(--text-2); line-height: 1.6; }
+
+    /* ─── DECISIONS 2x2 ─── */
+    .decisions {
+      display: grid; grid-template-columns: 1fr 1fr;
+      gap: 4px; border-radius: 20px; overflow: visible;
+    }
+    @media (max-width: 600px) {
+      /* Stats: stack vertically, all corners rounded */
+      .stats {
+        grid-template-columns: 1fr;
+        border-radius: 0; overflow: visible;
+      }
+      .stat {
+        border-radius: 16px !important;
+        height: auto;
+      }
+
+      /* Decisions: stack vertically, all corners rounded */
+      .decisions { grid-template-columns: 1fr; border-radius: 0; overflow: visible; }
+      .decision {
+        border-radius: 16px !important;
+      }
+    }
+    .decision {
+      background: var(--surface); border-radius: 0;
+      padding: 40px; display: flex; flex-direction: column;
+      transition: transform 250ms var(--ease);
+    }
+    .decision:hover { transform: translateY(-3px); }
+    .decision:nth-child(1) { border-radius: 20px 0 0 0; }
+    .decision:nth-child(2) { border-radius: 0 20px 0 0; }
+    .decision:nth-child(3) { border-radius: 0 0 0 20px; }
+    .decision:nth-child(4) { border-radius: 0 0 20px 0; }
+    .decision__num {
+      font-family: var(--f-head); font-size: 48px; font-weight: 600;
+      color: var(--surf-2); letter-spacing: -0.04em; line-height: 1;
+      margin-bottom: 24px;
+    }
+    .decision__title {
+      font-family: var(--f-head); font-size: 24px; font-weight: 600;
+      letter-spacing: -0.02em; color: var(--text); margin-bottom: 12px;
+    }
+    .decision__body {
+      font-size: 15px; font-weight: 300; color: var(--text-2);
+      line-height: 1.7; flex: 1; margin-bottom: 24px;
+    }
+    .decision__principle {
+      border-left: 2px solid var(--accent);
+      padding-left: 12px;
+      font-size: 14px; font-weight: 300;
+      line-height: 1.6; color: var(--text-2);
+    }
+    .decision__principle strong {
+      color: var(--accent); font-weight: 400;
+    }
+
+    /* ─── WHAT I LEARNED ─── */
+    .learned-card {
+      background: #FCEAE8;
+      border-radius: 20px; padding: 40px; width: 100%;
+    }
+    .learned-card__eyebrow {
+      font-size: 11px; font-weight: 500;
+      letter-spacing: 0.10em; text-transform: uppercase;
+      color: var(--accent); margin-bottom: 20px;
+    }
+    .learned-card__body {
+      font-family: var(--f-head);
+      font-size: 24px; font-weight: 400;
+      line-height: 1.55; letter-spacing: -0.01em; color: var(--text);
+    }
+
+    /* ─── WHAT COMES NEXT ─── */
+    .next-body { font-size: 16px; font-weight: 300; line-height: 1.75; color: var(--text); }
+    .next-body + .next-body { margin-top: 16px; }
+
+    /* ─── NEXT PROJECT CARD ─── */
+    .next-project {
+      background: var(--text); color: var(--bg);
+      border-radius: 14px; padding: 36px 40px;
+      display: flex; flex-direction: row;
+      justify-content: space-between; align-items: center;
+      gap: 24px;
+      margin-top: 64px; margin-bottom: 80px;
+      transition: background 250ms var(--ease);
+    }
+    .next-project:hover { background: #2A2A2A; }
+    .next-project__lbl {
+      font-size: 11px; letter-spacing: 0.10em; text-transform: uppercase;
+      color: rgba(250,248,246,0.35); margin-bottom: 8px;
+    }
+    .next-project__name { font-family: var(--f-head); font-size: 20px; font-weight: 500; letter-spacing: -0.02em; }
+    .next-project__arrow { font-size: 24px; color: var(--accent); transition: transform 300ms var(--ease); }
+    .next-project:hover .next-project__arrow { transform: translateX(6px); }
+
+    /* ─── SCROLL REVEAL ─── */
+    .reveal {
+      opacity: 0; transform: translateY(16px);
+      transition: opacity 550ms var(--ease), transform 550ms var(--ease);
+    }
+    .reveal.visible { opacity: 1; transform: translateY(0); }
+    .d1 { transition-delay: 80ms; }
+    .d2 { transition-delay: 160ms; }
+    .d3 { transition-delay: 240ms; }
+  </style>
+</head>
+<body>
+
+<!-- NAV -->
+<header class="nav">
+  <div class="nav__inner">
+    <a href="index.html" class="nav__logo">
+      <span>b</span><span class="nav__logo-rest">atul.design</span><span class="nav__logo-dot">.</span>
+    </a>
+    <nav>
+      <ul class="nav__links">
+        <li><a href="index.html#work"    class="nav__link">work</a></li>
+        <li><a href="index.html#about"   class="nav__link">about</a></li>
+        <li><a href="index.html#contact" class="nav__link">contact</a></li>
+      </ul>
+    </nav>
+  </div>
+</header>
+
+<main>
+
+  <!-- HERO -->
+  <div class="wrap">
+    <section class="hero">
+      <div class="hero__tags reveal">
+        <span class="hero__tag">mobile app</span>
+        <span class="hero__tag-dot">·</span>
+        <span class="hero__tag">ux research</span>
+        <span class="hero__tag-dot">·</span>
+        <span class="hero__tag">ui design</span>
+      </div>
+      <h1 class="hero__title reveal">signals</h1>
+    </section>
+  </div>
+
+  <!-- APP UI CARD -->
+  <div class="wrap" style="padding-bottom: 0;">
+    <div class="app-card reveal">
+      <div class="app-card__phone"><span>app ui</span></div>
+      <div class="app-card__bubble">what if your phone could help you begin navigating in your new phase of life which is entering a college away from home?</div>
+    </div>
+  </div>
+
+  <!-- ROWS -->
+  <div class="wrap">
+
+    <!-- OVERVIEW -->
+    <div class="row">
+      <div class="row__label"><span class="row__label-text">overview</span></div>
+      <div>
+        <p class="body-text reveal">every year, hundreds of thousands of indian students move to a new city for college. they arrive with ambition, a packed bag, and no one who knows their name.</p>
+        <p class="body-text reveal">signals is a mobile app for those first 90 days. it combines structured daily challenges with an anonymous campus feed, giving students a low-stakes way to act, and a real-time way to know they are not the only one struggling.</p>
+      </div>
+    </div>
+
+    <!-- THE PROBLEM -->
+    <div class="row">
+      <div class="row__label"><span class="row__label-text">the problem</span></div>
+      <div>
+        <div class="problem-statement reveal">
+          <div class="problem-bar"></div>
+          <p class="problem-text">nobody told their parents how they actually felt. they called home and said everything was fine.</p>
+        </div>
+        <div class="stats">
+          <div class="stat reveal">
+            <div class="stat__num">59.9%</div>
+            <p class="stat__text">of indian college students show signs of depression in year one across 8 tier-1 cities.</p>
+          </div>
+          <div class="stat reveal d1">
+            <div class="stat__num">45.5%</div>
+            <p class="stat__text">study outside their home state, a new city, zero social infrastructure.</p>
+          </div>
+          <div class="stat reveal d2">
+            <div class="stat__num">0</div>
+            <p class="stat__text">dedicated products for indian college student loneliness exist in the market today.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- WHO I DESIGNED FOR -->
+    <div class="row">
+      <div class="row__label"><span class="row__label-text">who i designed for</span></div>
+      <div>
+        <div class="persona reveal">
+          <div class="persona__head">
+            <div class="persona__avatar">AR</div>
+            <div>
+              <div class="persona__name">Aarav Rathore, 18 yrs</div>
+              <div class="persona__sub">b.tech cs · moved from indore to bengaluru<br>hostel room. knows nobody.</div>
+            </div>
+          </div>
+          <div class="persona__divider"></div>
+          <div class="persona__cols">
+            <div>
+              <div class="persona__col-lbl">what he does</div>
+              <ul class="persona__list">
+                <li>orders zomato to avoid eating alone publicly</li>
+                <li>scrolls instagram at 2am, feels worse</li>
+                <li>tells his parents everything is great</li>
+                <li>lurks r/indiasocial but never posts</li>
+              </ul>
+            </div>
+            <div>
+              <div class="persona__col-lbl">what he actually needs</div>
+              <ul class="persona__list">
+                <li>to know he's not the only one</li>
+                <li>one low-stakes reason to leave his room</li>
+                <li>someone to figure the city out with</li>
+                <li>to never feel defined by his loneliness</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- CORE INSIGHT — full width of 840px container -->
+    <div class="wrap insight-section">
+      <div class="insight reveal">
+        <div class="insight__lbl">the core insight</div>
+        <p class="insight__text">the wound isn't the absence of people. it's the belief that <em>you're the only one</em> feeling their absence.</p>
+      </div>
+    </div>
+
+    <!-- WHERE EVERYTHING ELSE FALLS SHORT -->
+    <div class="row">
+      <div class="row__label"><span class="row__label-text" style="white-space:normal;">where everything else falls short</span></div>
+      <div>
+        <div class="competitors reveal">
+          <div class="competitor">
+            <div class="competitor__name">nod (us)</div>
+            <div class="competitor__sub">research-backed, closest in concept</div>
+            <div class="competitor__gap-body">gap → us-only, solo product, no community layer, clinical tone, no indian context</div>
+          </div>
+          <div class="competitor competitor--accent">
+            <div class="competitor__name">signals</div>
+            <div class="competitor__sub">built for india, anonymous-first</div>
+            <div class="competitor__gap-body">challenge + community in one system. designed for a student who begins with nothing.</div>
+          </div>
+          <div class="competitor">
+            <div class="competitor__name">bumble bff</div>
+            <div class="competitor__sub">platonic friendship app</div>
+            <div class="competitor__gap-body">gap → dating mechanic creates wrong expectations, no hostel/campus layer, moderate india presence</div>
+          </div>
+          <div class="competitor">
+            <div class="competitor__name">reddit india</div>
+            <div class="competitor__sub">where Aarav actually goes</div>
+            <div class="competitor__gap-body">gap → anonymity without action. relief without a next step. no connection pathway.</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- THE PRODUCT -->
+    <div class="row">
+      <div class="row__label"><span class="row__label-text">the product</span></div>
+      <div>
+        <p class="body-text reveal">three flows. one system. every part connects to the others - intentionally.</p>
+      </div>
+    </div>
+
+    <!-- FLOWS — full 840px width, outside two-col -->
+    <div class="wrap" style="padding-bottom:48px; padding-left:0; padding-right:0;">
+      <div class="flows reveal">
+
+        <!-- Visual cue on first card -->
+        <div class="flow" id="flow-1"
+          onmouseenter="focusFlow(this)"
+          onmouseleave="resetFlows()">
+          <div class="flow__card">
+            <div class="flow__screen">
+              <video class="flow__video" src="" loop muted playsinline></video>
+              <span class="flow__placeholder">app ui</span>
+            </div>
+          </div>
+          <div class="flow__name">onboarding</div>
+          <div class="flow__desc">value before sign-up. the normalisation number appears before any account is created.</div>
+        </div>
+
+        <div class="flow" id="flow-2"
+          onmouseenter="focusFlow(this)"
+          onmouseleave="resetFlows()">
+          <div class="flow__card">
+            <div class="flow__screen">
+              <video class="flow__video" src="" loop muted playsinline></video>
+              <span class="flow__placeholder">app ui</span>
+            </div>
+          </div>
+          <div class="flow__name">daily challenge</div>
+          <div class="flow__desc">one move per day. always free. a buddy doing the same thing removes the fear of going alone.</div>
+        </div>
+
+        <div class="flow" id="flow-3"
+          onmouseenter="focusFlow(this)"
+          onmouseleave="resetFlows()">
+          <div class="flow__card">
+            <div class="flow__screen">
+              <video class="flow__video" src="" loop muted playsinline></video>
+              <span class="flow__placeholder">app ui</span>
+            </div>
+          </div>
+          <div class="flow__name">journey</div>
+          <div class="flow__desc">not a streak. it's a journey. the hollow dots shows that you're still going, not failing.</div>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- DECISIONS THAT MATTERED -->
+    <div class="row">
+      <div class="row__label"><span class="row__label-text">decisions that mattered</span></div>
+      <div>
+        <p class="body-text reveal">every element on every screen has a reason. these are the four that changed the product most.</p>
+      </div>
+    </div>
+
+    <div class="wrap" style="padding-bottom:48px; padding-left:0; padding-right:0;">
+      <div class="decisions reveal">
+        <div class="decision">
+          <div class="decision__num">01</div>
+          <div class="decision__title">value before sign-up</div>
+          <p class="decision__body">the first challenge appears before account creation - by the time sign-up shows up, aarav already has something to protect.</p>
+          <div class="decision__principle"><strong>endowment effect</strong> - people overvalue what they already have.</div>
+        </div>
+        <div class="decision">
+          <div class="decision__num">02</div>
+          <div class="decision__title">hollow dots, not x marks</div>
+          <p class="decision__body">a missed day stays hollow, never crossed out - because one pixel difference is the difference between "i'm still going" and "i've already failed."</p>
+          <div class="decision__principle"><strong>zeigarnik effect</strong> - incomplete arcs pull you forward. broken ones push you away.</div>
+        </div>
+        <div class="decision">
+          <div class="decision__num">03</div>
+          <div class="decision__title">anonymous by default</div>
+          <p class="decision__body">he won't say he's lonely. but he'll tap "me too" on someone else saying it. five steps from anonymous reading to name reveal - the design earns each one before asking for the next.</p>
+          <div class="decision__principle"><strong>progressive disclosure</strong> - only ask for what trust has been built for.</div>
+        </div>
+        <div class="decision">
+          <div class="decision__num">04</div>
+          <div class="decision__title">the pre-filled first message</div>
+          <p class="decision__body">the blank box after "say hi" is where most people close the app. signals writes the first line. editable, but most people send it as is.</p>
+          <div class="decision__principle"><strong>default effect</strong> - the best default is the one that makes doing nothing harder than doing something.</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- WHAT I LEARNED -->
+    <div class="row">
+      <div class="row__label"><span class="row__label-text">what i learned</span></div>
+      <div>
+        <div class="learned-card reveal">
+          <div class="learned-card__eyebrow">a note on tone</div>
+          <p class="learned-card__body">to find the right words for the users. with every screen, every label, every cta, i had to design for a student who would close the app the moment it made him feel defined by his struggle. the product had to say "you're not alone" without ever saying "you're lonely." that constraint shaped everything.</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- WHAT COMES NEXT -->
+    <div class="row">
+      <div class="row__label"><span class="row__label-text">what comes next</span></div>
+      <div>
+        <p class="next-body reveal">signals is designed for the first 90 days. what happens after week 12 is intentionally unanswered - because by then, the app should no longer be the most important relationship in a student's life.</p>
+        <p class="next-body reveal">V2 explores city mapping, group challenges, and a senior mentor layer. but those come after one student has helped one other student find a laundromat, or sat somewhere new for lunch, or sent a message that started with "i feel that too."</p>
+      </div>
+    </div>
+
+    <!-- NEXT PROJECT -->
+    <a href="fitness.html" class="next-project reveal">
+      <div>
+        <div class="next-project__lbl">next project</div>
+        <div class="next-project__name">momentum — a fitness companion</div>
+      </div>
+      <div class="next-project__arrow">→</div>
+    </a>
+
+  </div><!-- /wrap -->
+
+</main>
+
+<script>
+  var obs = new IntersectionObserver(function(entries){
+    entries.forEach(function(e){
+      if(e.isIntersecting){ e.target.classList.add('visible'); obs.unobserve(e.target); }
+    });
+  }, { threshold: 0.08, rootMargin: '0px 0px -20px 0px' });
+  document.querySelectorAll('.reveal').forEach(function(el){ obs.observe(el); });
+
+  /* ── FLOWS: hover on desktop, auto-play on mobile ── */
+  function focusFlow(flowEl) {
+    if(window.innerWidth < 600) return;
+    var container = flowEl.closest('.flows');
+    container.classList.add('has-hover');
+    flowEl.classList.add('is-focused');
+    var vid = flowEl.querySelector('.flow__video');
+    if(vid && vid.getAttribute('src')) vid.play();
+  }
+
+  function resetFlows() {
+    if(window.innerWidth < 600) return;
+    document.querySelectorAll('.flows').forEach(function(c){ c.classList.remove('has-hover'); });
+    document.querySelectorAll('.flow').forEach(function(f){
+      f.classList.remove('is-focused');
+      var vid = f.querySelector('.flow__video');
+      if(vid) { vid.pause(); vid.currentTime = 0; }
+    });
+  }
+
+  /* Mobile: auto-play all flow videos */
+  if(window.innerWidth < 600) {
+    document.querySelectorAll('.flow__video').forEach(function(vid){
+      if(vid.getAttribute('src')) {
+        vid.play();
+      }
+    });
+  }
+</script>
+
+</body>
+</html>
