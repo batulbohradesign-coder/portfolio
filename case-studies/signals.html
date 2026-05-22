@@ -513,7 +513,7 @@
     <div class="row">
       <div class="row__label"><span class="row__label-text">overview</span></div>
       <div>
-        <p class="body-text reveal">every year, hundreds of thousands of indian students move to a new city for college. they arrive with ambition, a packed bag, and no one who knows their name.</p>
+        <p class="body-text reveal">every year, hundreds of thousands of Indian students move to a new city for college. they arrive with ambition, a packed bag, and no one who knows their name.</p>
         <p class="body-text reveal">signals is a mobile app for those first 90 days. it combines structured daily challenges with an anonymous campus feed, giving students a low-stakes way to act, and a real-time way to know they are not the only one struggling.</p>
       </div>
     </div>
@@ -529,7 +529,7 @@
         <div class="stats">
           <div class="stat reveal">
             <div class="stat__num">59.9%</div>
-            <p class="stat__text">of indian college students show signs of depression in year one across 8 tier-1 cities.</p>
+            <p class="stat__text">of Indian college students show signs of depression in year one across 8 tier-1 cities.</p>
           </div>
           <div class="stat reveal d1">
             <div class="stat__num">45.5%</div>
@@ -537,7 +537,7 @@
           </div>
           <div class="stat reveal d2">
             <div class="stat__num">0</div>
-            <p class="stat__text">dedicated products for indian college student loneliness exist in the market today.</p>
+            <p class="stat__text">dedicated products for Indian college student loneliness exist in the market today.</p>
           </div>
         </div>
       </div>
@@ -552,7 +552,7 @@
             <div class="persona__avatar">AR</div>
             <div>
               <div class="persona__name">Aarav Rathore, 18 yrs</div>
-              <div class="persona__sub">b.tech cs · moved from indore to bengaluru<br>hostel room. knows nobody.</div>
+              <div class="persona__sub">b.tech cs · moved from Indore to Bengaluru</div>
             </div>
           </div>
           <div class="persona__divider"></div>
@@ -594,22 +594,22 @@
       <div>
         <div class="competitors reveal">
           <div class="competitor">
-            <div class="competitor__name">nod (us)</div>
+            <div class="competitor__name">nod (US)</div>
             <div class="competitor__sub">research-backed, closest in concept</div>
-            <div class="competitor__gap-body">gap → us-only, solo product, no community layer, clinical tone, no indian context</div>
+            <div class="competitor__gap-body">gap → US-only, solo product, no community layer, clinical tone, no Indian context</div>
           </div>
           <div class="competitor competitor--accent">
             <div class="competitor__name">signals</div>
-            <div class="competitor__sub">built for india, anonymous-first</div>
+            <div class="competitor__sub">built for India, anonymous-first</div>
             <div class="competitor__gap-body">challenge + community in one system. designed for a student who begins with nothing.</div>
           </div>
           <div class="competitor">
             <div class="competitor__name">bumble bff</div>
             <div class="competitor__sub">platonic friendship app</div>
-            <div class="competitor__gap-body">gap → dating mechanic creates wrong expectations, no hostel/campus layer, moderate india presence</div>
+            <div class="competitor__gap-body">gap → dating mechanic creates wrong expectations, no hostel/campus layer, moderate India presence</div>
           </div>
           <div class="competitor">
-            <div class="competitor__name">reddit india</div>
+            <div class="competitor__name">reddit India</div>
             <div class="competitor__sub">where Aarav actually goes</div>
             <div class="competitor__gap-body">gap → anonymity without action. relief without a next step. no connection pathway.</div>
           </div>
@@ -633,10 +633,9 @@
         <div class="flow" id="flow-1"
           onmouseenter="focusFlow(this)"
           onmouseleave="resetFlows()">
-          <div class="flow__card">
-            <div class="flow__screen">
-              <video class="flow__video" src="" loop muted playsinline></video>
-              <span class="flow__placeholder">app ui</span>
+          <div class="flow__card" style="background:#000; padding:14px;">
+            <div class="flow__screen" style="border-radius:10px; overflow:hidden;">
+              <video class="flow__video has-src" src="../onboarding flow.mov" loop muted playsinline style="object-fit:contain;"></video>
             </div>
           </div>
           <div class="flow__name">onboarding</div>
@@ -646,27 +645,25 @@
         <div class="flow" id="flow-2"
           onmouseenter="focusFlow(this)"
           onmouseleave="resetFlows()">
-          <div class="flow__card">
-            <div class="flow__screen">
-              <video class="flow__video" src="" loop muted playsinline></video>
-              <span class="flow__placeholder">app ui</span>
+          <div class="flow__card" style="background:#000; padding:14px;">
+            <div class="flow__screen" style="border-radius:10px; overflow:hidden;">
+              <video class="flow__video has-src" src="../daily move.mov" loop muted playsinline style="object-fit:contain;"></video>
             </div>
           </div>
-          <div class="flow__name">daily challenge</div>
+          <div class="flow__name">daily move</div>
           <div class="flow__desc">one move per day. always free. a buddy doing the same thing removes the fear of going alone.</div>
         </div>
 
         <div class="flow" id="flow-3"
           onmouseenter="focusFlow(this)"
           onmouseleave="resetFlows()">
-          <div class="flow__card">
-            <div class="flow__screen">
-              <video class="flow__video" src="" loop muted playsinline></video>
-              <span class="flow__placeholder">app ui</span>
+          <div class="flow__card" style="background:#000; padding:14px;">
+            <div class="flow__screen" style="border-radius:10px; overflow:hidden;">
+              <video class="flow__video has-src" src="../signal.mov" loop muted playsinline style="object-fit:contain;"></video>
             </div>
           </div>
-          <div class="flow__name">journey</div>
-          <div class="flow__desc">not a streak. it's a journey. the hollow dots shows that you're still going, not failing.</div>
+          <div class="flow__name">signal wall</div>
+          <div class="flow__desc">every card on the signal wall is something a real student felt that week. they read it. they tap me too. the count goes up. no algorithm, just recognition.</div>
         </div>
 
       </div>
@@ -789,12 +786,17 @@
     });
   }
 
-  /* Mobile: auto-play all flow videos */
+  /* Mobile: play each video when it scrolls into view */
   if(window.innerWidth < 600) {
+    var mobileVidObs = new IntersectionObserver(function(entries){
+      entries.forEach(function(e){
+        if(!e.target.getAttribute('src')) return;
+        if(e.isIntersecting) e.target.play();
+        else { e.target.pause(); e.target.currentTime = 0; }
+      });
+    }, { threshold: 0.5 });
     document.querySelectorAll('.flow__video').forEach(function(vid){
-      if(vid.getAttribute('src')) {
-        vid.play();
-      }
+      mobileVidObs.observe(vid);
     });
   }
 </script>
