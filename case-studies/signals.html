@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>signals — work</title>
+  <title>college guide - work</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,300;12..96,400;12..96,500;12..96,600&family=Figtree:wght@300;400;500&family=Caveat:wght@400;500&display=swap" rel="stylesheet">
@@ -113,6 +113,18 @@
       font-family: var(--f-head);
       font-size: clamp(48px, 8vw, 80px);
       font-weight: 500; line-height: 0.92; letter-spacing: -0.03em;
+    }
+
+    /* ─── HERO VISUAL ─── */
+    .hero-visual{ width:100%; max-width:var(--max); margin:0 auto; padding-left:var(--px); padding-right:var(--px); padding-bottom:0; }
+    .hero-video-wrap{
+      width:100%;
+      border-radius:20px; overflow:hidden;
+      box-shadow:0 20px 48px rgba(0,0,0,.12);
+    }
+    .hero-video-wrap video{
+      width:100%; height:auto;
+      display:block;
     }
 
     /* ─── APP UI CARD ─── */
@@ -481,7 +493,7 @@
 
   <!-- BACK LINK -->
   <div class="wrap" style="padding-bottom:0">
-    <a href="../index.html#work" class="back-link">← back to work</a>
+    <a href="../index.html#work" class="back-link">← back</a>
   </div>
 
   <!-- HERO -->
@@ -494,15 +506,16 @@
         <span class="hero__tag-dot">·</span>
         <span class="hero__tag">ui design</span>
       </div>
-      <h1 class="hero__title reveal">signals</h1>
+      <h1 class="hero__title reveal">signals </h1>
     </section>
   </div>
 
-  <!-- APP UI CARD -->
-  <div class="wrap" style="padding-bottom: 0;">
-    <div class="app-card reveal">
-      <div class="app-card__phone"><span>app ui</span></div>
-      <div class="app-card__bubble">what if your phone could help you begin navigating in your new phase of life which is entering a college away from home?</div>
+  <!-- HERO VISUAL — 780×520 video -->
+  <div class="hero-visual reveal" style="transition-delay:120ms">
+    <div class="hero-video-wrap">
+      <video autoplay muted loop playsinline>
+        <source src="../signals%20intro.mp4" type="video/mp4">
+      </video>
     </div>
   </div>
 
@@ -730,7 +743,7 @@
     <a href="fitness.html" class="next-project reveal">
       <div class="next-project__lbl">next project</div>
       <div class="next-project__row">
-        <div class="next-project__name">momentum — a fitness companion</div>
+        <div class="next-project__name">momentum - a fitness companion</div>
         <div class="next-project__arrow">→</div>
       </div>
     </a>

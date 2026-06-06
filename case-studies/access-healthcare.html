@@ -1,0 +1,1332 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title> website redesign – work</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,300;12..96,400;12..96,500;12..96,600&family=Figtree:wght@300;400;500&display=swap" rel="stylesheet">
+  <style>
+    /* ─── TOKENS ─── */
+    :root {
+      --bg:      #FAF8F6;
+      --text:    #1A1A1A;
+      --text-2:  #555555;
+      --text-3:  #888888;
+      --accent:  #0D0A6B;
+      --border:  rgba(17,17,17,0.10);
+      --surface: #EEEAE4;
+      --surf-2:  #E4E0D9;
+      --f-head:  'Bricolage Grotesque', sans-serif;
+      --f-body:  'Figtree', sans-serif;
+      --ease:    cubic-bezier(0.16,1,0.3,1);
+      --max:     920px;
+      --px:      24px;
+
+      /* Access Healthcare old palette (for reference display) */
+      --ah-old-1: #162D5E;
+      --ah-old-2: #2BA8A0;
+      --ah-old-3: #5B8DB8;
+      --ah-old-4: #F4F7FB;
+      --ah-old-5: #6B7280;
+    }
+    @media (min-width: 640px) { :root { --px: 40px; } }
+
+    /* ─── RESET ─── */
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; }
+    body {
+      background: var(--bg); color: var(--text);
+      font-family: var(--f-body); font-size: 16px;
+      line-height: 1.7; -webkit-font-smoothing: antialiased;
+      overflow-x: hidden;
+    }
+    a { color: inherit; text-decoration: none; }
+    img { max-width: 100%; display: block; }
+
+    /* ─── CONTAINER ─── */
+    .wrap {
+      width: 100%; max-width: var(--max);
+      margin: 0 auto;
+      padding-left: var(--px); padding-right: var(--px);
+    }
+
+    /* ─── NAV ─── */
+    .nav {
+      position: sticky; top: 0; z-index: 100;
+      background: var(--bg); border-bottom: 1px solid var(--border);
+    }
+    .nav__inner {
+      max-width: 1280px; margin: 0 auto;
+      padding: 0 64px;
+      display: flex; justify-content: space-between;
+      align-items: center; height: 64px;
+    }
+    .nav__logo {
+      font-family: var(--f-head); font-size: 20px; font-weight: 500;
+      letter-spacing: -0.03em; display: inline-flex; align-items: baseline; overflow: hidden;
+    }
+    .nav__logo-rest {
+      display: inline-block; max-width: 0; opacity: 0; overflow: hidden; white-space: nowrap;
+      transition: max-width 700ms var(--ease), opacity 500ms var(--ease) 100ms;
+    }
+    .nav__logo-dot { display: inline-block; transition: opacity 400ms ease, width 400ms ease; }
+    .nav__logo:hover .nav__logo-rest { max-width: 200px; opacity: 1; }
+    .nav__logo:hover .nav__logo-dot  { opacity: 0; width: 0; overflow: hidden; }
+    .nav__links { display: flex; gap: 40px; list-style: none; }
+    .nav__link {
+      font-size: 16px; color: var(--text-2);
+      position: relative; transition: color 150ms var(--ease);
+    }
+    .nav__link::after {
+      content: ''; position: absolute; bottom: -2px; left: 0;
+      width: 0; height: 1px; background: var(--accent);
+      transition: width 300ms var(--ease);
+    }
+    .nav__link:hover { color: var(--text); }
+    .nav__link:hover::after { width: 100%; }
+
+    /* ─── HERO ─── */
+    .hero { padding: 64px 0 48px; }
+    .hero__tags {
+      display: flex; gap: 0; flex-wrap: wrap;
+      margin-bottom: 16px; align-items: center;
+    }
+    .hero__tag {
+      font-size: 12px; font-weight: 500; letter-spacing: 0.08em;
+      text-transform: uppercase; color: var(--accent);
+    }
+    .hero__tag-dot { font-size: 12px; color: var(--accent); margin: 0 8px; }
+    .hero__title {
+      font-family: var(--f-head);
+      font-size: clamp(40px, 7vw, 72px);
+      font-weight: 500; line-height: 0.92; letter-spacing: -0.03em;
+      margin-bottom: 20px;
+    }
+    .hero__sub {
+      font-size: 18px; font-weight: 300; color: var(--text-2);
+      max-width: 540px; line-height: 1.6;
+    }
+
+    /* ─── HERO VIDEO CARD ─── */
+    .hero-card {
+      background: var(--text);
+      border-radius: 24px;
+      overflow: hidden;
+      position: relative;
+      aspect-ratio: 16/9;
+      margin-bottom: 0;
+      display: flex; align-items: center; justify-content: center;
+    }
+    .hero-card__video {
+      position: absolute; inset: 0;
+      width: 100%; height: 100%;
+      object-fit: cover; display: none;
+    }
+    .hero-card__video.has-src { display: block; }
+    .hero-card__placeholder {
+      display: flex; flex-direction: column;
+      align-items: center; justify-content: center;
+      gap: 12px; position: relative; z-index: 1;
+    }
+    .hero-card__placeholder-icon {
+      width: 56px; height: 56px; border-radius: 50%;
+      border: 2px solid rgba(255,255,255,0.15);
+      display: flex; align-items: center; justify-content: center;
+      color: rgba(255,255,255,0.4); font-size: 24px;
+    }
+    .hero-card__placeholder-text {
+      font-size: 12px; letter-spacing: 0.10em;
+      text-transform: uppercase; color: rgba(255,255,255,0.3);
+    }
+    .hero-card__overlay {
+      position: absolute; bottom: 24px; left: 24px;
+      background: rgba(0,0,0,0.5);
+      backdrop-filter: blur(8px);
+      border-radius: 10px; padding: 12px 16px;
+      display: flex; align-items: center; gap: 10px;
+    }
+    .hero-card__overlay-dot {
+      width: 8px; height: 8px; border-radius: 50%;
+      background: var(--accent); flex-shrink: 0;
+      animation: pulse 2s infinite;
+    }
+    @keyframes pulse {
+      0%, 100% { opacity: 1; transform: scale(1); }
+      50% { opacity: 0.5; transform: scale(0.85); }
+    }
+    .hero-card__overlay-text {
+      font-size: 12px; font-weight: 500; color: rgba(255,255,255,0.7);
+      letter-spacing: 0.04em;
+    }
+
+    /* ─── BEFORE / AFTER COMPARISON SLIDER ─── */
+    .compare__img {
+      position: absolute; inset: 0;
+      width: 100%; height: 100%;
+      object-fit: cover; object-position: top center;
+      display: block; user-select: none; pointer-events: none;
+      -webkit-user-drag: none;
+    }
+    .compare__before-clip {
+      position: absolute; inset: 0;
+      clip-path: inset(0 50% 0 0);
+    }
+    .compare__divider {
+      position: absolute; top: 0; bottom: 0; left: 50%;
+      transform: translateX(-50%);
+      width: 2px; background: rgba(255,255,255,0.85);
+      cursor: ew-resize; z-index: 10;
+      display: flex; align-items: center; justify-content: center;
+    }
+    .compare__handle {
+      width: 44px; height: 44px; border-radius: 50%;
+      background: white; color: #1A1A1A;
+      display: flex; align-items: center; justify-content: center; gap: 2px;
+      box-shadow: 0 2px 18px rgba(0,0,0,0.28);
+      flex-shrink: 0;
+      transition: transform 200ms ease, box-shadow 200ms ease;
+    }
+    .compare__handle span { font-size: 15px; font-weight: 700; line-height: 1; }
+    .compare__divider:hover .compare__handle {
+      transform: scale(1.1);
+      box-shadow: 0 4px 28px rgba(0,0,0,0.4);
+    }
+    .compare__label {
+      position: absolute; bottom: 20px;
+      background: rgba(0,0,0,0.45); backdrop-filter: blur(10px);
+      border-radius: 6px; padding: 5px 11px;
+      font-size: 11px; font-weight: 500; letter-spacing: 0.08em;
+      text-transform: uppercase; color: rgba(255,255,255,0.7);
+      pointer-events: none; z-index: 5;
+      transition: opacity 200ms ease;
+    }
+    .compare__label--left  { left: 20px; }
+    .compare__label--right { right: 20px; }
+
+    /* ─── TWO-COL ROW ─── */
+    .row {
+      display: grid;
+      grid-template-columns: 160px 1fr;
+      gap: 0 40px;
+      padding: 48px 0;
+      align-items: start;
+    }
+    .row--border-top { }
+    .row__label { padding-top: 2px; position: sticky; top: 72px; }
+    .row__label-text {
+      font-size: 11px; font-weight: 500;
+      letter-spacing: 0.08em; text-transform: uppercase;
+      color: var(--text-2); white-space: nowrap;
+    }
+    @media (max-width: 599px) {
+      .row { grid-template-columns: 1fr; gap: 12px; padding: 40px 0; }
+      .row__label { position: static; }
+      .row__label-text { white-space: normal; }
+    }
+
+    /* ─── TYPOGRAPHY ─── */
+    .body-text { font-size: 16px; font-weight: 300; line-height: 1.75; color: var(--text); }
+    .body-text + .body-text { margin-top: 16px; }
+
+    /* ─── PROBLEM STATEMENT ─── */
+    .problem-statement { display: flex; gap: 20px; align-items: stretch; }
+    .problem-bar { width: 3px; background: var(--accent); border-radius: 2px; flex-shrink: 0; }
+    .problem-text {
+      font-family: var(--f-head); font-size: 28px;
+      font-weight: 500; line-height: 1.3;
+      letter-spacing: -0.02em; color: var(--text);
+    }
+
+    /* ─── WHAT I FOUND – SLIDESHOW ─── */
+    .slideshow-section { padding: 48px 0; }
+    .slideshow-header {
+      display: grid; grid-template-columns: 160px 1fr;
+      gap: 0 40px; align-items: center; margin-bottom: 32px;
+    }
+    @media (max-width: 599px) { .slideshow-header { grid-template-columns: 1fr; gap: 12px; } }
+    .slideshow-controls { display: flex; gap: 12px; align-items: center; justify-content: flex-end; }
+    .slide-btn {
+      width: 40px; height: 40px; border-radius: 50%;
+      border: 1px solid var(--border); background: white;
+      cursor: pointer; display: flex; align-items: center; justify-content: center;
+      font-size: 16px; color: var(--text-2);
+      transition: all 200ms var(--ease); flex-shrink: 0;
+    }
+    .slide-btn:hover { background: var(--surface); color: var(--text); border-color: var(--text-3); }
+    .slide-btn:disabled { opacity: 0.3; cursor: not-allowed; }
+    .slide-counter { font-size: 13px; color: var(--text-3); font-weight: 300; min-width: 36px; text-align: center; }
+    .slideshow-track { overflow: hidden; border-radius: 20px; }
+    .slideshow-inner {
+      display: flex;
+      transition: transform 500ms var(--ease);
+    }
+    .slide {
+      min-width: 100%; position: relative;
+      background: var(--surf-2); border-radius: 20px;
+      aspect-ratio: 16/9;
+      display: flex; align-items: center; justify-content: center;
+      overflow: visible;
+    }
+    .slide__img {
+      width: 100%; height: 100%; object-fit: cover; object-position: top center;
+      position: absolute; inset: 0; display: none;
+      border-radius: 20px;
+      transform-origin: center center;
+      will-change: transform;
+    }
+    /* BTS images render at full natural height so panning reveals the whole image */
+    .slide__img.bts-img {
+      height: auto; bottom: auto;
+      object-fit: unset;
+      transform-origin: top center;
+    }
+    .slide__img.has-src { display: block; }
+    .slide__placeholder {
+      display: flex; flex-direction: column; align-items: center; gap: 8px;
+    }
+    .slide__placeholder-num {
+      font-family: var(--f-head); font-size: 48px; font-weight: 600;
+      color: var(--surf-2); letter-spacing: -0.04em;
+    }
+    .slide__placeholder-label {
+      font-size: 11px; letter-spacing: 0.08em; text-transform: uppercase;
+      color: var(--text-3);
+    }
+
+    /* Annotation pins */
+    .annotation {
+      position: absolute; z-index: 10;
+      cursor: pointer;
+    }
+    .annotation__pin {
+      width: 32px; height: 32px; border-radius: 50%;
+      background: #E5312B; color: white;
+      font-size: 13px; font-weight: 700; font-family: var(--f-head);
+      display: flex; align-items: center; justify-content: center;
+      box-shadow: 0 0 0 3px rgba(255,255,255,0.85), 0 3px 14px rgba(229,49,43,0.55);
+      transition: transform 200ms var(--ease);
+      flex-shrink: 0;
+    }
+    .annotation:hover .annotation__pin { transform: scale(1.12); }
+
+    /* Tooltip – shows BELOW the pin by default */
+    .annotation__tooltip {
+      position: absolute;
+      top: calc(100% + 10px);
+      left: 50%;
+      transform: translateX(-50%);
+      background: #1A1A1A;
+      color: rgba(255,255,255,0.88);
+      border-radius: 8px;
+      padding: 10px 14px;
+      font-size: 13px;
+      font-weight: 400;
+      line-height: 1.6;
+      width: 200px;
+      pointer-events: none;
+      opacity: 0;
+      transition: opacity 200ms ease;
+      box-shadow: 0 4px 20px rgba(0,0,0,0.35);
+      z-index: 20;
+    }
+    /* Caret pointing UP (toward pin above) */
+    .annotation__tooltip::after {
+      content: ''; position: absolute;
+      bottom: 100%; left: 50%;
+      transform: translateX(-50%);
+      border: 6px solid transparent;
+      border-bottom-color: #1A1A1A;
+    }
+    .annotation:hover .annotation__tooltip { opacity: 1; }
+
+    /* Flip variant – tooltip shows ABOVE pin (for pins in bottom half of image) */
+    .annotation--flip .annotation__tooltip {
+      top: auto;
+      bottom: calc(100% + 10px);
+    }
+    .annotation--flip .annotation__tooltip::after {
+      bottom: auto; top: 100%;
+      border-bottom-color: transparent;
+      border-top-color: #1A1A1A;
+    }
+
+    /* Light variant – for pins on dark-background images */
+    .annotation--light .annotation__tooltip {
+      background: #FAF8F6;
+      color: #1A1A1A;
+      box-shadow: 0 4px 20px rgba(0,0,0,0.5);
+    }
+    .annotation--light .annotation__tooltip::after { border-bottom-color: #FAF8F6; }
+    .annotation--light.annotation--flip .annotation__tooltip::after {
+      border-top-color: #FAF8F6;
+      border-bottom-color: transparent;
+    }
+
+    /* Slide caption row */
+    .slide-caption {
+      display: grid; grid-template-columns: 160px 1fr;
+      gap: 0 40px; margin-top: 20px; align-items: start;
+    }
+    @media (max-width: 599px) { .slide-caption { grid-template-columns: 1fr; gap: 8px; } }
+    .slide-caption__label {
+      font-size: 11px; font-weight: 500; letter-spacing: 0.08em;
+      text-transform: uppercase; color: var(--text-3); padding-top: 3px;
+    }
+    .slide-caption__text {
+      font-size: 15px; font-weight: 300; color: var(--text-2); line-height: 1.6;
+    }
+    .slide-dots { display: flex; gap: 6px; margin-top: 16px; padding-left: 200px; }
+    @media (max-width: 599px) { .slide-dots { padding-left: 0; } }
+    .slide-dot {
+      width: 6px; height: 6px; border-radius: 50%;
+      background: var(--surf-2); border: 1px solid var(--text-3);
+      cursor: pointer; transition: all 200ms var(--ease);
+    }
+    .slide-dot.active {
+      background: var(--accent); border-color: var(--accent); width: 20px; border-radius: 3px;
+    }
+
+    /* ─── PERSONA ─── */
+    .persona {
+      background: white; border-radius: 16px; padding: 36px; width: 100%;
+    }
+    .persona__head { display: flex; gap: 20px; align-items: flex-start; margin-bottom: 24px; }
+    .persona__avatar {
+      width: 56px; height: 56px; border-radius: 50%;
+      background: #D3E2F4; color: var(--ah-old-1);
+      font-family: var(--f-head); font-size: 22px; font-weight: 500;
+      display: flex; align-items: center; justify-content: center; flex-shrink: 0;
+    }
+    .persona__name { font-family: var(--f-head); font-size: 26px; font-weight: 600; letter-spacing: -0.02em; color: var(--text); line-height: 1; }
+    .persona__sub  { font-size: 15px; color: var(--text-2); font-weight: 300; margin-top: 6px; line-height: 1.5; }
+    .persona__divider { height: 1px; background: var(--border); margin-bottom: 24px; }
+    .persona__cols { display: grid; grid-template-columns: 1fr 1fr; gap: 32px; }
+    @media (max-width: 480px) { .persona__cols { grid-template-columns: 1fr; } }
+    .persona__col-lbl {
+      font-size: 11px; font-weight: 500; letter-spacing: 0.10em;
+      text-transform: uppercase; color: var(--text-3); margin-bottom: 16px;
+    }
+    .persona__list { list-style: none; display: flex; flex-direction: column; gap: 12px; }
+    .persona__list li {
+      font-size: 15px; font-weight: 300; color: var(--text);
+      padding-left: 16px; position: relative; line-height: 1.5;
+    }
+    .persona__list li::before {
+      content: '·'; position: absolute; left: 0;
+      color: var(--accent); font-size: 20px; line-height: 1.2;
+    }
+
+    /* ─── CORE INSIGHT ─── */
+    .insight-section { padding: 48px 0; }
+    .insight {
+      background: var(--text); color: var(--bg);
+      border-radius: 20px; padding: 40px;
+    }
+    .insight__lbl {
+      font-size: 11px; font-weight: 500; letter-spacing: 0.10em;
+      text-transform: uppercase; color: rgba(250,248,246,0.35);
+      margin-bottom: 20px;
+    }
+    .insight__text {
+      font-family: var(--f-head);
+      font-size: 28px; font-weight: 500;
+      line-height: 1.4; letter-spacing: -0.01em;
+    }
+    .insight__text em { color: inherit; font-style: italic; }
+
+    /* ─── COMPETITORS ─── */
+    .competitors {
+      display: grid; grid-template-columns: 1fr 1fr;
+      gap: 4px; border-radius: 20px; overflow: hidden;
+    }
+    @media (max-width: 480px) {
+      .competitors { grid-template-columns: 1fr; border-radius: 0; overflow: visible; }
+      .competitor { border-radius: 16px !important; }
+    }
+    .competitor {
+      background: var(--surface); padding: 32px; border-radius: 0;
+      transition: transform 250ms var(--ease);
+    }
+    .competitor:hover { transform: translateY(-3px); }
+    .competitor--accent { background: var(--accent); color: var(--bg); }
+    .competitor__name {
+      font-family: var(--f-head); font-size: 24px;
+      font-weight: 500; letter-spacing: -0.02em;
+      margin-bottom: 8px; color: var(--text);
+    }
+    .competitor--accent .competitor__name { color: var(--bg); }
+    .competitor__sub { font-size: 14px; font-weight: 500; color: var(--text-2); margin-bottom: 14px; }
+    .competitor--accent .competitor__sub { color: rgba(250,248,246,0.85); }
+    .competitor__gap-body { font-size: 14px; font-weight: 300; line-height: 1.6; color: var(--text-2); }
+    .competitor--accent .competitor__gap-body { color: rgba(250,248,246,0.75); }
+
+    /* ─── DESIGN DIRECTION ─── */
+    .direction-section { padding: 48px 0; border-top: 1px solid var(--border); }
+    .direction-grid {
+      display: grid; grid-template-columns: 1fr 1fr; gap: 16px;
+    }
+    @media (max-width: 599px) { .direction-grid { grid-template-columns: 1fr; } }
+
+    /* Moodboard */
+    .moodboard {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      grid-template-rows: repeat(2, 140px);
+      gap: 4px; border-radius: 16px; overflow: hidden;
+    }
+    .moodboard__cell {
+      background: var(--surf-2);
+      display: flex; align-items: center; justify-content: center;
+      position: relative; overflow: hidden;
+    }
+    .moodboard__cell:first-child { grid-row: 1 / 3; }
+    .moodboard__cell img { width: 100%; height: 100%; object-fit: cover; display: none; }
+    .moodboard__cell img.has-src { display: block; }
+    .moodboard__cell-label {
+      font-size: 10px; letter-spacing: 0.08em; text-transform: uppercase;
+      color: var(--text-3); position: absolute;
+    }
+
+    /* Palette */
+    .palette-card {
+      background: white; border-radius: 16px; padding: 28px;
+      display: flex; flex-direction: column; gap: 20px;
+    }
+    .palette-card__label {
+      font-size: 11px; font-weight: 500; letter-spacing: 0.10em;
+      text-transform: uppercase; color: var(--text-3);
+    }
+    .palette-row { display: flex; gap: 6px; }
+    .swatch {
+      flex: 1; height: 48px; border-radius: 8px; position: relative;
+      transition: transform 200ms var(--ease);
+      cursor: default;
+    }
+    .swatch:hover { transform: translateY(-2px); }
+    .swatch__tip {
+      position: absolute; bottom: calc(100% + 6px); left: 50%;
+      transform: translateX(-50%);
+      background: var(--text); color: white;
+      font-size: 11px; font-weight: 500; border-radius: 6px; padding: 4px 8px;
+      opacity: 0; pointer-events: none; white-space: nowrap;
+      transition: opacity 150ms ease;
+    }
+    .swatch:hover .swatch__tip { opacity: 1; }
+    .palette-divider {
+      display: flex; align-items: center; gap: 12px;
+      font-size: 11px; letter-spacing: 0.08em; text-transform: uppercase;
+      color: var(--text-3);
+    }
+    .palette-divider::before, .palette-divider::after {
+      content: ''; flex: 1; height: 1px; background: var(--border);
+    }
+    .palette-arrow {
+      display: flex; align-items: center; justify-content: center;
+      font-size: 18px; color: var(--accent);
+    }
+
+    /* New palette – user fills in */
+    .swatch--new-placeholder {
+      background: repeating-linear-gradient(
+        45deg,
+        var(--surf-2) 0px,
+        var(--surf-2) 6px,
+        var(--bg) 6px,
+        var(--bg) 12px
+      );
+      border: 2px dashed var(--border);
+    }
+
+    /* ─── THE REDESIGN (video) ─── */
+    .redesign-video {
+      background: var(--text); border-radius: 24px; overflow: hidden;
+      aspect-ratio: 16/9.9; position: relative;
+      display: flex; align-items: center; justify-content: center;
+      margin-top: 32px;
+    }
+    .redesign-video video {
+      position: absolute; inset: 0; width: 100%; height: 100%;
+      object-fit: cover; display: none;
+    }
+    .redesign-video video.has-src { display: block; }
+    .redesign-video__placeholder {
+      display: flex; flex-direction: column; align-items: center; gap: 12px;
+    }
+    .redesign-video__play {
+      width: 64px; height: 64px; border-radius: 50%;
+      border: 2px solid rgba(255,255,255,0.2);
+      display: flex; align-items: center; justify-content: center;
+      color: rgba(255,255,255,0.4); font-size: 28px;
+    }
+    .redesign-video__label {
+      font-size: 12px; letter-spacing: 0.10em; text-transform: uppercase;
+      color: rgba(255,255,255,0.3);
+    }
+
+    /* ─── BENTO GRID ─── */
+    .bento {
+      display: grid;
+      grid-template-columns: repeat(6, 1fr);
+      grid-template-rows: auto;
+      gap: 8px;
+    }
+    @media (max-width: 599px) { .bento { grid-template-columns: 1fr 1fr; } }
+
+    .bento__cell {
+      border-radius: 16px;
+      padding: 28px 24px;
+      background: var(--surface);
+      position: relative; overflow: hidden;
+      cursor: pointer;
+      transition: transform 280ms var(--ease), background 280ms var(--ease);
+      display: flex; flex-direction: column; justify-content: flex-end;
+      min-height: 160px;
+    }
+    .bento__cell::before {
+      content: ''; position: absolute; inset: 0;
+      background: var(--accent); opacity: 0;
+      transition: opacity 280ms var(--ease);
+    }
+    .bento__cell:hover { transform: translateY(-4px); }
+    .bento__cell:hover::before { opacity: 1; }
+    .bento__cell:hover .bento__name { color: white; }
+    .bento__cell:hover .bento__sub  { color: rgba(255,255,255,0.75); }
+    .bento__cell:hover .bento__icon { color: rgba(255,255,255,0.4); }
+
+    /* Spanning */
+    .bento__cell--wide   { grid-column: span 4; }
+    .bento__cell--medium { grid-column: span 3; }
+    .bento__cell--narrow { grid-column: span 2; }
+    .bento__cell--tall   { grid-row: span 2; }
+    @media (max-width: 599px) {
+      .bento__cell--wide, .bento__cell--medium { grid-column: span 2; }
+      .bento__cell--narrow { grid-column: span 1; }
+    }
+
+    .bento__icon {
+      font-size: 28px; color: var(--text-3);
+      margin-bottom: 20px; position: relative; z-index: 1;
+      transition: color 280ms var(--ease);
+    }
+    .bento__name {
+      font-family: var(--f-head); font-size: 18px; font-weight: 600;
+      letter-spacing: -0.02em; color: var(--text);
+      position: relative; z-index: 1;
+      transition: color 280ms var(--ease); margin-bottom: 6px;
+    }
+    .bento__sub {
+      font-size: 13px; font-weight: 300; color: var(--text-3);
+      line-height: 1.5; position: relative; z-index: 1;
+      transition: color 280ms var(--ease);
+    }
+
+    /* Dark accent cell */
+    .bento__cell--dark {
+      background: var(--text); border-radius: 16px;
+    }
+    .bento__cell--dark .bento__name { color: var(--bg); }
+    .bento__cell--dark .bento__sub  { color: rgba(250,248,246,0.5); }
+    .bento__cell--dark .bento__icon { color: rgba(250,248,246,0.3); }
+    .bento__cell--dark::before { background: #2A2A2A; }
+
+    /* ─── BEHIND THE SCENES ─── */
+    .bts {
+      display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px;
+    }
+    @media (max-width: 599px) { .bts { grid-template-columns: 1fr; } }
+    .bts__card {
+      background: var(--surface); border-radius: 16px; overflow: hidden;
+      display: flex; flex-direction: column;
+      transition: transform 250ms var(--ease);
+    }
+    .bts__card:hover { transform: translateY(-3px); }
+    .bts__img-area {
+      aspect-ratio: 4/3; background: var(--surf-2);
+      display: flex; align-items: center; justify-content: center;
+      position: relative;
+    }
+    .bts__img-area img {
+      width: 100%; height: 100%; object-fit: cover; display: none;
+    }
+    .bts__img-area img.has-src { display: block; }
+    .bts__img-label {
+      font-size: 10px; letter-spacing: 0.08em;
+      text-transform: uppercase; color: var(--text-3);
+    }
+    .bts__meta { padding: 20px; }
+    .bts__step {
+      font-size: 11px; font-weight: 500; letter-spacing: 0.10em;
+      text-transform: uppercase; color: var(--accent); margin-bottom: 8px;
+    }
+    .bts__title {
+      font-family: var(--f-head); font-size: 18px; font-weight: 600;
+      letter-spacing: -0.02em; color: var(--text); margin-bottom: 8px;
+    }
+    .bts__desc { font-size: 14px; font-weight: 300; color: var(--text-2); line-height: 1.55; }
+
+    /* ─── BTS INLINE ZOOM ─── */
+    .bts-zoom-ctrl {
+      position: absolute; bottom: 14px; right: 14px;
+      display: flex; gap: 4px; z-index: 5;
+    }
+    .bts-zoom-btn {
+      width: 32px; height: 32px;
+      background: rgba(255,255,255,0.88);
+      backdrop-filter: blur(6px);
+      border: none; border-radius: 8px;
+      font-size: 20px; line-height: 1; cursor: pointer;
+      display: flex; align-items: center; justify-content: center;
+      color: #1A1A1A;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.14);
+      transition: background 100ms ease, transform 80ms ease;
+      user-select: none;
+    }
+    .bts-zoom-btn:hover { background: #fff; }
+    .bts-zoom-btn:active { transform: scale(0.9); }
+    .bts-slide { cursor: grab; }
+    .bts-slide.is-panning { cursor: grabbing; }
+
+    /* ─── WHAT I LEARNED ─── */
+    .learned-card {
+      background: #EEEAE4;
+      border-radius: 20px; padding: 40px; width: 100%;
+    }
+    .learned-card__eyebrow {
+      font-size: 11px; font-weight: 500;
+      letter-spacing: 0.10em; text-transform: uppercase;
+      color: var(--accent); margin-bottom: 20px;
+    }
+    .learned-card__body {
+      font-family: var(--f-head);
+      font-size: 22px; font-weight: 400;
+      line-height: 1.55; letter-spacing: -0.01em; color: var(--text);
+    }
+
+    /* ─── NEXT PROJECT ─── */
+    .next-project {
+      background: var(--text); color: var(--bg);
+      border-radius: 14px; padding: 36px 40px;
+      display: flex; flex-direction: row;
+      justify-content: space-between; align-items: flex-end;
+      gap: 24px; margin-top: 64px; margin-bottom: 80px;
+      transition: background 250ms var(--ease);
+    }
+    .next-project:hover { background: #2A2A2A; }
+    .next-project__lbl {
+      font-size: 11px; letter-spacing: 0.10em; text-transform: uppercase;
+      color: rgba(250,248,246,0.35); margin-bottom: 8px;
+    }
+    .next-project__name { font-family: var(--f-head); font-size: 20px; font-weight: 500; letter-spacing: -0.02em; }
+    .next-project__arrow { font-size: 24px; color: #C85C3A; transition: transform 300ms var(--ease); }
+    .next-project:hover .next-project__arrow { transform: translateX(6px); }
+
+    /* ─── SCROLL REVEAL ─── */
+    .reveal {
+      opacity: 0; transform: translateY(16px);
+      transition: opacity 550ms var(--ease), transform 550ms var(--ease);
+    }
+    .reveal.visible { opacity: 1; transform: translateY(0); }
+    .d1 { transition-delay: 80ms; }
+    .d2 { transition-delay: 160ms; }
+    .d3 { transition-delay: 240ms; }
+
+    /* ─── STATS ─── */
+    .stats {
+      display: grid; grid-template-columns: repeat(3, 1fr);
+      gap: 4px; margin-top: 40px; border-radius: 16px;
+    }
+    @media (max-width: 599px) { .stats { grid-template-columns: 1fr; } }
+    .stat {
+      background: var(--surface); padding: 28px 24px;
+      min-height: 160px; display: flex; flex-direction: column;
+      transition: transform 250ms var(--ease);
+    }
+    .stat:hover { transform: translateY(-3px); }
+    .stat:first-child { border-radius: 16px 0 0 16px; }
+    .stat:last-child  { border-radius: 0 16px 16px 0; }
+    .stat__num {
+      font-family: var(--f-head); font-size: 32px; font-weight: 600;
+      letter-spacing: -0.03em; color: var(--accent);
+      line-height: 1; margin-bottom: 12px;
+    }
+    .stat__text { font-size: 14px; font-weight: 300; color: var(--text); line-height: 1.55; flex: 1; }
+    @media (max-width: 599px) {
+      .stat { border-radius: 16px !important; height: auto; }
+    }
+
+    /* BTS caption step title */
+    .bts-step-title {
+      font-family: var(--f-head); font-size: 17px; font-weight: 500;
+      letter-spacing: -0.01em; color: var(--text); margin-bottom: 6px;
+    }
+
+    /* ─── SECTION DIVIDER ─── */
+    .section-divider { border: none; border-top: 1px solid var(--border); margin: 0; }
+
+    /* ─── BACK LINK ─── */
+    .back-link { display: inline-flex; align-items: center; gap: 4px; font-size: 13px; color: var(--text-2); padding-top: 20px; transition: color 150ms var(--ease), transform 150ms var(--ease); }
+    .back-link:hover { color: var(--accent); transform: translateX(-2px); }
+
+    /* ─── VIDEO TRIO ─── */
+    .video-trio {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 8px;
+      align-items: end;
+    }
+    @media (max-width: 599px) { .video-trio { grid-template-columns: 1fr; } }
+    .video-trio__cell {
+      border-radius: 16px; overflow: hidden;
+      background: var(--surf-2); position: relative;
+      display: flex; align-items: center; justify-content: center;
+    }
+    .video-trio__cell:nth-child(1) { aspect-ratio: 4/5; }
+    .video-trio__cell:nth-child(2) { aspect-ratio: 3/4; }
+    .video-trio__cell:nth-child(3) { aspect-ratio: 4/5; }
+    .video-trio__vid {
+      position: absolute; inset: 0;
+      width: 100%; height: 100%;
+      object-fit: cover; display: block;
+    }
+  </style>
+</head>
+<body>
+
+<!-- NAV -->
+<header class="nav">
+  <div class="nav__inner">
+    <a href="../index.html" class="nav__logo">
+      <span>b</span><span class="nav__logo-rest">atul.design</span><span class="nav__logo-dot">.</span>
+    </a>
+    <nav>
+      <ul class="nav__links">
+        <li><a href="../index.html#work"    class="nav__link">work</a></li>
+        <li><a href="../index.html#about"   class="nav__link">about</a></li>
+        <li><a href="../index.html#contact" class="nav__link">contact</a></li>
+      </ul>
+    </nav>
+  </div>
+</header>
+
+<main>
+
+  <!-- BACK LINK -->
+  <div class="wrap" style="padding-bottom:0">
+    <a href="../index.html#work" class="back-link">← back</a>
+  </div>
+
+  <!-- HERO -->
+  <div class="wrap">
+    <section class="hero">
+      <div class="hero__tags reveal">
+        <span class="hero__tag">b2b healthcare</span>
+        <span class="hero__tag-dot">·</span>
+        <span class="hero__tag">web design</span>
+      </div>
+      <h1 class="hero__title reveal">access healthcare</h1>
+      <p class="hero__sub reveal">a new visual identity for a $1B+ RCM company that looked like a company from 2014.</p>
+    </section>
+  </div>
+
+  <!-- HERO VIDEO CARD -->
+  <div class="wrap" style="padding-bottom: 0;">
+    <div class="hero-card reveal" id="compare-card">
+      <!-- After image – full width, base layer -->
+      <img class="compare__img" src="../new%20ui.png" alt="Redesigned Access Healthcare website" draggable="false" />
+      <!-- Before image – clipped to reveal left portion only -->
+      <div class="compare__before-clip" id="compare-before">
+        <img class="compare__img" src="../slide1.png" alt="Original Access Healthcare website" draggable="false" />
+      </div>
+      <!-- Draggable divider -->
+      <div class="compare__divider" id="compare-divider">
+        <div class="compare__handle"><span>‹</span><span>›</span></div>
+      </div>
+      <!-- Labels -->
+      <span class="compare__label compare__label--left">before</span>
+      <span class="compare__label compare__label--right">after</span>
+    </div>
+  </div>
+
+  <div class="wrap">
+
+    <!-- OVERVIEW -->
+    <div class="row">
+      <div class="row__label"><span class="row__label-text">overview</span></div>
+      <div>
+        <p class="body-text reveal">access healthcare is a $1B+ revenue cycle management company - they handle medical billing, coding, and accounts receivable for hospitals and health systems across the US. 140,000+ employees. fortune 500 clients.</p>
+        <p class="body-text reveal">the website didn't say any of that. it said: generic healthcare company, circa 2014. the visual language failed the business it was supposed to represent - and it failed it at the exact moment decision-makers were evaluating vendors.</p>
+      </div>
+    </div>
+
+    <!-- THE PROBLEM -->
+    <div class="row">
+      <div class="row__label"><span class="row__label-text">the problem</span></div>
+      <div>
+        <div class="problem-statement reveal">
+          <div class="problem-bar"></div>
+          <p class="problem-text">a CFO deciding between RCM partners lands on your website. in 8 seconds, you either feel like a category leader - or a vendor they'll skip.</p>
+        </div>
+        <div class="stats">
+          <div class="stat reveal">
+            <div class="stat__num">8 sec</div>
+            <p class="stat__text">average time a B2B buyer spends on a landing page before deciding to stay or leave.</p>
+          </div>
+          <div class="stat reveal d1">
+            <div class="stat__num">~15</div>
+            <p class="stat__text">direct RCM competitors with more modern digital presence - Optum, R1, Ensemble, nThrive.</p>
+          </div>
+          <div class="stat reveal d2">
+            <div class="stat__num">0</div>
+            <p class="stat__text">clear hierarchy on the current homepage. everything shouts, so nothing lands.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div><!-- /wrap -->
+
+  <!-- WHAT I FOUND – SLIDESHOW -->
+  <div class="wrap">
+    <div class="row row--border-top">
+
+      <!-- Left: sticky label -->
+      <div class="row__label">
+        <span class="row__label-text">what i found</span>
+      </div>
+
+      <!-- Right: controls + track + caption + dots -->
+      <div>
+        <div class="reveal" style="display:flex;justify-content:flex-end;align-items:center;gap:12px;margin-bottom:16px;">
+          <button class="slide-btn" id="prev-btn" onclick="changeSlide(-1)" disabled>←</button>
+          <span class="slide-counter" id="slide-counter">1 / 3</span>
+          <button class="slide-btn" id="next-btn" onclick="changeSlide(1)">→</button>
+        </div>
+
+        <div class="slideshow-track reveal">
+          <div class="slideshow-inner" id="slideshow-inner">
+
+            <!-- SLIDE 1 – Hero / Above the Fold -->
+            <div class="slide" id="slide-0">
+              <img class="slide__img has-src" src="../slide1.png" alt="Access Healthcare homepage" />
+              <div class="annotation" style="top: 7%; left: 52%;">
+                <div class="annotation__pin">1</div>
+                <div class="annotation__tooltip">8 nav links, all the same size – nothing tells you where to go first</div>
+              </div>
+              <div class="annotation" style="top: 36%; left: 14%;">
+                <div class="annotation__pin">2</div>
+                <div class="annotation__tooltip">biggest trust signal buried in a rotating carousel – most visitors never see it</div>
+              </div>
+            </div>
+
+            <!-- SLIDE 2 – Services Section -->
+            <div class="slide" id="slide-1">
+              <img class="slide__img has-src" src="../slide2.png" alt="Access Healthcare services section" />
+              <div class="annotation" style="top: 20%; left: 48%;">
+                <div class="annotation__pin">1</div>
+                <div class="annotation__tooltip">three sentences of context before any scannable info – a busy buyer gives up before finding what's relevant to them</div>
+              </div>
+              <div class="annotation annotation--flip" style="top: 68%; left: 36%;">
+                <div class="annotation__pin">2</div>
+                <div class="annotation__tooltip">four tiles, four random colors – nothing signals what's most important</div>
+              </div>
+            </div>
+
+            <!-- SLIDE 3 – Echo Platform -->
+            <div class="slide" id="slide-2">
+              <img class="slide__img has-src" src="../slide3.png" alt="Echo platform page" />
+              <div class="annotation annotation--light" style="top: 20%; right: 16%;">
+                <div class="annotation__pin">1</div>
+                <div class="annotation__tooltip">stock robot image – says 'we have AI' without showing what it actually does</div>
+              </div>
+              <div class="annotation annotation--flip annotation--light" style="top: 74%; left: 28%;">
+                <div class="annotation__pin">2</div>
+                <div class="annotation__tooltip">two equal-weight CTAs – the page can't commit to a next step</div>
+              </div>
+            </div>
+
+          </div>
+        </div>
+
+      </div>
+
+    </div>
+  </div>
+
+  <div class="wrap">
+
+    <!-- WHO I DESIGNED FOR -->
+    <div class="row">
+      <div class="row__label"><span class="row__label-text" style="white-space: normal;">who buys this</span></div>
+      <div>
+        <div class="persona reveal">
+          <div class="persona__head">
+            <div class="persona__avatar">MK</div>
+            <div>
+              <div class="persona__name">Michael K., VP Revenue Cycle</div>
+              <div class="persona__sub">Health system, 12 hospitals · actively evaluating RCM vendors<br>has 20 minutes between meetings to make a first cut.</div>
+            </div>
+          </div>
+          <div class="persona__divider"></div>
+          <div class="persona__cols">
+            <div>
+              <div class="persona__col-lbl">what he does on the site</div>
+              <ul class="persona__list">
+                <li>skims the hero for a headline that matches his problem</li>
+                <li>scrolls to case studies – wants to see his specialty</li>
+                <li>checks "who we help" – does this company get hospitals?</li>
+                <li>looks for the phone number or demo CTA to forward to his team</li>
+              </ul>
+            </div>
+            <div>
+              <div class="persona__col-lbl">what he needs to feel</div>
+              <ul class="persona__list">
+                <li>this company has done this before, at scale</li>
+                <li>they know what revenue cycle actually means operationally</li>
+                <li>i can trust them with my billing infrastructure</li>
+                <li>they're worth putting in front of my CFO</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div><!-- /wrap -->
+
+  <!-- CORE INSIGHT -->
+  <div class="wrap">
+    <div class="insight-section">
+      <div class="insight reveal">
+        <div class="insight__lbl">the design brief</div>
+        <p class="insight__text">stop looking like every other RCM company. <em>trust is the product</em> – and trust is communicated before a single word is read.</p>
+      </div>
+    </div>
+  </div>
+
+
+  <!-- THE REDESIGN – video -->
+  <div class="wrap" style="padding-bottom: 0;">
+    <div class="row">
+      <div class="row__label"><span class="row__label-text">the redesign</span></div>
+      <div>
+        <p class="body-text reveal">one landing page. one clear message. the redesign applies a bold typographic hierarchy, a differentiated colour system, and a section structure designed around how Michael actually moves through the page.</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="wrap" style="padding-bottom: 48px;">
+    <div class="redesign-video reveal">
+      <iframe
+        src="https://embed.figma.com/proto/WzleXcNC0n9Z1GlJaHArDu/access-healthcare?node-id=194-2088&scaling=scale-down-width&content-scaling=fixed&page-id=0%3A1&embed-host=share"
+        style="position:absolute;inset:0;width:100%;height:100%;border:none;"
+        allowfullscreen
+      ></iframe>
+    </div>
+  </div>
+
+  <!-- BEHIND THE SCENES -->
+  <div class="wrap">
+    <div class="slideshow-section">
+      <div class="slideshow-header reveal">
+        <div><span class="row__label-text">behind the scenes</span></div>
+        <div class="slideshow-controls">
+          <button class="slide-btn" id="bts-prev-btn" onclick="changeBtsSlide(-1)" disabled>←</button>
+          <span class="slide-counter" id="bts-counter">1 / 3</span>
+          <button class="slide-btn" id="bts-next-btn" onclick="changeBtsSlide(1)">→</button>
+        </div>
+      </div>
+
+      <div class="slideshow-track reveal">
+        <div class="slideshow-inner" id="bts-inner">
+
+          <!-- BTS Slide 1 – Brainstorm / Competitive Mapping -->
+          <div class="slide bts-slide" id="bts-0">
+            <img class="slide__img has-src bts-img" src="../competitor.png" alt="Competitive mapping" />
+            <div class="bts-zoom-ctrl">
+              <button class="bts-zoom-btn bts-zoom-out" aria-label="Zoom out">−</button>
+              <button class="bts-zoom-btn bts-zoom-in"  aria-label="Zoom in">+</button>
+            </div>
+          </div>
+
+          <!-- BTS Slide 2 – Information Architecture -->
+          <div class="slide bts-slide" id="bts-1">
+            <img class="slide__img has-src bts-img" src="../IA - Access Healthcare.png" alt="Information architecture" />
+            <div class="bts-zoom-ctrl">
+              <button class="bts-zoom-btn bts-zoom-out" aria-label="Zoom out">−</button>
+              <button class="bts-zoom-btn bts-zoom-in"  aria-label="Zoom in">+</button>
+            </div>
+          </div>
+
+          <!-- BTS Slide 3 – Design System -->
+          <div class="slide bts-slide" id="bts-2">
+            <img class="slide__img has-src bts-img" src="../design system.png" alt="Design system" />
+            <div class="bts-zoom-ctrl">
+              <button class="bts-zoom-btn bts-zoom-out" aria-label="Zoom out">−</button>
+              <button class="bts-zoom-btn bts-zoom-in"  aria-label="Zoom in">+</button>
+            </div>
+          </div>
+
+        </div>
+      </div>
+
+      <!-- Caption row – all text lives here, nothing inside the slide -->
+      <div class="slide-caption reveal">
+        <div class="slide-caption__label" id="bts-label">step 01</div>
+        <div id="bts-caption">
+          <div class="bts-step-title">competitive mapping</div>
+          <div class="slide-caption__text">finding out what does every RCM website have in common? </div>
+        </div>
+      </div>
+      <div class="slide-dots reveal" id="bts-dots"></div>
+    </div>
+  </div>
+
+  <div class="wrap">
+
+    <!-- WHAT I LEARNED -->
+    <div class="row">
+      <div class="row__label"><span class="row__label-text">what i learned</span></div>
+      <div>
+        <div class="learned-card reveal">
+          <div class="learned-card__eyebrow">designing for B2B buyers</div>
+          <p class="learned-card__body">in consumer design, you design for delight. in B2B, you design for confidence. every visual choice is either adding to a buyer's certainty that this company can handle their complexity – or quietly subtracting from it. that constraint sharpened every decision on this project.</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- NEXT PROJECT -->
+    <a href="signals.html" class="next-project reveal">
+      <div>
+        <div class="next-project__lbl">next project</div>
+        <div class="next-project__name">signals - a college guide </div>
+      </div>
+      <div class="next-project__arrow">→</div>
+    </a>
+
+  </div>
+
+</main>
+
+
+<script>
+  /* ─── SCROLL REVEAL ─── */
+  var obs = new IntersectionObserver(function(entries){
+    entries.forEach(function(e){
+      if(e.isIntersecting){ e.target.classList.add('visible'); obs.unobserve(e.target); }
+    });
+  }, { threshold: 0.08, rootMargin: '0px 0px -20px 0px' });
+  document.querySelectorAll('.reveal').forEach(function(el){ obs.observe(el); });
+
+  /* ─── WHAT I FOUND SLIDESHOW ─── */
+  var slideCount = 3;
+  var current = 0;
+
+  function goToSlide(n) {
+    current = n;
+    document.getElementById('slideshow-inner').style.transform = 'translateX(-' + (current * 100) + '%)';
+    document.getElementById('slide-counter').textContent = (current + 1) + ' / ' + slideCount;
+    document.getElementById('prev-btn').disabled = current === 0;
+    document.getElementById('next-btn').disabled = current === slideCount - 1;
+  }
+
+  function changeSlide(dir) {
+    var next = current + dir;
+    if (next < 0 || next >= slideCount) return;
+    goToSlide(next);
+  }
+
+  /* ─── BEHIND THE SCENES SLIDESHOW ─── */
+  var btsSlides = [
+    {
+      label: 'step 01',
+      title: 'competitive mapping',
+      caption: 'what does every RCM website have in common? where is the visual white space in the category?'
+    },
+    {
+      label: 'step 02',
+      title: 'information architecture',
+      caption: 'reordering the page around the buyer\'s mental model – not the company org chart.'
+    },
+    {
+      label: 'step 03',
+      title: 'visual design',
+      caption: 'applying the new system across every component – type, colour, spacing, interaction.'
+    }
+  ];
+
+  var btsCurrent = 0;
+
+  function buildBtsDots() {
+    var container = document.getElementById('bts-dots');
+    btsSlides.forEach(function(_, i) {
+      var d = document.createElement('div');
+      d.className = 'slide-dot' + (i === 0 ? ' active' : '');
+      d.onclick = function() { goToBtsSlide(i); };
+      container.appendChild(d);
+    });
+  }
+
+  function goToBtsSlide(n) {
+    btsCurrent = n;
+    document.getElementById('bts-inner').style.transform = 'translateX(-' + (n * 100) + '%)';
+    document.getElementById('bts-counter').textContent = (n + 1) + ' / ' + btsSlides.length;
+    document.getElementById('bts-label').textContent = btsSlides[n].label;
+    document.getElementById('bts-caption').innerHTML =
+      '<div class="bts-step-title">' + btsSlides[n].title + '</div>' +
+      '<div class="slide-caption__text">' + btsSlides[n].caption + '</div>';
+    document.getElementById('bts-prev-btn').disabled = n === 0;
+    document.getElementById('bts-next-btn').disabled = n === btsSlides.length - 1;
+    document.querySelectorAll('#bts-dots .slide-dot').forEach(function(d, i) {
+      d.classList.toggle('active', i === n);
+    });
+  }
+
+  function changeBtsSlide(dir) {
+    var next = btsCurrent + dir;
+    if (next < 0 || next >= btsSlides.length) return;
+    goToBtsSlide(next);
+  }
+
+  buildBtsDots();
+
+  /* ─── BEFORE / AFTER COMPARISON SLIDER ─── */
+  (function() {
+    var card        = document.getElementById('compare-card');
+    var before      = document.getElementById('compare-before');
+    var divider     = document.getElementById('compare-divider');
+    var labelBefore = card.querySelector('.compare__label--left');
+    var labelAfter  = card.querySelector('.compare__label--right');
+    if (!card) return;
+    var dragging = false;
+
+    function update(pct, transition) {
+      pct = Math.max(0, Math.min(100, pct));
+      var t = transition || '';
+      divider.style.transition  = t ? 'left ' + t : '';
+      before.style.transition   = t ? 'clip-path ' + t : '';
+      divider.style.left        = pct + '%';
+      before.style.clipPath     = 'inset(0 ' + (100 - pct) + '% 0 0)';
+      labelBefore.style.opacity = pct > 15  ? '1' : '0';
+      labelAfter.style.opacity  = pct < 85  ? '1' : '0';
+    }
+
+    function pctFromEvent(e) {
+      var rect = card.getBoundingClientRect();
+      var x = e.touches ? e.touches[0].clientX : e.clientX;
+      return ((x - rect.left) / rect.width) * 100;
+    }
+
+    divider.addEventListener('mousedown',  function(e) { dragging = true; e.preventDefault(); });
+    divider.addEventListener('touchstart', function(e) { dragging = true; e.preventDefault(); }, { passive: false });
+    document.addEventListener('mouseup',   function() { dragging = false; });
+    document.addEventListener('touchend',  function() { dragging = false; });
+    document.addEventListener('mousemove', function(e) { if (dragging) update(pctFromEvent(e)); });
+    document.addEventListener('touchmove', function(e) { if (dragging) update(pctFromEvent(e)); }, { passive: true });
+
+    /* ─── BTS INLINE ZOOM ─── */
+    (function() {
+      var scale = 1, tx = 0, ty = 0;
+      var panning = false, startX, startY, startTx, startTy;
+      var MAX = 6;
+
+      function getImg()   { return document.querySelector('#bts-' + btsCurrent + ' .bts-img'); }
+      function getSlide() { return document.getElementById('bts-' + btsCurrent); }
+
+      function constrain() {
+        var slide = getSlide(), img = getImg();
+        if (!slide || !img) return;
+        var sw = slide.clientWidth, sh = slide.clientHeight;
+        /* full rendered height: image is width:100%, height:auto */
+        var rh = img.naturalWidth ? (img.naturalHeight / img.naturalWidth * sw) : sh;
+        /* horizontal: symmetric around centre, only zooming opens range */
+        var maxX = sw * (scale - 1) / 2;
+        tx = Math.max(-maxX, Math.min(maxX, tx));
+        /* vertical: top is anchor. pan downward (negative ty) to reveal the bottom */
+        var minY = Math.min(0, sh - rh * scale);
+        ty = Math.max(minY, Math.min(0, ty));
+      }
+
+      function apply(animated) {
+        var img = getImg();
+        if (!img) return;
+        img.style.transition = animated ? 'transform 200ms cubic-bezier(0.16,1,0.3,1)' : 'none';
+        img.style.transform  = 'translate(' + tx + 'px,' + ty + 'px) scale(' + scale + ')';
+      }
+
+      function reset(animated) {
+        scale = 1; tx = 0; ty = 0;
+        apply(animated !== false);
+        var slide = getSlide();
+        if (slide) slide.classList.remove('is-panning');
+      }
+
+      /* zoom buttons */
+      document.querySelectorAll('.bts-zoom-in').forEach(function(btn) {
+        btn.addEventListener('click', function(e) {
+          e.stopPropagation();
+          scale = Math.min(MAX, scale * 1.6);
+          constrain(); apply(true);
+        });
+      });
+
+      document.querySelectorAll('.bts-zoom-out').forEach(function(btn) {
+        btn.addEventListener('click', function(e) {
+          e.stopPropagation();
+          scale = Math.max(1, scale / 1.6);
+          if (scale < 1.01) { reset(true); return; }
+          constrain(); apply(true);
+        });
+      });
+
+      /* drag to pan — always active so tall images can be explored at any zoom level */
+      [0, 1, 2].forEach(function(i) {
+        var el = document.getElementById('bts-' + i);
+        el.addEventListener('mousedown', function(e) {
+          if (e.button !== 0) return;
+          if (e.target.classList.contains('bts-zoom-btn')) return;
+          panning = true;
+          startX = e.clientX; startY = e.clientY;
+          startTx = tx; startTy = ty;
+          el.classList.add('is-panning');
+          e.preventDefault();
+        });
+      });
+
+      document.addEventListener('mousemove', function(e) {
+        if (!panning) return;
+        tx = startTx + (e.clientX - startX);
+        ty = startTy + (e.clientY - startY);
+        constrain(); apply(false);
+      });
+
+      document.addEventListener('mouseup', function() {
+        if (!panning) return;
+        panning = false;
+        var slide = getSlide();
+        if (slide) slide.classList.remove('is-panning');
+      });
+
+      /* reset on slide change */
+      var _orig = goToBtsSlide;
+      goToBtsSlide = function(n) { reset(false); _orig(n); };
+
+      /* esc resets */
+      document.addEventListener('keydown', function(e) {
+        if (e.key === 'Escape') reset(true);
+      });
+    })();
+
+    /* Intro sweep to hint interactivity: 50 → 80 → 20 → 50 */
+    var ease = '680ms cubic-bezier(0.16,1,0.3,1)';
+    setTimeout(function() { update(80, ease);
+      setTimeout(function() { update(20, ease);
+        setTimeout(function() { update(50, ease); }, 780);
+      }, 780);
+    }, 900);
+  })();
+</script>
+
+</body>
+</html>

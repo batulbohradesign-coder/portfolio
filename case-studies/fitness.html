@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>momentum — work</title>
+  <title>fitness companion - work</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,300;12..96,400;12..96,500;12..96,600&family=Figtree:ital,wght@0,300;0,400;0,500;1,300&display=swap" rel="stylesheet">
@@ -76,8 +76,7 @@
     /* ─── HERO VISUAL — 780×520 video ─── */
     .hero-visual{ width:100%; max-width:var(--max); margin:0 auto; padding-left:var(--px); padding-right:var(--px); padding-bottom:0; }
     .hero-video-wrap{
-      width:780px; height:520px;
-      max-width:100%;
+      width:100%; aspect-ratio:3/2;
       border-radius:20px; overflow:hidden;
       margin:0;
       box-shadow:0 20px 48px rgba(0,0,0,.12);
@@ -85,9 +84,6 @@
     .hero-video-wrap video{
       width:100%; height:100%;
       object-fit:cover; display:block;
-    }
-    @media(max-width:860px){
-      .hero-video-wrap{ width:100%; height:auto; aspect-ratio:3/2; }
     }
 
     /* ─── TWO-COL ROWS ─── */
@@ -137,7 +133,7 @@
     /* PRODUCT FLOWS — alternating, offset to align with right column */
     .flows-section{ margin-left:var(--col-offset); padding-bottom:48px; }
     .flow-row{ display:grid; grid-template-columns:1fr 1fr; gap:32px; align-items:end; padding:48px 0; }
-    @media(max-width:599px){ .flow-row{grid-template-columns:1fr;gap:24px;} }
+    @media(max-width:599px){ .flow-row{grid-template-columns:1fr;gap:16px;padding:28px 0;} }
 
     .flow-row--phone-left  .flow-row__phone   { order:1; }
     .flow-row--phone-left  .flow-row__content { order:2; }
@@ -159,6 +155,9 @@
       box-shadow:0 16px 40px rgba(17,17,17,.15);
       aspect-ratio:9/19.5;
       position:relative;
+    }
+    @media(max-width:599px){
+      .flow-phone-frame{ width:62%; }
     }
     .flow-phone-frame--dark{ background:#111; border-color:rgba(255,255,255,.08); }
     .flow-phone-frame img{
@@ -257,7 +256,7 @@
 
   <!-- BACK LINK -->
   <div class="wrap" style="padding-bottom:0">
-    <a href="../index.html#work" class="back-link">← back to work</a>
+    <a href="../index.html#work" class="back-link">← back </a>
   </div>
 
   <!-- HERO -->
