@@ -87,11 +87,11 @@
 
     /* MOBILE HERO */
     @media(max-width:767px){
-      .hero{grid-template-columns:1fr;align-items:flex-start;padding-top:180px;padding-bottom:48px;gap:16px;min-height:unset;}
-      .hero__visual{display:flex!important;justify-content:right;order:-1;opacity:1;animation:none;}
-      .giraffe-wrap{width: 240px;}
-      .hero__title{font-size:clamp(56px,14vw,84px);}
-      .hero__sub{font-size:17px;max-width:100%;}
+      .hero{grid-template-columns:1fr;align-content:end;min-height:calc(100vh - 64px);padding-top:40px;padding-bottom:48px;gap:24px;}
+      .hero__visual{display:flex!important;justify-content:flex-start;order:-1;opacity:1;animation:none;margin-left:calc(-1 * var(--px));}
+      .giraffe-wrap{width:180px;height:150px;overflow:hidden;}
+      .hero__title{font-size:clamp(64px,18vw,84px);}
+      .hero__sub{font-size:20px;max-width:100%;}
     }
 
     /* SECTION */
@@ -543,7 +543,7 @@
       <a href="mailto:batulbohra.design@gmail.com" class="footer__link">batulbohra.design@gmail.com</a>
       <div class="footer__links-r">
         <a href="https://www.linkedin.com/in/batul-bohra-0336b3179" class="footer__link" target="_blank" rel="noopener">linkedin</a>
-        <a href="#" class="footer__link">resume</a>
+        <a href="Batul's Resume.pdf" class="footer__link" target="_blank" rel="noopener">resume</a>
       </div>
     </div>
   </div>
