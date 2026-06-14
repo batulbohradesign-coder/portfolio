@@ -434,7 +434,7 @@
           onclick="openOverlay('interactive/polaroid.html')"
           onkeydown="if(event.key==='Enter')openOverlay('interactive/polaroid.html')">
           <span class="tile__hint">tap to smile</span>
-          <img src="assets/images/polaroid_thumbnail.avif" alt="Polaroid camera">
+          <img src="assets/images/polaroid_thumbnail.png" alt="Polaroid camera">
         </article>
 
         <article class="tile tile--alt tile--content">
@@ -571,7 +571,7 @@
       requestAnimationFrame(draw);
     }
     img.onload=draw; img.onerror=function(){console.warn('giraffe-clean.png not found');};
-    img.src='assets/images/giraffe-clean.avif';
+    img.src='assets/images/giraffe-clean.png';
     function track(mx,my){
       EYES.forEach(function(e,i){
         var cx=e.fx*S,cy=e.fy*S,max=(e.fr*S-e.pr*S)*.58;
@@ -606,7 +606,7 @@
       });
       requestAnimationFrame(draw);
     }
-    img.src='assets/images/giraffe-clean.avif'; draw();
+    img.src='assets/images/giraffe-clean.png'; draw();
     var hero=document.querySelector('.hero'), footer=document.querySelector('.footer');
     window.addEventListener('scroll',function(){
       if(!hero||!footer) return;
