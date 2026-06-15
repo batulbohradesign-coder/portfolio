@@ -466,6 +466,53 @@
     .cs-footer__link:hover { color: #FAF8F6; transform: translateX(4px); }
     .cs-footer__links-r { display: flex; gap: 32px; }
     @media(max-width:600px) { .cs-footer__inner { flex-direction: column; align-items: flex-start; gap: 12px; } .cs-footer__links-r { flex-direction: column; gap: 12px; } }
+
+    /* ─── VIDEO CONTROLS ─── */
+    .vid-wrap { position: relative; }
+    .vid-wrap video, .flow__screen video { cursor: pointer; }
+    .vid-controls {
+      position: absolute; bottom: 10px; left: 10px; right: 10px;
+      display: flex; justify-content: space-between; align-items: center; z-index: 5;
+    }
+    .vid-btn {
+      width: 34px; height: 34px; border-radius: 50%;
+      background: rgba(0,0,0,.52); backdrop-filter: blur(6px); -webkit-backdrop-filter: blur(6px);
+      border: none; cursor: pointer;
+      display: flex; align-items: center; justify-content: center;
+      color: white; transition: background 150ms; flex-shrink: 0;
+    }
+    .vid-btn:hover { background: rgba(0,0,0,.78); }
+    .vid-btn svg { display: block; }
+    /* ─── VIDEO MODAL ─── */
+    .vid-modal {
+      position: fixed; inset: 0; z-index: 2000;
+      display: flex; align-items: center; justify-content: center; padding: 24px;
+      opacity: 0; pointer-events: none; transition: opacity 300ms ease;
+    }
+    .vid-modal.open { opacity: 1; pointer-events: all; }
+    .vid-modal__backdrop {
+      position: absolute; inset: 0;
+      background: rgba(0,0,0,.88); backdrop-filter: blur(14px); -webkit-backdrop-filter: blur(14px);
+      cursor: pointer;
+    }
+    .vid-modal__inner {
+      position: relative; border-radius: 16px; overflow: hidden;
+      box-shadow: 0 40px 100px rgba(0,0,0,.5);
+      transform: scale(.95); transition: transform 300ms ease;
+      background: #000;
+    }
+    .vid-modal__inner.is-flow { padding: 20px 20px 56px; }
+    .vid-modal.open .vid-modal__inner { transform: scale(1); }
+    .vid-modal__video {
+      display: block; width: auto; height: auto; cursor: pointer;
+      max-width: min(960px, 84vw); max-height: 85vh;
+    }
+    .vid-modal__inner.is-flow .vid-modal__video { max-height: calc(85vh - 76px); }
+    .vid-modal__bar {
+      position: absolute; bottom: 0; left: 0; right: 0;
+      display: flex; justify-content: space-between; align-items: center;
+      padding: 10px 12px; line-height: 1;
+    }
   </style>
 </head>
 <body>
@@ -512,10 +559,14 @@
 
   <!-- HERO VISUAL — 780×520 video -->
   <div class="hero-visual reveal" style="transition-delay:120ms">
-    <div class="hero-video-wrap">
-      <video autoplay muted loop playsinline>
+    <div class="hero-video-wrap vid-wrap">
+      <video autoplay muted loop playsinline preload="auto">
         <source src="../signals%20intro.mp4" type="video/mp4">
       </video>
+      <div class="vid-controls">
+        <button class="vid-btn vid-pause-btn" aria-label="Pause"></button>
+        <button class="vid-btn vid-fs-btn" aria-label="Expand to fullscreen"></button>
+      </div>
     </div>
   </div>
 
@@ -648,7 +699,10 @@
           onmouseleave="resetFlows()">
           <div class="flow__card" style="background:#000; padding:14px;">
             <div class="flow__screen" style="border-radius:10px; overflow:hidden;">
-              <video class="flow__video has-src" preload="none" src="../onboarding flow.mov" loop muted playsinline style="object-fit:contain;"></video>
+              <video class="flow__video has-src" preload="auto" src="../onboarding flow.mov" loop muted playsinline style="object-fit:contain;"></video>
+              <div class="vid-controls" style="left:auto">
+                <button class="vid-btn vid-fs-btn" aria-label="Expand to fullscreen"></button>
+              </div>
             </div>
           </div>
           <div class="flow__name">onboarding</div>
@@ -660,7 +714,10 @@
           onmouseleave="resetFlows()">
           <div class="flow__card" style="background:#000; padding:14px;">
             <div class="flow__screen" style="border-radius:10px; overflow:hidden;">
-              <video class="flow__video has-src" preload="none" src="../daily move.mov" loop muted playsinline style="object-fit:contain;"></video>
+              <video class="flow__video has-src" preload="auto" src="../daily move.mov" loop muted playsinline style="object-fit:contain;"></video>
+              <div class="vid-controls" style="left:auto">
+                <button class="vid-btn vid-fs-btn" aria-label="Expand to fullscreen"></button>
+              </div>
             </div>
           </div>
           <div class="flow__name">daily move</div>
@@ -672,7 +729,10 @@
           onmouseleave="resetFlows()">
           <div class="flow__card" style="background:#000; padding:14px;">
             <div class="flow__screen" style="border-radius:10px; overflow:hidden;">
-              <video class="flow__video has-src" preload="none" src="../signal.mov" loop muted playsinline style="object-fit:contain;"></video>
+              <video class="flow__video has-src" preload="auto" src="../signal.mov" loop muted playsinline style="object-fit:contain;"></video>
+              <div class="vid-controls" style="left:auto">
+                <button class="vid-btn vid-fs-btn" aria-label="Expand to fullscreen"></button>
+              </div>
             </div>
           </div>
           <div class="flow__name">signal wall</div>
@@ -740,10 +800,10 @@
     </div>
 
     <!-- NEXT PROJECT -->
-    <a href="fitness.html" class="next-project reveal">
+    <a href="access-healthcare.html" class="next-project reveal">
       <div class="next-project__lbl">next project</div>
       <div class="next-project__row">
-        <div class="next-project__name">momentum - a fitness companion</div>
+        <div class="next-project__name">access healthcare – website redesign</div>
         <div class="next-project__arrow">→</div>
       </div>
     </a>
@@ -779,14 +839,14 @@
   }, { threshold: 0.08, rootMargin: '0px 0px -20px 0px' });
   document.querySelectorAll('.reveal').forEach(function(el){ obs.observe(el); });
 
-  /* ── FLOWS: hover on desktop, auto-play on mobile ── */
+  /* ── FLOWS: play on hover (desktop), play on scroll (mobile) ── */
   function focusFlow(flowEl) {
     if(window.innerWidth < 600) return;
     var container = flowEl.closest('.flows');
     container.classList.add('has-hover');
     flowEl.classList.add('is-focused');
     var vid = flowEl.querySelector('.flow__video');
-    if(vid && vid.getAttribute('src')) vid.play();
+    if(vid) vid.play().catch(function(){});
   }
 
   function resetFlows() {
@@ -803,8 +863,7 @@
   if(window.innerWidth < 600) {
     var mobileVidObs = new IntersectionObserver(function(entries){
       entries.forEach(function(e){
-        if(!e.target.getAttribute('src')) return;
-        if(e.isIntersecting) e.target.play();
+        if(e.isIntersecting) e.target.play().catch(function(){});
         else { e.target.pause(); e.target.currentTime = 0; }
       });
     }, { threshold: 0.5 });
@@ -812,6 +871,92 @@
       mobileVidObs.observe(vid);
     });
   }
+</script>
+
+<!-- VIDEO FULLSCREEN MODAL -->
+<div class="vid-modal" id="vidModal">
+  <div class="vid-modal__backdrop" id="vidModalBg"></div>
+  <div class="vid-modal__inner">
+    <video class="vid-modal__video" id="vidModalVid" loop muted playsinline></video>
+    <div class="vid-modal__bar">
+      <button class="vid-btn" id="vidModalPause" aria-label="Pause"></button>
+      <button class="vid-btn" id="vidModalMin" aria-label="Minimise"></button>
+    </div>
+  </div>
+</div>
+
+<script>
+(function(){
+  var PAUSE='<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" fill="currentColor" width="14" height="14"><rect x="3" y="2" width="3" height="12" rx="1"/><rect x="10" y="2" width="3" height="12" rx="1"/></svg>';
+  var PLAY='<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" fill="currentColor" width="14" height="14"><path d="M4 2.5l9 5.5-9 5.5z"/></svg>';
+  var EXPND='<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" fill="currentColor" width="14" height="14"><path d="M1 1h4v1.5H2.5V4H1V1zm10 0h4v3h-1.5V2.5H11V1zM1 12h1.5v1.5H4V15H1v-3zm11 1.5H13.5V12H15v3h-3v-1.5z"/></svg>';
+  var MINI='<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" fill="currentColor" width="14" height="14"><path d="M5.5 1H4v3H1v1.5h4.5V1zm5 0h-1.5v4.5H14V4h-3V1zM1 10.5V12h3v3h1.5v-4.5H1zm9 4.5h1.5v-3h3v-1.5h-4.5V15z"/></svg>';
+
+  var modal=document.getElementById('vidModal');
+  var modalVid=document.getElementById('vidModalVid');
+  var modalPause=document.getElementById('vidModalPause');
+  var modalMin=document.getElementById('vidModalMin');
+  document.getElementById('vidModalBg').addEventListener('click', closeModal);
+  modalMin.innerHTML=MINI;
+
+  var origin=null;
+
+  var modalInner=document.querySelector('.vid-modal__inner');
+  function openModal(vid){
+    origin=vid;
+    modalInner.classList.toggle('is-flow', !!vid.closest('.flow__screen'));
+    var src=vid.currentSrc||(vid.querySelector('source')&&vid.querySelector('source').src)||vid.src||'';
+    modalVid.src=src;
+    modalVid.currentTime=vid.currentTime||0;
+    modalVid.play().catch(function(){});
+    vid.pause();
+    modal.classList.add('open');
+    document.body.style.overflow='hidden';
+    modalPause.innerHTML=PAUSE;
+  }
+
+  function closeModal(){
+    if(origin){ try{origin.currentTime=modalVid.currentTime;}catch(e){} origin.play().catch(function(){}); origin=null; }
+    modalVid.pause(); modalVid.src='';
+    modal.classList.remove('open');
+    document.body.style.overflow='';
+  }
+
+  modalMin.addEventListener('click', closeModal);
+  document.addEventListener('keydown',function(e){ if(e.key==='Escape'&&modal.classList.contains('open')) closeModal(); });
+
+  modalPause.addEventListener('click',function(){
+    if(modalVid.paused){ modalVid.play().catch(function(){}); modalPause.innerHTML=PAUSE; }
+    else{ modalVid.pause(); modalPause.innerHTML=PLAY; }
+  });
+  modalVid.addEventListener('pause',function(){ modalPause.innerHTML=PLAY; });
+  modalVid.addEventListener('play', function(){ modalPause.innerHTML=PAUSE; });
+  modalVid.addEventListener('click',function(){
+    if(modalVid.paused) modalVid.play().catch(function(){}); else modalVid.pause();
+  });
+
+  document.querySelectorAll('.vid-pause-btn').forEach(function(btn){
+    btn.innerHTML=PAUSE;
+    var container=btn.closest('.vid-wrap,.flow__screen');
+    var vid=container.querySelector('video');
+    btn.addEventListener('click',function(e){
+      e.stopPropagation();
+      if(vid.paused) vid.play().catch(function(){}); else vid.pause();
+    });
+    vid.addEventListener('pause',function(){ btn.innerHTML=PLAY; });
+    vid.addEventListener('play', function(){ btn.innerHTML=PAUSE; });
+    vid.addEventListener('click',function(){ if(vid.paused) vid.play().catch(function(){}); else vid.pause(); });
+  });
+
+  document.querySelectorAll('.vid-fs-btn').forEach(function(btn){
+    btn.innerHTML=EXPND;
+    btn.addEventListener('click',function(e){
+      e.stopPropagation();
+      var container=btn.closest('.vid-wrap,.flow__screen');
+      openModal(container.querySelector('video'));
+    });
+  });
+})();
 </script>
 
 </body>
