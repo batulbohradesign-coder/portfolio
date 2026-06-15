@@ -80,13 +80,10 @@
       border-radius:20px; overflow:hidden;
       margin:0;
       box-shadow:0 20px 48px rgba(0,0,0,.12);
-      position:relative;
     }
-    .hero-video-wrap iframe{
+    .hero-video-wrap video{
       width:100%; height:100%;
-      display:block;
-      position:absolute; top:0; left:0;
-      border:0;
+      object-fit:cover; display:block;
     }
 
     /* ─── TWO-COL ROWS ─── */
@@ -279,10 +276,9 @@
   <!-- HERO VISUAL — 780×520 video -->
   <div class="hero-visual reveal" style="transition-delay:120ms">
     <div class="hero-video-wrap">
-      <iframe
-        src="https://player.vimeo.com/video/1201443576?autoplay=1&muted=1&loop=1&background=1"
-        allow="autoplay; fullscreen"
-        allowfullscreen></iframe>
+      <video autoplay muted loop playsinline>
+        <source src="../hero%20ui.mp4" type="video/mp4">
+      </video>
     </div>
   </div>
 
