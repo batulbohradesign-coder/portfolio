@@ -121,10 +121,14 @@
       width:100%;
       border-radius:20px; overflow:hidden;
       box-shadow:0 20px 48px rgba(0,0,0,.12);
+      position:relative;
+      aspect-ratio:16/9;
     }
-    .hero-video-wrap video{
-      width:100%; height:auto;
+    .hero-video-wrap iframe{
+      width:100%; height:100%;
       display:block;
+      position:absolute; top:0; left:0;
+      border:0;
     }
 
     /* ─── APP UI CARD ─── */
@@ -340,9 +344,8 @@
     }
     .flow__video {
       position: absolute; inset: 0; width: 100%; height: 100%;
-      object-fit: cover; display: none;
+      border: 0; display: block;
     }
-    .flow__video.has-src { display: block; }
     .flow__placeholder { font-size: 11px; color: var(--text-3); position: relative; z-index: 1; }
     .flow__name {
       font-family: var(--f-head); font-size: 22px; font-weight: 600;
@@ -513,9 +516,10 @@
   <!-- HERO VISUAL — 780×520 video -->
   <div class="hero-visual reveal" style="transition-delay:120ms">
     <div class="hero-video-wrap">
-      <video autoplay muted loop playsinline>
-        <source src="../signals%20intro.mp4" type="video/mp4">
-      </video>
+      <iframe
+        src="https://player.vimeo.com/video/1201443329?autoplay=1&muted=1&loop=1&background=1"
+        allow="autoplay; fullscreen"
+        allowfullscreen></iframe>
     </div>
   </div>
 
@@ -648,7 +652,7 @@
           onmouseleave="resetFlows()">
           <div class="flow__card" style="background:#000; padding:14px;">
             <div class="flow__screen" style="border-radius:10px; overflow:hidden;">
-              <video class="flow__video has-src" preload="none" src="../onboarding flow.mov" loop muted playsinline style="object-fit:contain;"></video>
+              <iframe id="vflow-1" class="flow__video" src="https://player.vimeo.com/video/1201444949?muted=1&loop=1&controls=0&autopause=0" allow="autoplay"></iframe>
             </div>
           </div>
           <div class="flow__name">onboarding</div>
@@ -660,7 +664,7 @@
           onmouseleave="resetFlows()">
           <div class="flow__card" style="background:#000; padding:14px;">
             <div class="flow__screen" style="border-radius:10px; overflow:hidden;">
-              <video class="flow__video has-src" preload="none" src="../daily move.mov" loop muted playsinline style="object-fit:contain;"></video>
+              <iframe id="vflow-2" class="flow__video" src="https://player.vimeo.com/video/1201444950?muted=1&loop=1&controls=0&autopause=0" allow="autoplay"></iframe>
             </div>
           </div>
           <div class="flow__name">daily move</div>
@@ -672,7 +676,7 @@
           onmouseleave="resetFlows()">
           <div class="flow__card" style="background:#000; padding:14px;">
             <div class="flow__screen" style="border-radius:10px; overflow:hidden;">
-              <video class="flow__video has-src" preload="none" src="../signal.mov" loop muted playsinline style="object-fit:contain;"></video>
+              <iframe id="vflow-3" class="flow__video" src="https://player.vimeo.com/video/1201444953?muted=1&loop=1&controls=0&autopause=0" allow="autoplay"></iframe>
             </div>
           </div>
           <div class="flow__name">signal wall</div>
@@ -754,7 +758,7 @@
 
 <footer class="cs-footer">
   <div class="cs-footer__inner">
-    <a href="mailto:batulbohra.design@gmail.com" class="cs-footer__link">batulbohra.design@gmail.com</a>
+    <a href="https://mail.google.com/mail/?view=cm&to=batulbohra.design@gmail.com" target="_blank" rel="noopener" class="cs-footer__link">batulbohra.design@gmail.com</a>
     <div class="cs-footer__links-r">
       <a href="https://www.linkedin.com/in/batul-bohra-0336b3179" class="cs-footer__link" target="_blank" rel="noopener">linkedin</a>
       <a href="https://read.cv/YOUR_USERNAME" class="cs-footer__link" target="_blank" rel="noopener">resume</a>
@@ -762,6 +766,7 @@
   </div>
 </footer>
 
+<script src="https://player.vimeo.com/api/player.js"></script>
 <script>
   (function(){
     var btn=document.getElementById('hamburger'), links=document.getElementById('navLinks');
@@ -780,13 +785,19 @@
   document.querySelectorAll('.reveal').forEach(function(el){ obs.observe(el); });
 
   /* ── FLOWS: hover on desktop, auto-play on mobile ── */
+  var _vPlayers = {};
+  function _vp(el) {
+    if (!_vPlayers[el.id]) _vPlayers[el.id] = new Vimeo.Player(el);
+    return _vPlayers[el.id];
+  }
+
   function focusFlow(flowEl) {
     if(window.innerWidth < 600) return;
     var container = flowEl.closest('.flows');
     container.classList.add('has-hover');
     flowEl.classList.add('is-focused');
     var vid = flowEl.querySelector('.flow__video');
-    if(vid && vid.getAttribute('src')) vid.play();
+    if(vid) _vp(vid).play();
   }
 
   function resetFlows() {
@@ -795,7 +806,7 @@
     document.querySelectorAll('.flow').forEach(function(f){
       f.classList.remove('is-focused');
       var vid = f.querySelector('.flow__video');
-      if(vid) { vid.pause(); vid.currentTime = 0; }
+      if(vid) { _vp(vid).pause(); _vp(vid).setCurrentTime(0); }
     });
   }
 
@@ -803,9 +814,8 @@
   if(window.innerWidth < 600) {
     var mobileVidObs = new IntersectionObserver(function(entries){
       entries.forEach(function(e){
-        if(!e.target.getAttribute('src')) return;
-        if(e.isIntersecting) e.target.play();
-        else { e.target.pause(); e.target.currentTime = 0; }
+        if(e.isIntersecting) _vp(e.target).play();
+        else { _vp(e.target).pause(); _vp(e.target).setCurrentTime(0); }
       });
     }, { threshold: 0.5 });
     document.querySelectorAll('.flow__video').forEach(function(vid){

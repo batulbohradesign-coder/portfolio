@@ -274,7 +274,6 @@
       position: absolute; inset: 0; display: none;
       border-radius: 20px;
       transform-origin: center center;
-      will-change: transform;
     }
     /* BTS images render at full natural height so panning reveals the whole image */
     .slide__img.bts-img {
@@ -790,6 +789,14 @@
       width: 100%; height: 100%;
       object-fit: cover; display: block;
     }
+  </style>
+  <style>
+    .cs-footer { background: #0D0D0D; color: #FAF8F6; padding: 48px 0; border-radius: 24px 24px 0 0; }
+    .cs-footer__inner { max-width: 920px; margin: 0 auto; padding: 0 32px; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 16px; }
+    .cs-footer__link { font-family: var(--f-body); font-size: 18px; font-weight: 300; color: rgba(250,248,246,.55); text-decoration: none; transition: color 150ms, transform 150ms; }
+    .cs-footer__link:hover { color: #FAF8F6; transform: translateX(4px); }
+    .cs-footer__links-r { display: flex; gap: 32px; }
+    @media(max-width:600px) { .cs-footer__inner { flex-direction: column; align-items: flex-start; gap: 12px; } .cs-footer__links-r { flex-direction: column; gap: 12px; } }
   </style>
 </head>
 <body>
@@ -1327,6 +1334,17 @@
     }, 900);
   })();
 </script>
+
+
+<footer class="cs-footer">
+  <div class="cs-footer__inner">
+    <a href="https://mail.google.com/mail/?view=cm&to=batulbohra.design@gmail.com" target="_blank" rel="noopener" class="cs-footer__link">batulbohra.design@gmail.com</a>
+    <div class="cs-footer__links-r">
+      <a href="https://www.linkedin.com/in/batul-bohra-0336b3179" class="cs-footer__link" target="_blank" rel="noopener">linkedin</a>
+      <a href="https://read.cv/YOUR_USERNAME" class="cs-footer__link" target="_blank" rel="noopener">resume</a>
+    </div>
+  </div>
+</footer>
 
 </body>
 </html>
