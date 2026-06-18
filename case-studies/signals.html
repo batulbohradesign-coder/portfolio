@@ -280,40 +280,87 @@
     }
     .insight__text em { color: var(--accent); font-style: normal; }
 
-    /* ─── COMPETITORS — 4px gap, outer corners only rounded ─── */
-    .competitors {
-      display: grid; grid-template-columns: 1fr 1fr;
-      gap: 4px;
-      border-radius: 20px; overflow: hidden;
-    }
-    @media (max-width: 480px) {
-      .competitors { grid-template-columns: 1fr; border-radius: 0; overflow: visible; }
-      .competitor { border-radius: 16px !important; }
-    }
-    .competitor {
+    /* ─── STAT SOURCE ─── */
+    .stat__source { font-size: 10px; color: var(--text-3); margin-top: 10px; font-style: italic; }
+
+    /* ─── COMPETITOR POSITIONING MAP ─── */
+    .cmap-wrap {
+      position: relative;
+      width: 100%;
+      height: 380px;
       background: var(--surface);
-      padding: 32px;
-      border-radius: 0;
-      transition: transform 250ms var(--ease);
+      border-radius: 20px;
     }
-    .competitor:hover { transform: translateY(-3px); }
-    .competitor--accent { background: var(--accent); color: var(--bg); }
-    .competitor__name {
-      font-family: var(--f-head); font-size: 28px;
-      font-weight: 500; letter-spacing: -0.02em;
-      margin-bottom: 8px; color: var(--text);
+    @media (max-width: 599px) { .cmap-wrap { height: 280px; } }
+    .cmap__axis { position: absolute; background: rgba(26,26,26,0.10); }
+    .cmap__axis--h { top: 50%; left: 40px; right: 40px; height: 1px; }
+    .cmap__axis--v { left: 50%; top: 36px; bottom: 36px; width: 1px; }
+    .cmap__lbl {
+      position: absolute;
+      font-size: 10px; font-weight: 500;
+      letter-spacing: 0.07em; text-transform: uppercase;
+      color: var(--text-3); pointer-events: none; line-height: 1;
     }
-    .competitor--accent .competitor__name { color: var(--bg); }
-    .competitor__sub {
-      font-size: 15px; font-weight: 500; color: var(--text);
-      margin-bottom: 16px;
+    .cmap__lbl--top    { top: 12px; left: calc(50% + 10px); }
+    .cmap__lbl--bottom { bottom: 12px; left: calc(50% + 10px); }
+    .cmap__lbl--left   { top: calc(50% + 7px); left: 12px; }
+    .cmap__lbl--right  { top: calc(50% + 7px); right: 12px; }
+    .cmap__dot {
+      position: absolute;
+      left: var(--cx); top: var(--cy);
+      width: var(--sz); height: var(--sz);
+      transform: translate(-50%, -50%);
+      cursor: pointer; z-index: 2;
     }
-    .competitor--accent .competitor__sub { color: rgba(250,248,246,0.9); }
-    .competitor__gap-body {
-      font-size: 15px; font-weight: 300;
-      line-height: 1.6; color: var(--text-2);
+    .cmap__dot-inner {
+      position: relative;
+      width: 100%; height: 100%;
+      border-radius: 50%;
+      background: rgba(26,26,26,0.18);
+      transition: scale 220ms var(--ease), box-shadow 220ms var(--ease), filter 220ms var(--ease);
+      scale: 1;
     }
-    .competitor--accent .competitor__gap-body { color: rgba(250,248,246,0.75); }
+    .cmap__dot--signals .cmap__dot-inner { background: var(--accent); }
+    .cmap__dot:hover .cmap__dot-inner { scale: 1.1; filter: brightness(1.08); }
+    .cmap__dot--signals:hover .cmap__dot-inner { box-shadow: 0 8px 28px rgba(200,92,58,0.40); }
+    .cmap__dot--signals .cmap__dot-inner::before {
+      content: '';
+      position: absolute; inset: -6px;
+      border-radius: 50%;
+      border: 1.5px solid var(--accent);
+      animation: cpulse 2.6s ease-out infinite;
+    }
+    @keyframes cpulse {
+      0%   { opacity: 0.7; transform: scale(1); }
+      100% { opacity: 0;   transform: scale(2); }
+    }
+    @keyframes cfloat1 { 0%,100% { translate: 0 0; } 50% { translate: 3px -5px; } }
+    @keyframes cfloat2 { 0%,100% { translate: 0 0; } 50% { translate: -4px 3px; } }
+    @keyframes cfloat3 { 0%,100% { translate: 0 0; } 50% { translate: 2px 5px; } }
+    @keyframes cfloat4 { 0%,100% { translate: 0 0; } 50% { translate: -3px -3px; } }
+    .cmap__dot[data-float="1"] .cmap__dot-inner { animation: cfloat1 3.2s ease-in-out infinite; }
+    .cmap__dot[data-float="2"] .cmap__dot-inner { animation: cfloat2 2.9s ease-in-out infinite 0.5s; }
+    .cmap__dot[data-float="3"] .cmap__dot-inner { animation: cfloat3 3.6s ease-in-out infinite 1.0s; }
+    .cmap__dot[data-float="4"] .cmap__dot-inner { animation: cfloat4 3.0s ease-in-out infinite 1.5s; }
+    .cmap__dot:hover .cmap__dot-inner { animation-play-state: paused; }
+    .cmap__tooltip {
+      position: absolute; z-index: 10;
+      background: white; border-radius: 12px;
+      padding: 14px 18px; width: 210px;
+      pointer-events: none; opacity: 0;
+      transition: opacity 180ms ease, transform 180ms var(--ease);
+      transform: translateY(6px);
+      box-shadow: 0 6px 28px rgba(0,0,0,0.10);
+    }
+    .cmap__tooltip.is-visible { opacity: 1; transform: translateY(0); }
+    .cmap__tip-name {
+      font-family: var(--f-head);
+      font-size: 17px; font-weight: 600;
+      letter-spacing: -0.02em; color: var(--text); margin-bottom: 3px;
+    }
+    .cmap__tip-sub { font-size: 12px; font-weight: 500; color: var(--text-3); margin-bottom: 10px; }
+    .cmap__tip-body { font-size: 13px; font-weight: 300; color: var(--text-2); line-height: 1.55; }
+    .cmap__tip-prefix { color: var(--accent); font-weight: 500; }
 
     /* ─── THREE FLOWS — full 840px width ─── */
     .flows {
@@ -350,59 +397,117 @@
     }
     .flow__desc { font-size: 14px; font-weight: 300; color: var(--text-2); line-height: 1.6; }
 
-    /* ─── DECISIONS 2x2 ─── */
-    .decisions {
-      display: grid; grid-template-columns: 1fr 1fr;
-      gap: 4px; border-radius: 20px; overflow: visible;
+    /* ─── PRODUCT SCREEN FLOWS ─── */
+    .pf-section {
+      padding: 0 0 56px;
+      margin-left: calc(-1 * var(--px));
+      margin-right: calc(-1 * var(--px));
     }
-    @media (max-width: 600px) {
-      /* Stats: stack vertically, all corners rounded */
-      .stats {
-        grid-template-columns: 1fr;
-        border-radius: 0; overflow: visible;
+    .pf-row { margin-bottom: 48px; }
+    .pf-row:last-child { margin-bottom: 0; }
+    .pf-label {
+      display: flex; align-items: center; gap: 10px;
+      margin-bottom: 20px;
+      font-size: 11px; font-weight: 500;
+      letter-spacing: 0.1em; text-transform: uppercase;
+      color: var(--text-3);
+    }
+    .pf-label::after { content: ''; flex: 1; height: 0.5px; background: var(--border); }
+    .pf-screens {
+      display: grid;
+      grid-template-columns: 1fr auto 1fr auto 1fr;
+      gap: 0 4px;
+      align-items: center;
+    }
+    .pf-screen img { width: 100%; height: auto; border-radius: 20px; display: block; }
+    .pf-arrow { color: var(--text-3); font-size: 13px; line-height: 1; padding: 0 3px; }
+    @media (max-width: 599px) {
+      .pf-section { margin-left: 0; margin-right: 0; }
+      .pf-arrow { display: none; }
+      .pf-screens {
+        display: flex;
+        overflow-x: auto;
+        scroll-snap-type: x mandatory;
+        gap: 12px;
+        padding: 0 var(--px) 8px;
+        margin: 0 calc(-1 * var(--px));
+        scrollbar-width: none;
+        -ms-overflow-style: none;
       }
-      .stat {
-        border-radius: 16px !important;
-        height: auto;
-      }
+      .pf-screens::-webkit-scrollbar { display: none; }
+      .pf-screen { flex: 0 0 65%; scroll-snap-align: start; min-width: 0; }
+    }
 
-      /* Decisions: stack vertically, all corners rounded */
-      .decisions { grid-template-columns: 1fr; border-radius: 0; overflow: visible; }
-      .decision {
-        border-radius: 16px !important;
-      }
+    /* ─── DECISIONS THAT MATTERED (interactive annotated screens) ─── */
+    .dtm-tabs { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 24px; }
+    .dtm-tab {
+      background: white; border: 1px solid #e0e0e0; color: #777;
+      border-radius: 20px; padding: 5px 14px; font-size: 12px;
+      font-family: var(--f-body); cursor: pointer; line-height: 1.4;
+      transition: background 150ms, color 150ms, border-color 150ms;
     }
-    .decision {
-      background: var(--surface); border-radius: 0;
-      padding: 40px; display: flex; flex-direction: column;
-      transition: transform 250ms var(--ease);
+    .dtm-tab.is-active { background: #1a1a1a; color: white; border-color: #1a1a1a; }
+    .dtm-layout { display: flex; gap: 32px; align-items: flex-start; }
+    @media (max-width: 599px) { .dtm-layout { flex-direction: column; } }
+    .dtm-img-wrap { flex-shrink: 0; width: 358px; }
+    @media (max-width: 599px) { .dtm-img-wrap { width: 100%; } }
+    .dtm-img-inner { background: #f5f0eb; border-radius: 20px; padding: 10px; }
+    .dtm-img-ref { position: relative; }
+    .dtm-screen { width: 100%; height: auto; display: block; border-radius: 12px; }
+    .dtm-pin {
+      position: absolute;
+      width: 22px; height: 22px;
+      background: #E96B3C; border: 2px solid white; border-radius: 50%;
+      color: white; font-size: 10px; font-weight: 700;
+      font-family: var(--f-body); line-height: 1; padding: 0;
+      display: flex; align-items: center; justify-content: center;
+      cursor: pointer; z-index: 2;
+      transform: translate(-50%, -50%);
+      transition: transform 150ms var(--ease);
     }
-    .decision:hover { transform: translateY(-3px); }
-    .decision:nth-child(1) { border-radius: 20px 0 0 0; }
-    .decision:nth-child(2) { border-radius: 0 20px 0 0; }
-    .decision:nth-child(3) { border-radius: 0 0 0 20px; }
-    .decision:nth-child(4) { border-radius: 0 0 20px 0; }
-    .decision__num {
-      font-family: var(--f-head); font-size: 48px; font-weight: 600;
-      color: var(--surf-2); letter-spacing: -0.04em; line-height: 1;
-      margin-bottom: 24px;
+    .dtm-pin:hover { transform: translate(-50%, -50%) scale(1.18); }
+    .dtm-pin.is-active {
+      transform: translate(-50%, -50%) scale(1.1);
+      box-shadow: 0 0 0 3px rgba(233,107,60,0.25);
     }
-    .decision__title {
-      font-family: var(--f-head); font-size: 24px; font-weight: 600;
-      letter-spacing: -0.02em; color: var(--text); margin-bottom: 12px;
+    .dtm-annotation { flex: 1; min-width: 0; }
+    .dtm-hint {
+      font-size: 13px; color: #aaa; min-height: 180px;
+      display: flex; align-items: center; font-family: var(--f-body);
     }
-    .decision__body {
-      font-size: 15px; font-weight: 300; color: var(--text-2);
-      line-height: 1.7; flex: 1; margin-bottom: 24px;
+    .dtm-card {
+      background: white; border: 1px solid #eee;
+      border-radius: 12px; padding: 20px; min-height: 180px;
     }
-    .decision__principle {
-      border-left: 2px solid var(--accent);
-      padding-left: 12px;
-      font-size: 14px; font-weight: 300;
-      line-height: 1.6; color: var(--text-2);
+    .dtm-pill {
+      display: inline-block; background: #FAECE7; color: #993C1D;
+      font-size: 11px; padding: 3px 10px; border-radius: 20px;
+      font-weight: 500; font-family: var(--f-body);
     }
-    .decision__principle strong {
-      color: var(--accent); font-weight: 400;
+    .dtm-card__title {
+      font-size: 15px; font-weight: 500; color: #1a1a1a;
+      margin-top: 8px; font-family: var(--f-body); line-height: 1.4;
+    }
+    .dtm-card__body {
+      font-size: 13px; color: #555; line-height: 1.6;
+      margin-top: 6px; font-family: var(--f-body);
+    }
+    .dtm-card__element {
+      font-size: 11px; color: #aaa; margin-top: 10px;
+      padding-top: 10px; border-top: 1px solid #f0f0f0;
+      font-family: var(--f-body);
+    }
+    .dtm-card__element span { color: #777; font-weight: 500; }
+    .dtm-dots { display: flex; gap: 6px; margin-top: 16px; align-items: center; }
+    .dtm-dot {
+      width: 6px; height: 6px; border-radius: 50%; background: #ddd;
+      cursor: pointer; transition: background 150ms;
+    }
+    .dtm-dot.is-active { background: #E96B3C; }
+
+    @media (max-width: 600px) {
+      .stats { grid-template-columns: 1fr; border-radius: 0; overflow: visible; }
+      .stat { border-radius: 16px !important; height: auto; }
     }
 
     /* ─── WHAT I LEARNED ─── */
@@ -594,10 +699,12 @@
           <div class="stat reveal">
             <div class="stat__num">59.9%</div>
             <p class="stat__text">of Indian college students show signs of depression in year one across 8 tier-1 cities.</p>
+            <p class="stat__source">Cherian et al., 2025</p>
           </div>
           <div class="stat reveal d1">
             <div class="stat__num">45.5%</div>
             <p class="stat__text">study outside their home state, a new city, zero social infrastructure.</p>
+            <p class="stat__source">AISHE</p>
           </div>
           <div class="stat reveal d2">
             <div class="stat__num">0</div>
@@ -641,6 +748,7 @@
             </div>
           </div>
         </div>
+        <p class="body-text reveal" style="margin-top:16px; font-size:14px; color:var(--text-3);">based on 5 interviews and 40+ reddit threads across r/IndiaSocial and r/Btech.</p>
       </div>
     </div>
 
@@ -656,26 +764,39 @@
     <div class="row">
       <div class="row__label"><span class="row__label-text" style="white-space:normal;">where everything else falls short</span></div>
       <div>
-        <div class="competitors reveal">
-          <div class="competitor">
-            <div class="competitor__name">nod (US)</div>
-            <div class="competitor__sub">research-backed, closest in concept</div>
-            <div class="competitor__gap-body">gap → US-only, solo product, no community layer, clinical tone, no Indian context</div>
+        <div class="cmap-wrap reveal" id="cmap">
+          <div class="cmap__axis cmap__axis--h"></div>
+          <div class="cmap__axis cmap__axis--v"></div>
+          <span class="cmap__lbl cmap__lbl--top">targeted</span>
+          <span class="cmap__lbl cmap__lbl--bottom">generic</span>
+          <span class="cmap__lbl cmap__lbl--left">passive</span>
+          <span class="cmap__lbl cmap__lbl--right">action-driven</span>
+
+          <div class="cmap__dot cmap__dot--signals" style="--cx:72%;--cy:20%;--sz:80px" data-float="1"
+            data-name="signals" data-sub="built for India, anonymous-first"
+            data-body="challenge + community in one system. designed for a student who begins with nothing.">
+            <div class="cmap__dot-inner"></div>
           </div>
-          <div class="competitor competitor--accent">
-            <div class="competitor__name">signals</div>
-            <div class="competitor__sub">built for India, anonymous-first</div>
-            <div class="competitor__gap-body">challenge + community in one system. designed for a student who begins with nothing.</div>
+          <div class="cmap__dot" style="--cx:57%;--cy:32%;--sz:50px" data-float="2"
+            data-name="nod (US)" data-sub="research-backed, closest in concept"
+            data-body="US-only, solo product, no community layer, clinical tone, no Indian context.">
+            <div class="cmap__dot-inner"></div>
           </div>
-          <div class="competitor">
-            <div class="competitor__name">bumble bff</div>
-            <div class="competitor__sub">platonic friendship app</div>
-            <div class="competitor__gap-body">gap → dating mechanic creates wrong expectations, no hostel/campus layer, moderate India presence</div>
+          <div class="cmap__dot" style="--cx:26%;--cy:45%;--sz:40px" data-float="3"
+            data-name="reddit India" data-sub="where Aarav actually goes"
+            data-body="anonymity without action. relief without a next step. no connection pathway.">
+            <div class="cmap__dot-inner"></div>
           </div>
-          <div class="competitor">
-            <div class="competitor__name">reddit India</div>
-            <div class="competitor__sub">where Aarav actually goes</div>
-            <div class="competitor__gap-body">gap → anonymity without action. relief without a next step. no connection pathway.</div>
+          <div class="cmap__dot" style="--cx:63%;--cy:73%;--sz:36px" data-float="4"
+            data-name="bumble bff" data-sub="platonic friendship app"
+            data-body="dating mechanic creates wrong expectations. no hostel/campus layer. moderate India presence.">
+            <div class="cmap__dot-inner"></div>
+          </div>
+
+          <div class="cmap__tooltip" id="cmapTip">
+            <div class="cmap__tip-name"></div>
+            <div class="cmap__tip-sub"></div>
+            <div class="cmap__tip-body"></div>
           </div>
         </div>
       </div>
@@ -742,40 +863,166 @@
       </div>
     </div>
 
+    <!-- PRODUCT SCREEN FLOWS — full container width -->
+    <div class="pf-section">
+
+      <div class="pf-row reveal">
+        <div class="pf-label">onboarding</div>
+        <div class="pf-screens">
+          <div class="pf-screen"><img src="../o1.png" alt="onboarding step 1" /></div>
+          <div class="pf-arrow">→</div>
+          <div class="pf-screen"><img src="../o2.png" alt="onboarding step 2" /></div>
+          <div class="pf-arrow">→</div>
+          <div class="pf-screen"><img src="../o3.png" alt="onboarding step 3" /></div>
+        </div>
+      </div>
+
+      <div class="pf-row reveal">
+        <div class="pf-label">daily move + buddy connect</div>
+        <div class="pf-screens">
+          <div class="pf-screen"><img src="../b1.png" alt="daily move step 1" /></div>
+          <div class="pf-arrow">→</div>
+          <div class="pf-screen"><img src="../b2.png" alt="daily move step 2" /></div>
+          <div class="pf-arrow">→</div>
+          <div class="pf-screen"><img src="../b3.png" alt="daily move step 3" /></div>
+        </div>
+      </div>
+
+      <div class="pf-row reveal">
+        <div class="pf-label">signal wall</div>
+        <div class="pf-screens">
+          <div class="pf-screen"><img src="../s1.png" alt="signal wall step 1" /></div>
+          <div class="pf-arrow">→</div>
+          <div class="pf-screen"><img src="../s2.png" alt="signal wall step 2" /></div>
+          <div class="pf-arrow">→</div>
+          <div class="pf-screen"><img src="../s3.png" alt="signal wall step 3" /></div>
+        </div>
+      </div>
+
+    </div>
+
     <!-- DECISIONS THAT MATTERED -->
     <div class="row">
       <div class="row__label"><span class="row__label-text">decisions that mattered</span></div>
       <div>
-        <p class="body-text reveal">every element on every screen has a reason. these are the four that changed the product most.</p>
-      </div>
-    </div>
 
-    <div class="wrap" style="padding-bottom:48px; padding-left:0; padding-right:0;">
-      <div class="decisions reveal">
-        <div class="decision">
-          <div class="decision__num">01</div>
-          <div class="decision__title">value before sign-up</div>
-          <p class="decision__body">the first challenge appears before account creation - by the time sign-up shows up, aarav already has something to protect.</p>
-          <div class="decision__principle"><strong>endowment effect</strong> - people overvalue what they already have.</div>
+        <div class="dtm-tabs reveal">
+          <button class="dtm-tab is-active" data-dtm-tab="onboarding">onboarding</button>
+          <button class="dtm-tab" data-dtm-tab="buddy-connect">buddy connect</button>
+          <button class="dtm-tab" data-dtm-tab="journey">journey</button>
+          <button class="dtm-tab" data-dtm-tab="signal-wall">signal wall</button>
         </div>
-        <div class="decision">
-          <div class="decision__num">02</div>
-          <div class="decision__title">hollow dots, not x marks</div>
-          <p class="decision__body">a missed day stays hollow, never crossed out - because one pixel difference is the difference between "i'm still going" and "i've already failed."</p>
-          <div class="decision__principle"><strong>zeigarnik effect</strong> - incomplete arcs pull you forward. broken ones push you away.</div>
+
+        <!-- TAB: onboarding -->
+        <div class="dtm-panel reveal" id="dtmp-onboarding">
+          <div class="dtm-layout">
+            <div class="dtm-img-wrap">
+              <div class="dtm-img-inner">
+                <div class="dtm-img-ref">
+                  <img src="../onboarding.png" class="dtm-screen" alt="onboarding screen" draggable="false" />
+                  <button class="dtm-pin" style="top:28%;left:85%" data-panel="onboarding" data-idx="0">1</button>
+                  <button class="dtm-pin" style="top:72%;left:85%" data-panel="onboarding" data-idx="1">2</button>
+                </div>
+              </div>
+            </div>
+            <div class="dtm-annotation" id="dtma-onboarding">
+              <div class="dtm-hint">tap a pin to see the decision behind it.</div>
+              <div class="dtm-card" style="display:none">
+                <span class="dtm-pill"></span>
+                <div class="dtm-card__title"></div>
+                <div class="dtm-card__body"></div>
+                <div class="dtm-card__element">element: <span></span></div>
+              </div>
+              <div class="dtm-dots">
+                <span class="dtm-dot" data-panel="onboarding" data-idx="0"></span>
+                <span class="dtm-dot" data-panel="onboarding" data-idx="1"></span>
+              </div>
+            </div>
+          </div>
         </div>
-        <div class="decision">
-          <div class="decision__num">03</div>
-          <div class="decision__title">anonymous by default</div>
-          <p class="decision__body">he won't say he's lonely. but he'll tap "me too" on someone else saying it. five steps from anonymous reading to name reveal - the design earns each one before asking for the next.</p>
-          <div class="decision__principle"><strong>progressive disclosure</strong> - only ask for what trust has been built for.</div>
+
+        <!-- TAB: buddy connect -->
+        <div class="dtm-panel reveal" id="dtmp-buddy-connect" style="display:none">
+          <div class="dtm-layout">
+            <div class="dtm-img-wrap">
+              <div class="dtm-img-inner">
+                <div class="dtm-img-ref">
+                  <img src="../buddy-connect.png" class="dtm-screen" alt="buddy connect screen" draggable="false" />
+                  <button class="dtm-pin" style="top:68%;left:85%" data-panel="buddy-connect" data-idx="0">1</button>
+                </div>
+              </div>
+            </div>
+            <div class="dtm-annotation" id="dtma-buddy-connect">
+              <div class="dtm-hint">tap a pin to see the decision behind it.</div>
+              <div class="dtm-card" style="display:none">
+                <span class="dtm-pill"></span>
+                <div class="dtm-card__title"></div>
+                <div class="dtm-card__body"></div>
+                <div class="dtm-card__element">element: <span></span></div>
+              </div>
+              <div class="dtm-dots">
+                <span class="dtm-dot" data-panel="buddy-connect" data-idx="0"></span>
+              </div>
+            </div>
+          </div>
         </div>
-        <div class="decision">
-          <div class="decision__num">04</div>
-          <div class="decision__title">the pre-filled first message</div>
-          <p class="decision__body">the blank box after "say hi" is where most people close the app. signals writes the first line. editable, but most people send it as is.</p>
-          <div class="decision__principle"><strong>default effect</strong> - the best default is the one that makes doing nothing harder than doing something.</div>
+
+        <!-- TAB: journey -->
+        <div class="dtm-panel reveal" id="dtmp-journey" style="display:none">
+          <div class="dtm-layout">
+            <div class="dtm-img-wrap">
+              <div class="dtm-img-inner">
+                <div class="dtm-img-ref">
+                  <img src="../completion-signals.png" class="dtm-screen" alt="journey screen" draggable="false" />
+                  <button class="dtm-pin" style="top:38%;left:85%" data-panel="journey" data-idx="0">1</button>
+                  <button class="dtm-pin" style="top:55%;left:85%" data-panel="journey" data-idx="1">2</button>
+                </div>
+              </div>
+            </div>
+            <div class="dtm-annotation" id="dtma-journey">
+              <div class="dtm-hint">tap a pin to see the decision behind it.</div>
+              <div class="dtm-card" style="display:none">
+                <span class="dtm-pill"></span>
+                <div class="dtm-card__title"></div>
+                <div class="dtm-card__body"></div>
+                <div class="dtm-card__element">element: <span></span></div>
+              </div>
+              <div class="dtm-dots">
+                <span class="dtm-dot" data-panel="journey" data-idx="0"></span>
+                <span class="dtm-dot" data-panel="journey" data-idx="1"></span>
+              </div>
+            </div>
+          </div>
         </div>
+
+        <!-- TAB: signal wall -->
+        <div class="dtm-panel reveal" id="dtmp-signal-wall" style="display:none">
+          <div class="dtm-layout">
+            <div class="dtm-img-wrap">
+              <div class="dtm-img-inner">
+                <div class="dtm-img-ref">
+                  <img src="../signal-wall.png" class="dtm-screen" alt="signal wall screen" draggable="false" />
+                  <button class="dtm-pin" style="top:35%;left:10%" data-panel="signal-wall" data-idx="0">1</button>
+                  <button class="dtm-pin" style="top:72%;left:85%" data-panel="signal-wall" data-idx="1">2</button>
+                </div>
+              </div>
+            </div>
+            <div class="dtm-annotation" id="dtma-signal-wall">
+              <div class="dtm-hint">tap a pin to see the decision behind it.</div>
+              <div class="dtm-card" style="display:none">
+                <span class="dtm-pill"></span>
+                <div class="dtm-card__title"></div>
+                <div class="dtm-card__body"></div>
+                <div class="dtm-card__element">element: <span></span></div>
+              </div>
+              <div class="dtm-dots">
+                <span class="dtm-dot" data-panel="signal-wall" data-idx="0"></span>
+                <span class="dtm-dot" data-panel="signal-wall" data-idx="1"></span>
+              </div>
+            </div>
+          </div>
+        </div>
+
       </div>
     </div>
 
@@ -794,8 +1041,12 @@
     <div class="row">
       <div class="row__label"><span class="row__label-text">what comes next</span></div>
       <div>
-        <p class="next-body reveal">signals is designed for the first 90 days. what happens after week 12 is intentionally unanswered - because by then, the app should no longer be the most important relationship in a student's life.</p>
-        <p class="next-body reveal">V2 explores city mapping, group challenges, and a senior mentor layer. but those come after one student has helped one other student find a laundromat, or sat somewhere new for lunch, or sent a message that started with "i feel that too."</p>
+        <p class="next-body reveal">signals is designed for the first 90 days. what happens after week 12 is intentionally unanswered — because by then, the app should no longer be the most important relationship in a student's life.</p>
+        <p class="next-body reveal" style="margin-top:24px;">three numbers would tell us if it worked.</p>
+        <p class="next-body reveal" style="margin-top:20px;"><strong>day 7 retention</strong> — does the habit survive the first week, or does aarav open it twice and disappear?</p>
+        <p class="next-body reveal" style="margin-top:16px;"><strong>buddy connection rate</strong> — of every daily move completed, how many lead to a matched pair? this is the product's core bet: that action precedes friendship.</p>
+        <p class="next-body reveal" style="margin-top:16px;"><strong>wall-to-name ratio</strong> — how many students who read the signal wall anonymously eventually reveal who they are?</p>
+        <p class="next-body reveal" style="margin-top:24px;">V2 explores city mapping, group challenges, and a senior mentor layer. but those come after one student has helped one other student find a laundromat, or sat somewhere new for lunch, or sent a message that started with "i felt that too."</p>
       </div>
     </div>
 
@@ -871,6 +1122,178 @@
       mobileVidObs.observe(vid);
     });
   }
+</script>
+
+<!-- DECISIONS THAT MATTERED — interactive annotated screens -->
+<script>
+(function(){
+  var DATA = {
+    'onboarding': [
+      {
+        pill: 'endowment effect',
+        title: 'the challenge appears before sign-up',
+        body: '"before you set up your profile — try this today." the move exists before aarav has an account to attach it to. by the time sign-up appears, he already has something to protect — and people overvalue what they already possess.',
+        element: 'challenge card, shown pre-auth'
+      },
+      {
+        pill: 'default effect',
+        title: 'the buddy is already there',
+        body: 'priya appears on the challenge card before aarav has opted into anything. the default is a paired experience. opting out takes more energy than going along.',
+        element: 'buddy chip, pre-matched before consent'
+      }
+    ],
+    'buddy-connect': [
+      {
+        pill: 'default effect',
+        title: 'the pre-filled first message',
+        body: 'the blank box after "say hi" is where most people close the app. signals writes the first line. editable, but most people send it as-is — the best default is the one that makes doing nothing harder than doing something.',
+        element: 'pre-filled message, bottom sheet'
+      }
+    ],
+    'journey': [
+      {
+        pill: 'zeigarnik effect',
+        title: 'hollow dots, never crossed out',
+        body: 'the unfilled sunday dot stays hollow — never marked as failed or crossed out. incomplete arcs pull you forward. broken ones push you away. one pixel difference is the difference between "i\'m still going" and "i\'ve already quit."',
+        element: 'weekly day dots, hollow incomplete state'
+      },
+      {
+        pill: 'social proof',
+        title: 'a classmate\'s reflection as a nudge',
+        body: '"seeing my classmates complete their move made me go out." the reflection isn\'t a notification or a push — it\'s a peer moment, surfaced quietly. it works because it doesn\'t try to.',
+        element: 'weekly reflection card, peer activity visible'
+      }
+    ],
+    'signal-wall': [
+      {
+        pill: 'progressive disclosure',
+        title: 'anonymous by default, identity earned',
+        body: 'aarav won\'t say he\'s lonely. but he\'ll resonate with someone who signals the same thing. no name required to read — the modal only surfaces a connection after shared resonance is established.',
+        element: 'signal wall, anonymous read state'
+      },
+      {
+        pill: 'earned trust',
+        title: 'say hello only after something is shared',
+        body: 'the connection prompt appears after both users have resonated with the same signal — not before. the product earns the ask before making it. "want to connect anonymously?" is five words that only land because of everything that came before them.',
+        element: 'connection modal, post-resonance trigger'
+      }
+    ]
+  };
+
+  var activePin = {};
+  Object.keys(DATA).forEach(function(id){ activePin[id] = -1; });
+
+  function getEls(panelId) {
+    var a = document.getElementById('dtma-' + panelId);
+    if(!a) return null;
+    return {
+      hint:    a.querySelector('.dtm-hint'),
+      card:    a.querySelector('.dtm-card'),
+      pill:    a.querySelector('.dtm-pill'),
+      title:   a.querySelector('.dtm-card__title'),
+      body:    a.querySelector('.dtm-card__body'),
+      elSpan:  a.querySelector('.dtm-card__element span'),
+      dots:    a.querySelectorAll('.dtm-dot'),
+      pins:    document.querySelectorAll('[data-panel="' + panelId + '"].dtm-pin')
+    };
+  }
+
+  function clear(panelId) {
+    var e = getEls(panelId); if(!e) return;
+    e.hint.style.display = 'flex';
+    e.card.style.display = 'none';
+    e.pins.forEach(function(p){ p.classList.remove('is-active'); });
+    e.dots.forEach(function(d){ d.classList.remove('is-active'); });
+    activePin[panelId] = -1;
+  }
+
+  function select(panelId, idx) {
+    if(activePin[panelId] === idx) { clear(panelId); return; }
+    var e = getEls(panelId); if(!e) return;
+    var p = DATA[panelId][idx]; if(!p) return;
+
+    e.pill.textContent    = p.pill;
+    e.title.textContent   = p.title;
+    e.body.textContent    = p.body;
+    e.elSpan.textContent  = p.element;
+
+    e.hint.style.display  = 'none';
+    e.card.style.display  = 'block';
+
+    e.pins.forEach(function(pin, i){ pin.classList.toggle('is-active', i === idx); });
+    e.dots.forEach(function(dot, i){ dot.classList.toggle('is-active', i === idx); });
+    activePin[panelId] = idx;
+  }
+
+  document.querySelectorAll('.dtm-pin').forEach(function(pin){
+    pin.addEventListener('click', function(){
+      select(pin.dataset.panel, parseInt(pin.dataset.idx, 10));
+    });
+  });
+
+  document.querySelectorAll('.dtm-dot').forEach(function(dot){
+    dot.addEventListener('click', function(){
+      select(dot.dataset.panel, parseInt(dot.dataset.idx, 10));
+    });
+  });
+
+  document.querySelectorAll('.dtm-tab').forEach(function(tab){
+    tab.addEventListener('click', function(){
+      var id = tab.dataset.dtmTab;
+      document.querySelectorAll('.dtm-tab').forEach(function(t){ t.classList.remove('is-active'); });
+      tab.classList.add('is-active');
+      document.querySelectorAll('.dtm-panel').forEach(function(p){ p.style.display = 'none'; });
+      var panel = document.getElementById('dtmp-' + id);
+      if(panel) panel.style.display = 'block';
+    });
+  });
+})();
+</script>
+
+<!-- COMPETITOR MAP TOOLTIP -->
+<script>
+(function(){
+  var wrap = document.getElementById('cmap');
+  var tip  = document.getElementById('cmapTip');
+  if(!wrap || !tip) return;
+  var tipName = tip.querySelector('.cmap__tip-name');
+  var tipSub  = tip.querySelector('.cmap__tip-sub');
+  var tipBody = tip.querySelector('.cmap__tip-body');
+  var TIP_W = 210, TIP_H = 140;
+
+  wrap.querySelectorAll('.cmap__dot').forEach(function(dot){
+    dot.addEventListener('mouseenter', function(){
+      tipName.textContent = dot.dataset.name;
+      tipSub.textContent  = dot.dataset.sub;
+      var isSignals = dot.classList.contains('cmap__dot--signals');
+      tipBody.innerHTML = isSignals
+        ? dot.dataset.body
+        : '<span class="cmap__tip-prefix">gap → </span>' + dot.dataset.body;
+
+      var wW  = wrap.offsetWidth;
+      var wH  = wrap.offsetHeight;
+      var cx  = parseFloat(dot.style.getPropertyValue('--cx')) / 100 * wW;
+      var cy  = parseFloat(dot.style.getPropertyValue('--cy')) / 100 * wH;
+      var sz  = parseFloat(dot.style.getPropertyValue('--sz'));
+      var off = sz / 2 + 12;
+
+      var left = cx + off;
+      if(left + TIP_W > wW - 8) left = cx - off - TIP_W;
+      if(left < 8) left = 8;
+
+      var top = cy - TIP_H / 2;
+      if(top < 8) top = 8;
+      if(top + TIP_H > wH - 8) top = wH - TIP_H - 8;
+
+      tip.style.left = left + 'px';
+      tip.style.top  = top  + 'px';
+      tip.classList.add('is-visible');
+    });
+    dot.addEventListener('mouseleave', function(){
+      tip.classList.remove('is-visible');
+    });
+  });
+})();
 </script>
 
 <!-- VIDEO FULLSCREEN MODAL -->
