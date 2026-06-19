@@ -435,7 +435,7 @@
         -ms-overflow-style: none;
       }
       .pf-screens::-webkit-scrollbar { display: none; }
-      .pf-screen { flex: 0 0 65%; scroll-snap-align: start; min-width: 0; }
+      .pf-screen { flex: 0 0 80%; scroll-snap-align: start; min-width: 0; }
     }
 
     /* ─── DECISIONS THAT MATTERED (interactive annotated screens) ─── */
@@ -447,13 +447,18 @@
       transition: background 150ms, color 150ms, border-color 150ms;
     }
     .dtm-tab.is-active { background: #1a1a1a; color: white; border-color: #1a1a1a; }
-    .dtm-layout { display: flex; gap: 32px; align-items: flex-start; }
-    @media (max-width: 599px) { .dtm-layout { flex-direction: column; } }
-    .dtm-img-wrap { flex-shrink: 0; width: 358px; }
-    @media (max-width: 599px) { .dtm-img-wrap { width: 100%; } }
-    .dtm-img-inner { background: #f5f0eb; border-radius: 20px; padding: 10px; }
+    .dtm-layout {
+      display: grid;
+      grid-template-columns: 340px 1fr;
+      gap: 16px;
+      align-items: start;
+    }
+    @media (max-width: 599px) { .dtm-layout { grid-template-columns: 1fr; } }
+    .dtm-img-wrap { width: 100%; }
+    @media (max-width: 599px) { .dtm-img-wrap { width: 90%; margin: 0 auto; } }
+    .dtm-img-inner { }
     .dtm-img-ref { position: relative; }
-    .dtm-screen { width: 100%; height: auto; display: block; border-radius: 12px; }
+    .dtm-screen { display: block; width: 100%; height: auto; border-radius: 12px; }
     .dtm-pin {
       position: absolute;
       width: 22px; height: 22px;
@@ -461,7 +466,7 @@
       color: white; font-size: 10px; font-weight: 700;
       font-family: var(--f-body); line-height: 1; padding: 0;
       display: flex; align-items: center; justify-content: center;
-      cursor: pointer; z-index: 2;
+      cursor: pointer; z-index: 10;
       transform: translate(-50%, -50%);
       transition: transform 150ms var(--ease);
     }
@@ -470,7 +475,7 @@
       transform: translate(-50%, -50%) scale(1.1);
       box-shadow: 0 0 0 3px rgba(233,107,60,0.25);
     }
-    .dtm-annotation { flex: 1; min-width: 0; }
+    .dtm-annotation { min-width: 0; padding-top: 25px; }
     .dtm-hint {
       font-size: 13px; color: #aaa; min-height: 180px;
       display: flex; align-items: center; font-family: var(--f-body);
@@ -492,12 +497,6 @@
       font-size: 13px; color: #555; line-height: 1.6;
       margin-top: 6px; font-family: var(--f-body);
     }
-    .dtm-card__element {
-      font-size: 11px; color: #aaa; margin-top: 10px;
-      padding-top: 10px; border-top: 1px solid #f0f0f0;
-      font-family: var(--f-body);
-    }
-    .dtm-card__element span { color: #777; font-weight: 500; }
     .dtm-dots { display: flex; gap: 6px; margin-top: 16px; align-items: center; }
     .dtm-dot {
       width: 6px; height: 6px; border-radius: 50%; background: #ddd;
@@ -508,6 +507,44 @@
     @media (max-width: 600px) {
       .stats { grid-template-columns: 1fr; border-radius: 0; overflow: visible; }
       .stat { border-radius: 16px !important; height: auto; }
+    }
+
+    /* ─── DTM MOBILE SIZE REDUCTION ─── */
+    @media (max-width: 599px) {
+      .dtm-card { padding: 16px; min-height: 0; }
+      .dtm-card__title { font-size: 13px; }
+      .dtm-card__body { font-size: 12px; }
+    }
+
+    /* ─── DTM MOBILE OVERLAY ─── */
+    .dtm-mob-overlay {
+      display: none;
+      position: absolute; inset: 0;
+      border-radius: 12px;
+      background: rgba(0,0,0,0.82);
+      backdrop-filter: blur(3px); -webkit-backdrop-filter: blur(3px);
+      z-index: 5;
+      align-items: center; justify-content: center;
+      padding: 16px;
+    }
+    @media (max-width: 599px) {
+      .dtm-mob-overlay.is-active { display: flex; }
+    }
+    .dtm-mob-card {
+      background: white; border-radius: 10px; padding: 16px; width: 100%;
+    }
+    .dtm-mob-card .dtm-pill {
+      display: inline-block; background: #FAECE7; color: #993C1D;
+      font-size: 11px; padding: 3px 10px; border-radius: 20px;
+      font-weight: 500; font-family: var(--f-body);
+    }
+    .dtm-mob-card .dtm-card__title {
+      font-size: 14px; font-weight: 500; color: #1a1a1a;
+      margin-top: 8px; font-family: var(--f-body); line-height: 1.4;
+    }
+    .dtm-mob-card .dtm-card__body {
+      font-size: 13px; color: #555; line-height: 1.6;
+      margin-top: 6px; font-family: var(--f-body);
     }
 
     /* ─── WHAT I LEARNED ─── */
@@ -921,7 +958,14 @@
                 <div class="dtm-img-ref">
                   <img src="../onboarding.png" class="dtm-screen" alt="onboarding screen" draggable="false" />
                   <button class="dtm-pin" style="top:28%;left:85%" data-panel="onboarding" data-idx="0">1</button>
-                  <button class="dtm-pin" style="top:72%;left:85%" data-panel="onboarding" data-idx="1">2</button>
+                  <button class="dtm-pin" style="top:40%;left:85%" data-panel="onboarding" data-idx="1">2</button>
+                  <div class="dtm-mob-overlay">
+                    <div class="dtm-mob-card">
+                      <span class="dtm-pill"></span>
+                      <div class="dtm-card__title"></div>
+                      <div class="dtm-card__body"></div>
+                    </div>
+                  </div>
                 </div>
               </div>
             </div>
@@ -931,11 +975,6 @@
                 <span class="dtm-pill"></span>
                 <div class="dtm-card__title"></div>
                 <div class="dtm-card__body"></div>
-                <div class="dtm-card__element">element: <span></span></div>
-              </div>
-              <div class="dtm-dots">
-                <span class="dtm-dot" data-panel="onboarding" data-idx="0"></span>
-                <span class="dtm-dot" data-panel="onboarding" data-idx="1"></span>
               </div>
             </div>
           </div>
@@ -949,6 +988,13 @@
                 <div class="dtm-img-ref">
                   <img src="../buddy-connect.png" class="dtm-screen" alt="buddy connect screen" draggable="false" />
                   <button class="dtm-pin" style="top:68%;left:85%" data-panel="buddy-connect" data-idx="0">1</button>
+                  <div class="dtm-mob-overlay">
+                    <div class="dtm-mob-card">
+                      <span class="dtm-pill"></span>
+                      <div class="dtm-card__title"></div>
+                      <div class="dtm-card__body"></div>
+                    </div>
+                  </div>
                 </div>
               </div>
             </div>
@@ -958,10 +1004,6 @@
                 <span class="dtm-pill"></span>
                 <div class="dtm-card__title"></div>
                 <div class="dtm-card__body"></div>
-                <div class="dtm-card__element">element: <span></span></div>
-              </div>
-              <div class="dtm-dots">
-                <span class="dtm-dot" data-panel="buddy-connect" data-idx="0"></span>
               </div>
             </div>
           </div>
@@ -975,7 +1017,13 @@
                 <div class="dtm-img-ref">
                   <img src="../completion-signals.png" class="dtm-screen" alt="journey screen" draggable="false" />
                   <button class="dtm-pin" style="top:38%;left:85%" data-panel="journey" data-idx="0">1</button>
-                  <button class="dtm-pin" style="top:55%;left:85%" data-panel="journey" data-idx="1">2</button>
+                  <div class="dtm-mob-overlay">
+                    <div class="dtm-mob-card">
+                      <span class="dtm-pill"></span>
+                      <div class="dtm-card__title"></div>
+                      <div class="dtm-card__body"></div>
+                    </div>
+                  </div>
                 </div>
               </div>
             </div>
@@ -985,11 +1033,6 @@
                 <span class="dtm-pill"></span>
                 <div class="dtm-card__title"></div>
                 <div class="dtm-card__body"></div>
-                <div class="dtm-card__element">element: <span></span></div>
-              </div>
-              <div class="dtm-dots">
-                <span class="dtm-dot" data-panel="journey" data-idx="0"></span>
-                <span class="dtm-dot" data-panel="journey" data-idx="1"></span>
               </div>
             </div>
           </div>
@@ -1004,6 +1047,13 @@
                   <img src="../signal-wall.png" class="dtm-screen" alt="signal wall screen" draggable="false" />
                   <button class="dtm-pin" style="top:35%;left:10%" data-panel="signal-wall" data-idx="0">1</button>
                   <button class="dtm-pin" style="top:72%;left:85%" data-panel="signal-wall" data-idx="1">2</button>
+                  <div class="dtm-mob-overlay">
+                    <div class="dtm-mob-card">
+                      <span class="dtm-pill"></span>
+                      <div class="dtm-card__title"></div>
+                      <div class="dtm-card__body"></div>
+                    </div>
+                  </div>
                 </div>
               </div>
             </div>
@@ -1013,11 +1063,6 @@
                 <span class="dtm-pill"></span>
                 <div class="dtm-card__title"></div>
                 <div class="dtm-card__body"></div>
-                <div class="dtm-card__element">element: <span></span></div>
-              </div>
-              <div class="dtm-dots">
-                <span class="dtm-dot" data-panel="signal-wall" data-idx="0"></span>
-                <span class="dtm-dot" data-panel="signal-wall" data-idx="1"></span>
               </div>
             </div>
           </div>
@@ -1041,11 +1086,11 @@
     <div class="row">
       <div class="row__label"><span class="row__label-text">what comes next</span></div>
       <div>
-        <p class="next-body reveal">signals is designed for the first 90 days. what happens after week 12 is intentionally unanswered — because by then, the app should no longer be the most important relationship in a student's life.</p>
+        <p class="next-body reveal">signals is designed for the first 90 days. what happens after week 12 is intentionally unanswered - because by then, the app should no longer be the most important relationship in a student's life.</p>
         <p class="next-body reveal" style="margin-top:24px;">three numbers would tell us if it worked.</p>
-        <p class="next-body reveal" style="margin-top:20px;"><strong>day 7 retention</strong> — does the habit survive the first week, or does aarav open it twice and disappear?</p>
-        <p class="next-body reveal" style="margin-top:16px;"><strong>buddy connection rate</strong> — of every daily move completed, how many lead to a matched pair? this is the product's core bet: that action precedes friendship.</p>
-        <p class="next-body reveal" style="margin-top:16px;"><strong>wall-to-name ratio</strong> — how many students who read the signal wall anonymously eventually reveal who they are?</p>
+        <p class="next-body reveal" style="margin-top:20px;"><strong>day 7 retention</strong> - does the habit survive the first week, or does aarav open it twice and disappear?</p>
+        <p class="next-body reveal" style="margin-top:16px;"><strong>buddy connection rate</strong> - of every daily move completed, how many lead to a matched pair? this is the product's core bet: that action precedes friendship.</p>
+        <p class="next-body reveal" style="margin-top:16px;"><strong>wall-to-name ratio</strong> - how many students who read the signal wall anonymously eventually reveal who they are?</p>
         <p class="next-body reveal" style="margin-top:24px;">V2 explores city mapping, group challenges, and a senior mentor layer. but those come after one student has helped one other student find a laundromat, or sat somewhere new for lunch, or sent a message that started with "i felt that too."</p>
       </div>
     </div>
@@ -1132,7 +1177,7 @@
       {
         pill: 'endowment effect',
         title: 'the challenge appears before sign-up',
-        body: '"before you set up your profile — try this today." the move exists before aarav has an account to attach it to. by the time sign-up appears, he already has something to protect — and people overvalue what they already possess.',
+        body: '"before you set up your profile - try this today." the move exists before aarav has an account to attach it to. by the time sign-up appears, he already has something to protect - and people overvalue what they already possess.',
         element: 'challenge card, shown pre-auth'
       },
       {
@@ -1146,7 +1191,7 @@
       {
         pill: 'default effect',
         title: 'the pre-filled first message',
-        body: 'the blank box after "say hi" is where most people close the app. signals writes the first line. editable, but most people send it as-is — the best default is the one that makes doing nothing harder than doing something.',
+        body: 'the blank box after "say hi" is where most people close the app. signals writes the first line. editable, but most people send it as-is - the best default is the one that makes doing nothing harder than doing something.',
         element: 'pre-filled message, bottom sheet'
       }
     ],
@@ -1154,13 +1199,13 @@
       {
         pill: 'zeigarnik effect',
         title: 'hollow dots, never crossed out',
-        body: 'the unfilled sunday dot stays hollow — never marked as failed or crossed out. incomplete arcs pull you forward. broken ones push you away. one pixel difference is the difference between "i\'m still going" and "i\'ve already quit."',
+        body: 'the unfilled sunday dot stays hollow - never marked as failed or crossed out. incomplete arcs pull you forward. broken ones push you away. one pixel difference is the difference between "i\'m still going" and "i\'ve already quit."',
         element: 'weekly day dots, hollow incomplete state'
       },
       {
         pill: 'social proof',
         title: 'a classmate\'s reflection as a nudge',
-        body: '"seeing my classmates complete their move made me go out." the reflection isn\'t a notification or a push — it\'s a peer moment, surfaced quietly. it works because it doesn\'t try to.',
+        body: '"seeing my classmates complete their move made me go out." the reflection isn\'t a notification or a push - it\'s a peer moment, surfaced quietly. it works because it doesn\'t try to.',
         element: 'weekly reflection card, peer activity visible'
       }
     ],
@@ -1168,13 +1213,13 @@
       {
         pill: 'progressive disclosure',
         title: 'anonymous by default, identity earned',
-        body: 'aarav won\'t say he\'s lonely. but he\'ll resonate with someone who signals the same thing. no name required to read — the modal only surfaces a connection after shared resonance is established.',
+        body: 'aarav won\'t say he\'s lonely. but he\'ll resonate with someone who signals the same thing. no name required to read - the modal only surfaces a connection after shared resonance is established.',
         element: 'signal wall, anonymous read state'
       },
       {
         pill: 'earned trust',
         title: 'say hello only after something is shared',
-        body: 'the connection prompt appears after both users have resonated with the same signal — not before. the product earns the ask before making it. "want to connect anonymously?" is five words that only land because of everything that came before them.',
+        body: 'the connection prompt appears after both users have resonated with the same signal - not before. the product earns the ask before making it. "want to connect anonymously?" is five words that only land because of everything that came before them.',
         element: 'connection modal, post-resonance trigger'
       }
     ]
@@ -1192,16 +1237,22 @@
       pill:    a.querySelector('.dtm-pill'),
       title:   a.querySelector('.dtm-card__title'),
       body:    a.querySelector('.dtm-card__body'),
-      elSpan:  a.querySelector('.dtm-card__element span'),
       dots:    a.querySelectorAll('.dtm-dot'),
       pins:    document.querySelectorAll('[data-panel="' + panelId + '"].dtm-pin')
     };
+  }
+
+  function getMobOverlay(panelId) {
+    var panel = document.getElementById('dtmp-' + panelId);
+    return panel ? panel.querySelector('.dtm-mob-overlay') : null;
   }
 
   function clear(panelId) {
     var e = getEls(panelId); if(!e) return;
     e.hint.style.display = 'flex';
     e.card.style.display = 'none';
+    var ov = getMobOverlay(panelId);
+    if(ov) ov.classList.remove('is-active');
     e.pins.forEach(function(p){ p.classList.remove('is-active'); });
     e.dots.forEach(function(d){ d.classList.remove('is-active'); });
     activePin[panelId] = -1;
@@ -1212,13 +1263,23 @@
     var e = getEls(panelId); if(!e) return;
     var p = DATA[panelId][idx]; if(!p) return;
 
-    e.pill.textContent    = p.pill;
-    e.title.textContent   = p.title;
-    e.body.textContent    = p.body;
-    e.elSpan.textContent  = p.element;
-
-    e.hint.style.display  = 'none';
-    e.card.style.display  = 'block';
+    if(window.innerWidth < 600) {
+      var ov = getMobOverlay(panelId);
+      if(ov) {
+        ov.querySelector('.dtm-pill').textContent        = p.pill;
+        ov.querySelector('.dtm-card__title').textContent = p.title;
+        ov.querySelector('.dtm-card__body').textContent  = p.body;
+        ov.classList.add('is-active');
+      }
+      e.hint.style.display = 'none';
+      e.card.style.display = 'none';
+    } else {
+      e.pill.textContent   = p.pill;
+      e.title.textContent  = p.title;
+      e.body.textContent   = p.body;
+      e.hint.style.display = 'none';
+      e.card.style.display = 'block';
+    }
 
     e.pins.forEach(function(pin, i){ pin.classList.toggle('is-active', i === idx); });
     e.dots.forEach(function(dot, i){ dot.classList.toggle('is-active', i === idx); });
