@@ -4,9 +4,11 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>figmeet for figma - work</title>
+  <meta name="description" content="Figmeet - a Figma plugin that brings voice, video, and live presence into the canvas so design reviews happen where the design lives.">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,300;12..96,400;12..96,500;12..96,600&family=Figtree:wght@300;400;500&display=swap" rel="stylesheet">
+  <link rel="icon" type="image/png" href="../assets/images/logo.png">
   <style>
     /* ─── TOKENS ─── */
     :root {
@@ -336,7 +338,7 @@
     .feature-card:only-child   { border-radius: 20px; }
     .feature-card:hover { transform: translateY(-2px); }
 
-    /* alternate layout — mockup left on even */
+    /* alternate layout - mockup left on even */
     .feature-card.flip { direction: rtl; }
     .feature-card.flip > * { direction: ltr; }
 
@@ -525,7 +527,7 @@
     .feat3-pip.active .feat3-pip-dot { background: var(--accent); }
     .feat3-pip:not(.active) .feat3-pip-dot { background: rgba(255,255,255,0.15); }
 
-    /* bottom area: split — focused canvas left, you're live right */
+    /* bottom area: split - focused canvas left, you're live right */
     .feat3-split {
       flex: 1; display: flex; overflow: hidden;
     }
@@ -772,7 +774,7 @@
     </section>
   </div>
 
-  <!-- HERO VISUAL — landscape Figma UI -->
+  <!-- HERO VISUAL - landscape Figma UI -->
   <div class="hero-visual reveal">
     <div class="hero-card">
       <div class="hero-card-bg"></div>
@@ -876,7 +878,7 @@
           </div>
           <div class="stat reveal d2">
             <div class="stat__num">68%</div>
-            <p class="stat__text">of designers say verbal feedback rarely matches the comment left in figma. the loop breaks every time.</p>
+            <p class="stat__text">of designers we spoke to said verbal feedback rarely matched the written comment left in figma after the call.</p>
           </div>
         </div>
       </div>
@@ -1136,7 +1138,7 @@
       <div class="step-card">
         <div class="step-num">01</div>
         <h3>research</h3>
-        <p>interviewed 8 designers and 4 developers across remote-first teams. mapped their exact toolchain during design reviews. the pattern was unmistakable - figma, then zoom, then figma again.</p>
+        <p>interviewed 8 designers and 4 developers across remote-first teams. three things kept coming up: designers would repeat the same verbal comment they'd already typed - because the comment wasn't visible during the call. developers said they made implementation decisions mid-review based on tone, not text, and those decisions weren't captured anywhere. and almost everyone described opening figma, zoom, and slack simultaneously as just "how reviews work," without questioning it.</p>
       </div>
       <div class="step-card">
         <div class="step-num">02</div>
@@ -1151,7 +1153,7 @@
       <div class="step-card">
         <div class="step-num">04</div>
         <h3>test & refine</h3>
-        <p>ran 3 moderated prototype sessions. cursor spotlight validated immediately. a proposed hand-raise button was cut - nobody used it. what teams needed was simpler than expected.</p>
+        <p>ran 3 moderated prototype sessions. cursor spotlight validated immediately - every participant noticed it without prompting. the hand-raise button was cut after v1 testing: in the first session, a designer instinctively unmuted to speak instead of raising a hand. in the second, nobody touched it at all. the social mechanic from video calls didn't translate to an environment where people were already looking at the same canvas. removing it made the panel cleaner and the behaviour more natural.</p>
       </div>
     </div><!-- /process-steps -->
   </div>
@@ -1164,7 +1166,7 @@
       <div>
         <div class="learned-card reveal">
           <div class="learned-card__eyebrow">designing inside someone else’s product</div>
-          <p class="learned-card__body"> the challenge with figmeet was making every interaction feel like it already belonged inside figma, instead of feeling like a separate layer added on top.<br><br>that constraint forced a lot more intentional decision-making. several features were removed, not because they were bad ideas, but because they didn’t improve the core experience enough to justify the space.<br><br>the biggest lesson from the project was understanding that collaboration tools should stay out of the way. if users focus on the discussion and the work itself, the product is doing what it’s supposed to do.</p>
+          <p class="learned-card__body">i assumed the biggest challenge would be visual - making figmeet look native to figma’s UI. it turned out the bigger challenge was behavioural. people kept instinctively reaching for zoom anyway, out of habit, even mid-session. that changed how i thought about the onboarding moment: the product couldn’t just exist inside figma, it had to interrupt the reflex of leaving it.<br><br>several features were cut not because they were bad ideas, but because they gave people a reason to think about the tool instead of the design. the hand-raise button was the clearest example. it made sense on paper and failed in practice - because the canvas already tells you where everyone is. adding a gesture layer on top of that was noise.</p>
         </div>
       </div>
     </div>
@@ -1173,7 +1175,7 @@
     <a href="signals.html" class="next-project reveal">
       <div class="next-project__lbl">next project</div>
       <div class="next-project__row">
-        <div class="next-project__name">signals – a trading app</div>
+        <div class="next-project__name">signals – college guide app</div>
         <div class="next-project__arrow">→</div>
       </div>
     </a>
