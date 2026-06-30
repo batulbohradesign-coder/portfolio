@@ -100,8 +100,8 @@
     @media(max-width:767px){.section{padding-top:56px;padding-bottom:56px;}}
 
     /* WORK */
-    .work-layout{display:grid;grid-template-columns:1fr 1fr;gap:48px;margin-top:48px;margin-bottom:48px;align-items:start;}
-    .work-visual{border-radius:24px;overflow:hidden;position:sticky;top:88px;width:100%;aspect-ratio:1730/1600;}
+    .work-layout{display:grid;grid-template-columns:1fr 1fr;gap:48px;margin-top:48px;align-items:start;}
+    .work-visual{border-radius:24px;overflow:hidden;position:sticky;top:88px;width:100%;}
     /* ─── WORK PANELS ─── */
     .wv-panel{position:absolute;inset:0;opacity:0;pointer-events:none;transition:opacity 350ms var(--ease);border-radius:24px;overflow:hidden;}
     .wv-panel.is-active{opacity:1;pointer-events:auto;}
@@ -165,7 +165,7 @@
     .wv-panel img{width:100%;height:100%;object-fit:cover;object-position:center;display:block;}
     .work-visual__inner{width:100%;height:100%;display:flex;flex-direction:column;justify-content:flex-end;padding:32px;background:linear-gradient(to top,rgba(0,0,0,.18) 0%,transparent 60%);}
     .work-visual__title{font-family:var(--f-head);font-size:28px;font-weight:500;letter-spacing:-.02em;color:white;line-height:1.2;}
-    .work-list{display:flex;flex-direction:column;padding-bottom:24px;}
+    .work-list{display:flex;flex-direction:column;}
     .work-item{cursor:pointer;flex-shrink:0;}
     .work-item+.work-item{border-top:1px solid var(--border);}
     .work-item__header{display:flex;justify-content:space-between;align-items:center;padding:24px 0;transition:color 200ms var(--ease);}
@@ -752,6 +752,17 @@
   }
 
   document.addEventListener('keydown',function(e){if(e.key!=='Escape')return;closeOverlay();closeModal();});
+
+  /* LOCK WORK VISUAL HEIGHT to right column's initial rendered height */
+  document.addEventListener('DOMContentLoaded',function(){
+    setTimeout(function(){
+      var workList=document.getElementById('workList');
+      var workVisual=document.getElementById('workVisual');
+      if(workList&&workVisual){
+        workVisual.style.height=workList.offsetHeight+'px';
+      }
+    },450);
+  });
 
 </script>
 
