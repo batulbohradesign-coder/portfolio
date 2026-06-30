@@ -197,7 +197,10 @@
       box-shadow: 0 0 0 3px rgba(255,255,255,0.85), 0 3px 14px rgba(229,49,43,0.55);
       transition: transform 200ms var(--ease); flex-shrink: 0;
     }
-    .annotation:hover .annotation__pin { transform: scale(1.12); }
+    .annotation.is-open .annotation__pin { transform: scale(1.12); }
+    @media (hover: hover) {
+      .annotation:hover .annotation__pin { transform: scale(1.12); }
+    }
     .annotation__tooltip {
       position: absolute;
       top: calc(100% + 10px); left: 50%; transform: translateX(-50%);
@@ -213,7 +216,10 @@
       bottom: 100%; left: 50%; transform: translateX(-50%);
       border: 6px solid transparent; border-bottom-color: #1A1A1A;
     }
-    .annotation:hover .annotation__tooltip { opacity: 1; }
+    .annotation.is-open .annotation__tooltip { opacity: 1; }
+    @media (hover: hover) {
+      .annotation:hover .annotation__tooltip { opacity: 1; }
+    }
     .annotation--flip .annotation__tooltip { top: auto; bottom: calc(100% + 10px); }
     .annotation--flip .annotation__tooltip::after {
       bottom: auto; top: 100%;
@@ -300,6 +306,7 @@
     }
 
     /* ─── VIEW TABS ─── */
+    .view-tabs { margin-top: 32px; }
     .view-tabs__bar {
       display: flex; gap: 4px; margin-bottom: 12px;
     }
@@ -354,10 +361,20 @@
       line-height: 1.55;
     }
     @media (max-width: 599px) {
-      .compare-table__head { grid-template-columns: 1fr 1fr; }
-      .compare-table__head-cell:first-child { display: none; }
-      .compare-table__row { grid-template-columns: 1fr; gap: 4px; }
-      .compare-table__label { display: none; }
+      .compare-table__head { display: none; }
+      .compare-table__row { grid-template-columns: 1fr; gap: 0; padding: 20px; }
+      .compare-table__label { display: block; margin-bottom: 10px; }
+      .compare-table__old { padding-right: 0; padding-bottom: 10px; }
+      .compare-table__old::before {
+        content: 'before'; display: block;
+        font-size: 10px; font-weight: 500; letter-spacing: 0.08em;
+        text-transform: uppercase; color: var(--text-3); margin-bottom: 2px;
+      }
+      .compare-table__new::before {
+        content: 'after'; display: block;
+        font-size: 10px; font-weight: 500; letter-spacing: 0.08em;
+        text-transform: uppercase; color: var(--accent); margin-bottom: 2px;
+      }
     }
 
     /* ─── THE RESISTANCE — BEATS ─── */
@@ -482,7 +499,7 @@
         <span class="hero__tag">ux design</span>
       </div>
       <h1 class="hero__title reveal">rebuilding visibility</h1>
-      <p class="hero__sub reveal">a Nordic software company building enterprise asset management tools.</p>
+      <p class="hero__sub reveal">A Nordic software company building enterprise asset management tools.</p>
     </section>
   </div>
 
@@ -499,7 +516,7 @@
     <div class="row">
       <div class="row__label"><span class="row__label-text">overview</span></div>
       <div>
-        <p class="body-text reveal">i worked as a ux/ui designer for four months on a software product used by teams managing aquaculture operations across multiple sites in denmark. the software assigns tasks to field personnel and gives managers visibility into task status, deviations, and risk across locations.</p>
+        <p class="body-text reveal">I worked as a UX/UI designer for four months on a software product used by teams managing aquaculture operations across multiple sites in Denmark. The software assigns tasks to field personnel and gives managers visibility into task status, deviations, and risk across locations.</p>
       </div>
     </div>
 
@@ -521,8 +538,8 @@
             <p class="stat__text">separate widgets on a single asset's dashboard, most of them empty.</p>
           </div>
         </div>
-        <p class="body-text reveal" style="margin-top:32px;">the old systems organised by data type, not place. location was a filter, not a structure. a manager checking on one specific site still had to dig through unrelated categories one at a time, even after choosing a location.</p>
-        <p class="body-text reveal">each category led to its own view, designed for a manager who already knew what kind of data he was looking for - but most managers just wanted to know what was happening at a place.</p>
+        <p class="body-text reveal" style="margin-top:32px;">The old systems organised by data type, not place. Location was a filter, not a structure. A manager checking on one specific site still had to dig through unrelated categories one at a time, even after choosing a location.</p>
+        <p class="body-text reveal">Each category led to its own view, designed for a manager who already knew what kind of data he was looking for - but most managers just wanted to know what was happening at a place.</p>
       </div>
     </div>
 
@@ -549,15 +566,15 @@
               <img class="slide__img" src="../rebuilduing%20visibility/old%20asset%20dashboard.png" alt="old asset dashboard" />
               <div class="annotation annotation--flip" style="top:52%;left:48%;">
                 <div class="annotation__pin">1</div>
-                <div class="annotation__tooltip">eighteen widgets, most reading zero - no way to tell at a glance what actually needs attention</div>
+                <div class="annotation__tooltip">Eighteen widgets, most reading zero - no way to tell at a glance what actually needs attention</div>
               </div>
               <div class="annotation" style="top:18%;left:22%;">
                 <div class="annotation__pin">2</div>
-                <div class="annotation__tooltip">location lives in a dropdown filter at the top - everything below it stays organised by data type, not by place</div>
+                <div class="annotation__tooltip">Location lives in a dropdown filter at the top - everything below it stays organised by data type, not by place</div>
               </div>
               <div class="annotation annotation--flip" style="top:68%;left:72%;">
                 <div class="annotation__pin">3</div>
-                <div class="annotation__tooltip">five separate work order views split by time and status - the same information, fragmented five ways</div>
+                <div class="annotation__tooltip">Five separate work order views split by time and status - the same information, fragmented five ways</div>
               </div>
             </div>
 
@@ -571,7 +588,7 @@
 
         <div class="slide-caption reveal">
           <div class="slide-caption__label" id="slide-label">01 / 02</div>
-          <p class="slide-caption__text" id="slide-caption-text">the single-asset dashboard. eighteen counters and status widgets fill the screen, most showing nothing.</p>
+          <p class="slide-caption__text" id="slide-caption-text">The single-asset dashboard. Eighteen counters and status widgets fill the screen, most showing nothing.</p>
         </div>
         <div class="slide-dots reveal" id="slide-dots"></div>
 
@@ -585,7 +602,7 @@
     <div class="insight-section">
       <div class="insight reveal">
         <div class="insight__lbl">the shift</div>
-        <p class="insight__text">location used to sit behind a filter. the goal was to make it the first thing a manager saw.</p>
+        <p class="insight__text">Location used to sit behind a filter. The goal was to make it the first thing a manager saw.</p>
       </div>
     </div>
   </div>
@@ -594,7 +611,7 @@
     <div class="row" style="padding-bottom:16px;">
       <div class="row__label"><span class="row__label-text">the redesign</span></div>
       <div>
-        <p class="body-text reveal">the redesign starts with where, not what kind of data. picking a location surfaces what matters about that place immediately, instead of narrowing down a list of unrelated categories.</p>
+        <p class="body-text reveal">The redesign starts with where, not what kind of data. Picking a location surfaces what matters about that place immediately, instead of narrowing down a list of unrelated categories.</p>
       </div>
     </div>
   </div>
@@ -614,12 +631,12 @@
         <img src="../rebuilduing%20visibility/location-list.png" alt="list view of all locations" />
       </div>
     </div>
-    <p class="redesign-caption reveal">a manager lands on a map of every location, or switches to a list view with the same data, shaped differently. only one view shows at a time, toggled with this control.</p>
+    <p class="redesign-caption reveal">A manager lands on a map of every location, or switches to a list view with the same data, shaped differently. Only one view shows at a time, toggled with this control.</p>
 
     <div class="redesign-ia reveal">
       <img src="../rebuilduing%20visibility/new%20IA.png" alt="simplified IA structure" />
     </div>
-    <p class="redesign-caption reveal">simplified structure - location first, all detail nested underneath.</p>
+    <p class="redesign-caption reveal">Simplified structure - location first, all detail nested underneath.</p>
 
     <!-- COMPARISON TABLE -->
     <div class="compare-table reveal">
@@ -630,37 +647,37 @@
       </div>
       <div class="compare-table__row">
         <div class="compare-table__label">entry point</div>
-        <div class="compare-table__old">dashboard with twelve data-type views</div>
-        <div class="compare-table__new">map of locations</div>
+        <div class="compare-table__old">Dashboard with twelve data-type views</div>
+        <div class="compare-table__new">Map of locations</div>
       </div>
       <div class="compare-table__row">
         <div class="compare-table__label">location</div>
-        <div class="compare-table__old">a filter applied on top</div>
-        <div class="compare-table__new">the starting point</div>
+        <div class="compare-table__old">A filter applied on top</div>
+        <div class="compare-table__new">The starting point</div>
       </div>
       <div class="compare-table__row">
         <div class="compare-table__label">checking status</div>
-        <div class="compare-table__old">open the right category, find the right filter</div>
-        <div class="compare-table__new">click a pin, see it instantly</div>
+        <div class="compare-table__old">Open the right category, find the right filter</div>
+        <div class="compare-table__new">Click a pin, see it instantly</div>
       </div>
       <div class="compare-table__row">
         <div class="compare-table__label">asset view</div>
-        <div class="compare-table__old">eighteen widgets, most reading zero</div>
-        <div class="compare-table__new">one health score, one risk plot</div>
+        <div class="compare-table__old">Eighteen widgets, most reading zero</div>
+        <div class="compare-table__new">One health score, one risk plot</div>
       </div>
       <div class="compare-table__row">
         <div class="compare-table__label">flagging a problem</div>
-        <div class="compare-table__old">buried in a separate messages tab</div>
-        <div class="compare-table__new">logged next to the data it relates to</div>
+        <div class="compare-table__old">Buried in a separate messages tab</div>
+        <div class="compare-table__new">Logged next to the data it relates to</div>
       </div>
       <div class="compare-table__row">
         <div class="compare-table__label">systems involved</div>
-        <div class="compare-table__old">three, none connected</div>
-        <div class="compare-table__new">one</div>
+        <div class="compare-table__old">Three, none connected</div>
+        <div class="compare-table__new">One</div>
       </div>
     </div>
 
-    <p class="body-text reveal" style="margin-bottom:48px;">at the asset level, a manager used to scroll past a wall of counters, most of them at zero, looking for the one that wasn't. Now they see a health score and a risk plot first, so the assets that need attention stand out without anyone having to scan for them. Tasks list their location right there, instead of somewhere else. And if something actually goes wrong at a site, the note about it sits on the same page as the data, not buried in a separate messages tab.</p>
+    <p class="body-text reveal" style="margin-bottom:48px;">At the asset level, a manager used to scroll past a wall of counters, most of them at zero, looking for the one that wasn't. Now they see a health score and a risk plot first, so the assets that need attention stand out without anyone having to scan for them. Tasks list their location right there, instead of somewhere else. And if something actually goes wrong at a site, the note about it sits on the same page as the data, not buried in a separate messages tab.</p>
 
   </div><!-- /wrap -->
 
@@ -673,15 +690,15 @@
         <div class="beats">
           <div class="beat reveal">
             <div class="beat__num">01</div>
-            <div class="beat__body">before testing, the client-side point of contact resisted the new structure. the concern wasn't the design itself - it was <strong>adoption risk</strong>. long-time managers were used to the old system, and a transition risked <strong>slowing down task execution exactly when it mattered most</strong>.</div>
+            <div class="beat__body">Before testing, the client-side point of contact resisted the new structure. The concern wasn't the design itself - it was <strong>adoption risk</strong>. Long-time managers were used to the old system, and a transition risked <strong>slowing down task execution exactly when it mattered most</strong>.</div>
           </div>
           <div class="beat reveal">
             <div class="beat__num">02</div>
-            <div class="beat__body">the new structure was tested with the field managers who'd actually use it daily. <strong>they pushed back too</strong> - not because anything was broken, but because <strong>the structure was unfamiliar</strong>. they wanted certainty they were doing things correctly, and a new look threatened that.</div>
+            <div class="beat__body">The new structure was tested with the field managers who'd actually use it daily. <strong>They pushed back too</strong> - not because anything was broken, but because <strong>the structure was unfamiliar</strong>. They wanted certainty they were doing things correctly, and a new look threatened that.</div>
           </div>
           <div class="beat reveal">
             <div class="beat__num">03</div>
-            <div class="beat__body">what actually moved both groups was <strong>time, not a better argument</strong>. a multi-day, section-by-section walkthrough ran over video calls, deliberately paced so people could <strong>sit with the change rather than approve it on the spot</strong> - paired with <strong>concrete proof</strong>. managers reached key actions in fewer steps. risk appeared immediately instead of staying buried.</div>
+            <div class="beat__body">What actually moved both groups was <strong>time, not a better argument</strong>. A multi-day, section-by-section walkthrough ran over video calls, deliberately paced so people could <strong>sit with the change rather than approve it on the spot</strong> - paired with <strong>concrete proof</strong>. Managers reached key actions in fewer steps. Risk appeared immediately instead of staying buried.</div>
           </div>
         </div>
       </div>
@@ -691,15 +708,15 @@
     <div class="row">
       <div class="row__label"><span class="row__label-text" style="white-space:normal;">what i'd measure</span></div>
       <div>
-        <p class="body-text reveal">no instrumentation existed to track this quantitatively during the project. if it had, two numbers worth watching:</p>
+        <p class="body-text reveal">No instrumentation existed to track this quantitatively during the project. If it had, two numbers worth watching:</p>
         <div class="measure-metrics">
           <div class="measure-metric reveal">
-            <div class="measure-metric__label">task completion rate</div>
-            <div class="measure-metric__text">on the assignment flow - does a field operative reach confirmation without backtracking or dropping out?</div>
+            <div class="measure-metric__label">Task completion rate</div>
+            <div class="measure-metric__text">On the assignment flow - does a field operative reach confirmation without backtracking or dropping out?</div>
           </div>
           <div class="measure-metric reveal d1">
-            <div class="measure-metric__label">time-to-locate</div>
-            <div class="measure-metric__text">how many clicks a manager needs to reach the current status of a specific site from a cold start. under the old structure, this required choosing a category before choosing a place.</div>
+            <div class="measure-metric__label">Time-to-locate</div>
+            <div class="measure-metric__text">How many clicks a manager needs to reach the current status of a specific site from a cold start. Under the old structure, this required choosing a category before choosing a place.</div>
           </div>
         </div>
       </div>
@@ -709,7 +726,7 @@
     <a href="signals.html" class="next-project reveal">
       <div>
         <div class="next-project__lbl">next project</div>
-        <div class="next-project__name">signals – a college guide</div>
+        <div class="next-project__name">Signals – A College Guide</div>
       </div>
       <div class="next-project__arrow">→</div>
     </a>
@@ -751,8 +768,8 @@
   var slideCount = 2;
   var current = 0;
   var captions = [
-    'the single-asset dashboard. eighteen counters and status widgets fill the screen, most showing nothing.',
-    'the structure behind that screen. data type sits at the top. location sits underneath it, several layers down.'
+    'The single-asset dashboard. Eighteen counters and status widgets fill the screen, most showing nothing.',
+    'The structure behind that screen. Data type sits at the top. Location sits underneath it, several layers down.'
   ];
 
   function buildDots() {
@@ -785,6 +802,79 @@
   }
 
   buildDots();
+
+  /* ─── ANNOTATION PINS – touch support ─── */
+  var _bodyTip = null;
+  var _bodyTipOrigin = null;
+
+  function restoreBodyTip() {
+    if (_bodyTip) {
+      _bodyTip.style.cssText = '';
+      if (_bodyTipOrigin) {
+        _bodyTipOrigin.parent.insertBefore(_bodyTip, _bodyTipOrigin.next);
+      }
+      _bodyTip = null;
+      _bodyTipOrigin = null;
+    }
+  }
+
+  document.querySelectorAll('.annotation').forEach(function(pin) {
+    pin.addEventListener('click', function(e) {
+      var isOpen = pin.classList.contains('is-open');
+      restoreBodyTip();
+      document.querySelectorAll('.annotation').forEach(function(p) {
+        p.classList.remove('is-open');
+        var t = p.querySelector('.annotation__tooltip');
+        if (t) t.style.cssText = '';
+      });
+      if (!isOpen) {
+        var tip = pin.querySelector('.annotation__tooltip');
+        if (tip) {
+          if (window.innerWidth < 600) {
+            var pr = pin.getBoundingClientRect();
+            var tipW = Math.min(240, window.innerWidth - 32);
+            var tipLeft = Math.max(16, Math.min(window.innerWidth - tipW - 16, pr.left + pr.width / 2 - tipW / 2));
+            var isFlip = pin.classList.contains('annotation--flip');
+            _bodyTipOrigin = { parent: tip.parentNode, next: tip.nextSibling };
+            document.body.appendChild(tip);
+            _bodyTip = tip;
+            tip.style.position = 'fixed';
+            tip.style.opacity = '1';
+            tip.style.width = tipW + 'px';
+            tip.style.left = tipLeft + 'px';
+            tip.style.transform = 'none';
+            if (isFlip) {
+              tip.style.top = 'auto';
+              tip.style.bottom = (window.innerHeight - pr.top + 10) + 'px';
+            } else {
+              tip.style.top = (pr.bottom + 10) + 'px';
+              tip.style.bottom = 'auto';
+            }
+          } else {
+            var slide = pin.closest('.slide');
+            if (slide) {
+              var tr = tip.getBoundingClientRect();
+              var sr = slide.getBoundingClientRect();
+              var leftGap  = sr.left + 8 - tr.left;
+              var rightGap = tr.right + 8 - sr.right;
+              if (leftGap > 0)       tip.style.marginLeft = leftGap + 'px';
+              else if (rightGap > 0) tip.style.marginLeft = '-' + rightGap + 'px';
+            }
+          }
+        }
+        pin.classList.add('is-open');
+      }
+      e.stopPropagation();
+    });
+  });
+  document.addEventListener('click', function() {
+    restoreBodyTip();
+    document.querySelectorAll('.annotation').forEach(function(p) {
+      p.classList.remove('is-open');
+      var t = p.querySelector('.annotation__tooltip');
+      if (t) t.style.cssText = '';
+    });
+  });
 
   /* ─── VIEW TABS ─── */
   document.querySelectorAll('.view-tab').forEach(function(tab) {

@@ -4,6 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title> website redesign – work</title>
+  <link rel="icon" type="image/png" href="../assets/images/logo.png">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,300;12..96,400;12..96,500;12..96,600&family=Figtree:wght@300;400;500&display=swap" rel="stylesheet">
@@ -86,6 +87,21 @@
     }
     .nav__link:hover { color: var(--text); }
     .nav__link:hover::after { width: 100%; }
+    .nav__link--active { color: var(--text); }
+    .nav__link--active::after { width: 100%; }
+    .hamburger { display: none; flex-direction: column; gap: 5px; cursor: pointer; padding: 4px; background: none; border: none; }
+    .hamburger span { display: block; width: 22px; height: 1.5px; background: var(--text); border-radius: 2px; transition: transform 300ms var(--ease), opacity 200ms; }
+    .hamburger.is-open span:nth-child(1) { transform: translateY(6.5px) rotate(45deg); }
+    .hamburger.is-open span:nth-child(2) { opacity: 0; }
+    .hamburger.is-open span:nth-child(3) { transform: translateY(-6.5px) rotate(-45deg); }
+    @media(max-width:767px) {
+      .hamburger { display: flex; margin-left: auto; }
+      .nav__inner { padding: 0 var(--px); }
+      .nav__links { display: none; flex-direction: column; gap: 0; position: absolute; top: 64px; left: 0; right: 0; background: var(--bg); border-bottom: 1px solid var(--border); padding: 8px 0; z-index: 200; }
+      .nav__links.is-open { display: flex; }
+      .nav__link { padding: 14px var(--px); font-size: 18px; }
+      .nav__link::after { display: none; }
+    }
 
     /* ─── HERO ─── */
     .hero { padding: 64px 0 48px; }
@@ -308,7 +324,10 @@
       transition: transform 200ms var(--ease);
       flex-shrink: 0;
     }
-    .annotation:hover .annotation__pin { transform: scale(1.12); }
+    .annotation.is-open .annotation__pin { transform: scale(1.12); }
+    @media (hover: hover) {
+      .annotation:hover .annotation__pin { transform: scale(1.12); }
+    }
 
     /* Tooltip – shows BELOW the pin by default */
     .annotation__tooltip {
@@ -338,7 +357,10 @@
       border: 6px solid transparent;
       border-bottom-color: #1A1A1A;
     }
-    .annotation:hover .annotation__tooltip { opacity: 1; }
+    .annotation.is-open .annotation__tooltip { opacity: 1; }
+    @media (hover: hover) {
+      .annotation:hover .annotation__tooltip { opacity: 1; }
+    }
 
     /* Flip variant – tooltip shows ABOVE pin (for pins in bottom half of image) */
     .annotation--flip .annotation__tooltip {
@@ -807,9 +829,12 @@
     <a href="../index.html" class="nav__logo">
       <span>b</span><span class="nav__logo-rest">atul.design</span><span class="nav__logo-dot">.</span>
     </a>
+    <button class="hamburger" id="hamburger" aria-label="Toggle menu">
+      <span></span><span></span><span></span>
+    </button>
     <nav>
-      <ul class="nav__links">
-        <li><a href="../index.html#work"    class="nav__link">work</a></li>
+      <ul class="nav__links" id="navLinks">
+        <li><a href="../index.html#work"    class="nav__link nav__link--active">work</a></li>
         <li><a href="../index.html#about"   class="nav__link">about</a></li>
         <li><a href="../index.html#contact" class="nav__link">contact</a></li>
       </ul>
@@ -833,7 +858,7 @@
         <span class="hero__tag">web design</span>
       </div>
       <h1 class="hero__title reveal">access healthcare</h1>
-      <p class="hero__sub reveal">a new visual identity for a $1B+ RCM company that looked like a company from 2014.</p>
+      <p class="hero__sub reveal">A new visual identity for a $1B+ RCM company that looked like a company from 2014.</p>
     </section>
   </div>
 
@@ -862,8 +887,8 @@
     <div class="row">
       <div class="row__label"><span class="row__label-text">overview</span></div>
       <div>
-        <p class="body-text reveal">access healthcare is a $1B+ revenue cycle management company - they handle medical billing, coding, and accounts receivable for hospitals and health systems across the US. 140,000+ employees. fortune 500 clients.</p>
-        <p class="body-text reveal">the website didn't say any of that. it said: generic healthcare company, circa 2014. the visual language failed the business it was supposed to represent - and it failed it at the exact moment decision-makers were evaluating vendors.</p>
+        <p class="body-text reveal">Access Healthcare is a $1B+ revenue cycle management company - they handle medical billing, coding, and accounts receivable for hospitals and health systems across the US. 140,000+ employees. Fortune 500 clients.</p>
+        <p class="body-text reveal">The website didn't say any of that. It said: generic healthcare company, circa 2014. The visual language failed the business it was supposed to represent - and it failed it at the exact moment decision-makers were evaluating vendors.</p>
       </div>
     </div>
 
@@ -873,7 +898,7 @@
       <div>
         <div class="problem-statement reveal">
           <div class="problem-bar"></div>
-          <p class="problem-text">a CFO deciding between RCM partners lands on your website. in 8 seconds, you either feel like a category leader - or a vendor they'll skip.</p>
+          <p class="problem-text">A CFO deciding between RCM partners lands on your website. In 8 seconds, you either feel like a category leader - or a vendor they'll skip.</p>
         </div>
         <div class="stats">
           <div class="stat reveal">
@@ -923,7 +948,7 @@
               </div>
               <div class="annotation" style="top: 36%; left: 14%;">
                 <div class="annotation__pin">2</div>
-                <div class="annotation__tooltip">biggest trust signal buried in a rotating carousel – most visitors never see it</div>
+                <div class="annotation__tooltip">Biggest trust signal buried in a rotating carousel – most visitors never see it</div>
               </div>
             </div>
 
@@ -932,11 +957,11 @@
               <img class="slide__img has-src" src="../slide2.png" alt="Access Healthcare services section" />
               <div class="annotation" style="top: 20%; left: 48%;">
                 <div class="annotation__pin">1</div>
-                <div class="annotation__tooltip">three sentences of context before any scannable info – a busy buyer gives up before finding what's relevant to them</div>
+                <div class="annotation__tooltip">Three sentences of context before any scannable info – a busy buyer gives up before finding what's relevant to them</div>
               </div>
               <div class="annotation annotation--flip" style="top: 68%; left: 36%;">
                 <div class="annotation__pin">2</div>
-                <div class="annotation__tooltip">four tiles, four random colors – nothing signals what's most important</div>
+                <div class="annotation__tooltip">Four tiles, four random colors – nothing signals what's most important</div>
               </div>
             </div>
 
@@ -945,11 +970,11 @@
               <img class="slide__img has-src" src="../slide3.png" alt="Echo platform page" />
               <div class="annotation annotation--light" style="top: 20%; right: 16%;">
                 <div class="annotation__pin">1</div>
-                <div class="annotation__tooltip">stock robot image – says 'we have AI' without showing what it actually does</div>
+                <div class="annotation__tooltip">Stock robot image – says 'we have AI' without showing what it actually does</div>
               </div>
               <div class="annotation annotation--flip annotation--light" style="top: 74%; left: 28%;">
                 <div class="annotation__pin">2</div>
-                <div class="annotation__tooltip">two equal-weight CTAs – the page can't commit to a next step</div>
+                <div class="annotation__tooltip">Two equal-weight CTAs – the page can't commit to a next step</div>
               </div>
             </div>
 
@@ -980,19 +1005,19 @@
             <div>
               <div class="persona__col-lbl">what he does on the site</div>
               <ul class="persona__list">
-                <li>skims the hero for a headline that matches his problem</li>
-                <li>scrolls to case studies – wants to see his specialty</li>
-                <li>checks "who we help" – does this company get hospitals?</li>
-                <li>looks for the phone number or demo CTA to forward to his team</li>
+                <li>Skims the hero for a headline that matches his problem</li>
+                <li>Scrolls to case studies – wants to see his specialty</li>
+                <li>Checks "who we help" – does this company get hospitals?</li>
+                <li>Looks for the phone number or demo CTA to forward to his team</li>
               </ul>
             </div>
             <div>
               <div class="persona__col-lbl">what he needs to feel</div>
               <ul class="persona__list">
-                <li>this company has done this before, at scale</li>
-                <li>they know what revenue cycle actually means operationally</li>
-                <li>i can trust them with my billing infrastructure</li>
-                <li>they're worth putting in front of my CFO</li>
+                <li>This company has done this before, at scale</li>
+                <li>They know what revenue cycle actually means operationally</li>
+                <li>I can trust them with my billing infrastructure</li>
+                <li>They're worth putting in front of my CFO</li>
               </ul>
             </div>
           </div>
@@ -1007,7 +1032,7 @@
     <div class="insight-section">
       <div class="insight reveal">
         <div class="insight__lbl">the design brief</div>
-        <p class="insight__text">stop looking like every other RCM company. <em>trust is the product</em> – and trust is communicated before a single word is read.</p>
+        <p class="insight__text">Stop looking like every other RCM company. <em>Trust is the product</em> – and trust is communicated before a single word is read.</p>
       </div>
     </div>
   </div>
@@ -1018,7 +1043,7 @@
     <div class="row">
       <div class="row__label"><span class="row__label-text">the redesign</span></div>
       <div>
-        <p class="body-text reveal">one landing page. one clear message. the redesign applies a bold typographic hierarchy, a differentiated colour system, and a section structure designed around how Michael actually moves through the page.</p>
+        <p class="body-text reveal">One landing page. One clear message. The redesign applies a bold typographic hierarchy, a differentiated colour system, and a section structure designed around how Michael actually moves through the page.</p>
       </div>
     </div>
   </div>
@@ -1082,8 +1107,8 @@
       <div class="slide-caption reveal">
         <div class="slide-caption__label" id="bts-label">step 01</div>
         <div id="bts-caption">
-          <div class="bts-step-title">competitive mapping</div>
-          <div class="slide-caption__text">finding out what does every RCM website have in common? </div>
+          <div class="bts-step-title">Competitive mapping</div>
+          <div class="slide-caption__text">What does every RCM website have in common? Where is the visual white space in the category?</div>
         </div>
       </div>
       <div class="slide-dots reveal" id="bts-dots"></div>
@@ -1098,7 +1123,7 @@
       <div>
         <div class="learned-card reveal">
           <div class="learned-card__eyebrow">designing for B2B buyers</div>
-          <p class="learned-card__body">in consumer design, you design for delight. in B2B, you design for confidence. every visual choice is either adding to a buyer's certainty that this company can handle their complexity – or quietly subtracting from it. that constraint sharpened every decision on this project.</p>
+          <p class="learned-card__body">In consumer design, you design for delight. In B2B, you design for confidence. Every visual choice is either adding to a buyer's certainty that this company can handle their complexity – or quietly subtracting from it. That constraint sharpened every decision on this project.</p>
         </div>
       </div>
     </div>
@@ -1107,7 +1132,7 @@
     <a href="fitness.html" class="next-project reveal">
       <div>
         <div class="next-project__lbl">next project</div>
-        <div class="next-project__name">momentum – a fitness companion</div>
+        <div class="next-project__name">Momentum – A Fitness Companion</div>
       </div>
       <div class="next-project__arrow">→</div>
     </a>
@@ -1118,6 +1143,16 @@
 
 
 <script>
+  /* ─── HAMBURGER ─── */
+  (function(){
+    var btn=document.getElementById('hamburger'), links=document.getElementById('navLinks');
+    if(!btn||!links) return;
+    btn.addEventListener('click',function(){btn.classList.toggle('is-open');links.classList.toggle('is-open');});
+    links.querySelectorAll('a').forEach(function(a){
+      a.addEventListener('click',function(){btn.classList.remove('is-open');links.classList.remove('is-open');});
+    });
+  })();
+
   /* ─── SCROLL REVEAL ─── */
   var obs = new IntersectionObserver(function(entries){
     entries.forEach(function(e){
@@ -1148,18 +1183,18 @@
   var btsSlides = [
     {
       label: 'step 01',
-      title: 'competitive mapping',
-      caption: 'what does every RCM website have in common? where is the visual white space in the category?'
+      title: 'Competitive mapping',
+      caption: 'What does every RCM website have in common? Where is the visual white space in the category?'
     },
     {
       label: 'step 02',
-      title: 'information architecture',
-      caption: 'reordering the page around the buyer\'s mental model – not the company org chart.'
+      title: 'Information architecture',
+      caption: 'Reordering the page around the buyer\'s mental model – not the company org chart.'
     },
     {
       label: 'step 03',
-      title: 'visual design',
-      caption: 'applying the new system across every component – type, colour, spacing, interaction.'
+      title: 'Visual design',
+      caption: 'Applying the new system across every component – type, colour, spacing, interaction.'
     }
   ];
 
@@ -1197,6 +1232,79 @@
   }
 
   buildBtsDots();
+
+  /* ─── ANNOTATION PIN TOUCH + CLAMP ─── */
+  var _bodyTip = null;
+  var _bodyTipOrigin = null;
+
+  function restoreBodyTip() {
+    if (_bodyTip) {
+      _bodyTip.style.cssText = '';
+      if (_bodyTipOrigin) {
+        _bodyTipOrigin.parent.insertBefore(_bodyTip, _bodyTipOrigin.next);
+      }
+      _bodyTip = null;
+      _bodyTipOrigin = null;
+    }
+  }
+
+  document.querySelectorAll('.annotation').forEach(function(pin) {
+    pin.addEventListener('click', function(e) {
+      var isOpen = pin.classList.contains('is-open');
+      restoreBodyTip();
+      document.querySelectorAll('.annotation').forEach(function(p) {
+        p.classList.remove('is-open');
+        var t = p.querySelector('.annotation__tooltip');
+        if (t) t.style.cssText = '';
+      });
+      if (!isOpen) {
+        var tip = pin.querySelector('.annotation__tooltip');
+        if (tip) {
+          if (window.innerWidth < 600) {
+            var pr = pin.getBoundingClientRect();
+            var tipW = Math.min(240, window.innerWidth - 32);
+            var tipLeft = Math.max(16, Math.min(window.innerWidth - tipW - 16, pr.left + pr.width / 2 - tipW / 2));
+            var isFlip = pin.classList.contains('annotation--flip');
+            _bodyTipOrigin = { parent: tip.parentNode, next: tip.nextSibling };
+            document.body.appendChild(tip);
+            _bodyTip = tip;
+            tip.style.position = 'fixed';
+            tip.style.opacity = '1';
+            tip.style.width = tipW + 'px';
+            tip.style.left = tipLeft + 'px';
+            tip.style.transform = 'none';
+            if (isFlip) {
+              tip.style.top = 'auto';
+              tip.style.bottom = (window.innerHeight - pr.top + 10) + 'px';
+            } else {
+              tip.style.top = (pr.bottom + 10) + 'px';
+              tip.style.bottom = 'auto';
+            }
+          } else {
+            var slide = pin.closest('.slide');
+            if (slide) {
+              var tr = tip.getBoundingClientRect();
+              var sr = slide.getBoundingClientRect();
+              var leftGap  = sr.left + 8 - tr.left;
+              var rightGap = tr.right + 8 - sr.right;
+              if (leftGap > 0)       tip.style.marginLeft = leftGap + 'px';
+              else if (rightGap > 0) tip.style.marginLeft = '-' + rightGap + 'px';
+            }
+          }
+        }
+        pin.classList.add('is-open');
+      }
+      e.stopPropagation();
+    });
+  });
+  document.addEventListener('click', function() {
+    restoreBodyTip();
+    document.querySelectorAll('.annotation').forEach(function(p) {
+      p.classList.remove('is-open');
+      var t = p.querySelector('.annotation__tooltip');
+      if (t) t.style.cssText = '';
+    });
+  });
 
   /* ─── BEFORE / AFTER COMPARISON SLIDER ─── */
   (function() {
@@ -1313,6 +1421,56 @@
         panning = false;
         var slide = getSlide();
         if (slide) slide.classList.remove('is-panning');
+      });
+
+      /* touch pan + pinch-to-zoom */
+      var pinching = false, lastPinchDist = 0;
+      [0, 1, 2].forEach(function(i) {
+        var el = document.getElementById('bts-' + i);
+
+        el.addEventListener('touchstart', function(e) {
+          if (e.target.closest('.bts-zoom-btn')) return;
+          if (e.touches.length === 2) {
+            pinching = true; panning = false;
+            lastPinchDist = Math.hypot(
+              e.touches[0].clientX - e.touches[1].clientX,
+              e.touches[0].clientY - e.touches[1].clientY
+            );
+            e.preventDefault();
+          } else if (e.touches.length === 1 && scale > 1) {
+            panning = true; pinching = false;
+            startX = e.touches[0].clientX; startY = e.touches[0].clientY;
+            startTx = tx; startTy = ty;
+            el.classList.add('is-panning');
+            e.preventDefault();
+          }
+        }, { passive: false });
+
+        el.addEventListener('touchmove', function(e) {
+          if (pinching && e.touches.length === 2) {
+            var d = Math.hypot(
+              e.touches[0].clientX - e.touches[1].clientX,
+              e.touches[0].clientY - e.touches[1].clientY
+            );
+            if (lastPinchDist > 0) {
+              scale = Math.max(1, Math.min(MAX, scale * (d / lastPinchDist)));
+              constrain(); apply(false);
+            }
+            lastPinchDist = d;
+            e.preventDefault();
+          } else if (panning && e.touches.length === 1) {
+            tx = startTx + (e.touches[0].clientX - startX);
+            ty = startTy + (e.touches[0].clientY - startY);
+            constrain(); apply(false);
+            e.preventDefault();
+          }
+        }, { passive: false });
+
+        el.addEventListener('touchend', function() {
+          pinching = false; lastPinchDist = 0; panning = false;
+          var slide = getSlide();
+          if (slide) slide.classList.remove('is-panning');
+        });
       });
 
       /* reset on slide change */

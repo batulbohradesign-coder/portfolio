@@ -511,40 +511,34 @@
 
     /* ─── DTM MOBILE SIZE REDUCTION ─── */
     @media (max-width: 599px) {
+      .dtm-annotation { display: none; }
       .dtm-card { padding: 16px; min-height: 0; }
       .dtm-card__title { font-size: 13px; }
       .dtm-card__body { font-size: 12px; }
     }
 
-    /* ─── DTM MOBILE OVERLAY ─── */
-    .dtm-mob-overlay {
-      display: none;
-      position: absolute; inset: 0;
-      border-radius: 12px;
-      background: rgba(0,0,0,0.82);
-      backdrop-filter: blur(3px); -webkit-backdrop-filter: blur(3px);
-      z-index: 5;
-      align-items: center; justify-content: center;
-      padding: 16px;
+    /* ─── DTM INLINE TOOLTIP (mobile pin tap) ─── */
+    .dtm-inline-tip {
+      position: absolute; z-index: 20;
+      background: #1A1A1A; color: rgba(255,255,255,0.88);
+      border-radius: 10px; padding: 10px 12px; width: 170px;
+      opacity: 0; pointer-events: none;
+      transition: opacity 200ms ease;
+      box-shadow: 0 4px 20px rgba(0,0,0,0.35);
     }
-    @media (max-width: 599px) {
-      .dtm-mob-overlay.is-active { display: flex; }
+    .dtm-inline-tip.is-visible { opacity: 1; }
+    .dtm-inline-tip__pill {
+      display: inline-block; background: rgba(255,255,255,0.12); color: rgba(255,255,255,0.72);
+      font-size: 10px; padding: 2px 8px; border-radius: 20px;
+      font-weight: 500; font-family: var(--f-body); letter-spacing: 0.04em;
     }
-    .dtm-mob-card {
-      background: white; border-radius: 10px; padding: 16px; width: 100%;
+    .dtm-inline-tip__title {
+      font-size: 12px; font-weight: 500; color: white;
+      margin-top: 6px; font-family: var(--f-body); line-height: 1.4;
     }
-    .dtm-mob-card .dtm-pill {
-      display: inline-block; background: #FAECE7; color: #993C1D;
-      font-size: 11px; padding: 3px 10px; border-radius: 20px;
-      font-weight: 500; font-family: var(--f-body);
-    }
-    .dtm-mob-card .dtm-card__title {
-      font-size: 14px; font-weight: 500; color: #1a1a1a;
-      margin-top: 8px; font-family: var(--f-body); line-height: 1.4;
-    }
-    .dtm-mob-card .dtm-card__body {
-      font-size: 13px; color: #555; line-height: 1.6;
-      margin-top: 6px; font-family: var(--f-body);
+    .dtm-inline-tip__body {
+      font-size: 11px; color: rgba(255,255,255,0.72);
+      margin-top: 4px; font-family: var(--f-body); line-height: 1.5;
     }
 
     /* ─── WHAT I LEARNED ─── */
@@ -699,16 +693,10 @@
     </section>
   </div>
 
-  <!-- HERO VISUAL — 780×520 video -->
+  <!-- HERO VISUAL -->
   <div class="hero-visual reveal" style="transition-delay:120ms">
-    <div class="hero-video-wrap vid-wrap">
-      <video autoplay muted loop playsinline preload="auto">
-        <source src="../signals%20intro.mp4" type="video/mp4">
-      </video>
-      <div class="vid-controls">
-        <button class="vid-btn vid-pause-btn" aria-label="Pause"></button>
-        <button class="vid-btn vid-fs-btn" aria-label="Expand to fullscreen"></button>
-      </div>
+    <div class="hero-video-wrap">
+      <img src="../1.png" alt="signals – a college guide" style="width:100%;height:auto;display:block;">
     </div>
   </div>
 
@@ -719,8 +707,8 @@
     <div class="row">
       <div class="row__label"><span class="row__label-text">overview</span></div>
       <div>
-        <p class="body-text reveal">every year, hundreds of thousands of Indian students move to a new city for college. they arrive with ambition, a packed bag, and no one who knows their name.</p>
-        <p class="body-text reveal">signals is a mobile app for those first 90 days. it combines structured daily challenges with an anonymous campus feed, giving students a low-stakes way to act, and a real-time way to know they are not the only one struggling.</p>
+        <p class="body-text reveal">Every year, hundreds of thousands of Indian students move to a new city for college. They arrive with ambition, a packed bag, and no one who knows their name.</p>
+        <p class="body-text reveal">Signals is a mobile app for those first 90 days. It combines structured daily challenges with an anonymous campus feed, giving students a low-stakes way to act, and a real-time way to know they are not the only one struggling.</p>
       </div>
     </div>
 
@@ -730,7 +718,7 @@
       <div>
         <div class="problem-statement reveal">
           <div class="problem-bar"></div>
-          <p class="problem-text">nobody told their parents how they actually felt. they called home and said everything was fine.</p>
+          <p class="problem-text">Nobody told their parents how they actually felt. They called home and said everything was fine.</p>
         </div>
         <div class="stats">
           <div class="stat reveal">
@@ -760,7 +748,7 @@
             <div class="persona__avatar">AR</div>
             <div>
               <div class="persona__name">Aarav Rathore, 18 yrs</div>
-              <div class="persona__sub">b.tech cs · moved from Indore to Bengaluru</div>
+              <div class="persona__sub">B.Tech CS · moved from Indore to Bengaluru</div>
             </div>
           </div>
           <div class="persona__divider"></div>
@@ -768,24 +756,24 @@
             <div>
               <div class="persona__col-lbl">what he does</div>
               <ul class="persona__list">
-                <li>orders zomato to avoid eating alone publicly</li>
-                <li>scrolls instagram at 2am, feels worse</li>
-                <li>tells his parents everything is great</li>
-                <li>lurks r/indiasocial but never posts</li>
+                <li>Orders Zomato to avoid eating alone publicly</li>
+                <li>Scrolls Instagram at 2am, feels worse</li>
+                <li>Tells his parents everything is great</li>
+                <li>Lurks r/IndiaSocial but never posts</li>
               </ul>
             </div>
             <div>
               <div class="persona__col-lbl">what he actually needs</div>
               <ul class="persona__list">
-                <li>to know he's not the only one</li>
-                <li>one low-stakes reason to leave his room</li>
-                <li>someone to figure the city out with</li>
-                <li>to never feel defined by his loneliness</li>
+                <li>To know he's not the only one</li>
+                <li>One low-stakes reason to leave his room</li>
+                <li>Someone to figure the city out with</li>
+                <li>To never feel defined by his loneliness</li>
               </ul>
             </div>
           </div>
         </div>
-        <p class="body-text reveal" style="margin-top:16px; font-size:14px; color:var(--text-3);">based on 5 interviews and 40+ reddit threads across r/IndiaSocial and r/Btech.</p>
+        <p class="body-text reveal" style="margin-top:16px; font-size:14px; color:var(--text-3);">Based on 5 interviews and 40+ Reddit threads across r/IndiaSocial and r/Btech.</p>
       </div>
     </div>
 
@@ -793,7 +781,7 @@
     <div class="wrap insight-section">
       <div class="insight reveal">
         <div class="insight__lbl">the core insight</div>
-        <p class="insight__text">the wound isn't the absence of people. it's the belief that <em>you're the only one</em> feeling their absence.</p>
+        <p class="insight__text">The wound isn't the absence of people. It's the belief that <em>you're the only one</em> feeling their absence.</p>
       </div>
     </div>
 
@@ -839,11 +827,22 @@
       </div>
     </div>
 
+    <!-- SIGNALS INTRO VIDEO -->
+    <div class="hero-video-wrap vid-wrap reveal" style="margin-bottom:0;">
+      <video autoplay muted loop playsinline preload="auto">
+        <source src="../signals%20intro.mp4" type="video/mp4">
+      </video>
+      <div class="vid-controls">
+        <button class="vid-btn vid-pause-btn" aria-label="Pause"></button>
+        <button class="vid-btn vid-fs-btn" aria-label="Expand to fullscreen"></button>
+      </div>
+    </div>
+
     <!-- THE PRODUCT -->
     <div class="row">
       <div class="row__label"><span class="row__label-text">the product</span></div>
       <div>
-        <p class="body-text reveal">three flows. one system. every part connects to the others - intentionally.</p>
+        <p class="body-text reveal">Three flows. One system. Every part connects to the others - intentionally.</p>
       </div>
     </div>
 
@@ -863,8 +862,8 @@
               </div>
             </div>
           </div>
-          <div class="flow__name">onboarding</div>
-          <div class="flow__desc">value before sign-up. the normalisation number appears before any account is created.</div>
+          <div class="flow__name">Onboarding</div>
+          <div class="flow__desc">Value before sign-up. The normalisation number appears before any account is created.</div>
         </div>
 
         <div class="flow" id="flow-2"
@@ -878,8 +877,8 @@
               </div>
             </div>
           </div>
-          <div class="flow__name">daily move</div>
-          <div class="flow__desc">one move per day. always free. a buddy doing the same thing removes the fear of going alone.</div>
+          <div class="flow__name">Daily Move</div>
+          <div class="flow__desc">One move per day. Always free. A buddy doing the same thing removes the fear of going alone.</div>
         </div>
 
         <div class="flow" id="flow-3"
@@ -893,8 +892,8 @@
               </div>
             </div>
           </div>
-          <div class="flow__name">signal wall</div>
-          <div class="flow__desc">every card on the signal wall is something a real student felt that week. they read it. they tap me too. the count goes up. no algorithm, just recognition.</div>
+          <div class="flow__name">Signal Wall</div>
+          <div class="flow__desc">Every card on the signal wall is something a real student felt that week. They read it. They tap "me too." The count goes up. No algorithm, just recognition.</div>
         </div>
 
       </div>
@@ -944,10 +943,10 @@
       <div>
 
         <div class="dtm-tabs reveal">
-          <button class="dtm-tab is-active" data-dtm-tab="onboarding">onboarding</button>
-          <button class="dtm-tab" data-dtm-tab="buddy-connect">buddy connect</button>
-          <button class="dtm-tab" data-dtm-tab="journey">journey</button>
-          <button class="dtm-tab" data-dtm-tab="signal-wall">signal wall</button>
+          <button class="dtm-tab is-active" data-dtm-tab="onboarding">Onboarding</button>
+          <button class="dtm-tab" data-dtm-tab="buddy-connect">Buddy connect</button>
+          <button class="dtm-tab" data-dtm-tab="journey">Journey</button>
+          <button class="dtm-tab" data-dtm-tab="signal-wall">Signal wall</button>
         </div>
 
         <!-- TAB: onboarding -->
@@ -959,13 +958,6 @@
                   <img src="../onboarding.png" class="dtm-screen" alt="onboarding screen" draggable="false" />
                   <button class="dtm-pin" style="top:28%;left:85%" data-panel="onboarding" data-idx="0">1</button>
                   <button class="dtm-pin" style="top:40%;left:85%" data-panel="onboarding" data-idx="1">2</button>
-                  <div class="dtm-mob-overlay">
-                    <div class="dtm-mob-card">
-                      <span class="dtm-pill"></span>
-                      <div class="dtm-card__title"></div>
-                      <div class="dtm-card__body"></div>
-                    </div>
-                  </div>
                 </div>
               </div>
             </div>
@@ -988,13 +980,6 @@
                 <div class="dtm-img-ref">
                   <img src="../buddy-connect.png" class="dtm-screen" alt="buddy connect screen" draggable="false" />
                   <button class="dtm-pin" style="top:68%;left:85%" data-panel="buddy-connect" data-idx="0">1</button>
-                  <div class="dtm-mob-overlay">
-                    <div class="dtm-mob-card">
-                      <span class="dtm-pill"></span>
-                      <div class="dtm-card__title"></div>
-                      <div class="dtm-card__body"></div>
-                    </div>
-                  </div>
                 </div>
               </div>
             </div>
@@ -1017,13 +1002,6 @@
                 <div class="dtm-img-ref">
                   <img src="../completion-signals.png" class="dtm-screen" alt="journey screen" draggable="false" />
                   <button class="dtm-pin" style="top:38%;left:85%" data-panel="journey" data-idx="0">1</button>
-                  <div class="dtm-mob-overlay">
-                    <div class="dtm-mob-card">
-                      <span class="dtm-pill"></span>
-                      <div class="dtm-card__title"></div>
-                      <div class="dtm-card__body"></div>
-                    </div>
-                  </div>
                 </div>
               </div>
             </div>
@@ -1047,13 +1025,6 @@
                   <img src="../signal-wall.png" class="dtm-screen" alt="signal wall screen" draggable="false" />
                   <button class="dtm-pin" style="top:35%;left:10%" data-panel="signal-wall" data-idx="0">1</button>
                   <button class="dtm-pin" style="top:72%;left:85%" data-panel="signal-wall" data-idx="1">2</button>
-                  <div class="dtm-mob-overlay">
-                    <div class="dtm-mob-card">
-                      <span class="dtm-pill"></span>
-                      <div class="dtm-card__title"></div>
-                      <div class="dtm-card__body"></div>
-                    </div>
-                  </div>
                 </div>
               </div>
             </div>
@@ -1077,7 +1048,7 @@
       <div>
         <div class="learned-card reveal">
           <div class="learned-card__eyebrow">a note on tone</div>
-          <p class="learned-card__body">to find the right words for the users. with every screen, every label, every cta, i had to design for a student who would close the app the moment it made him feel defined by his struggle. the product had to say "you're not alone" without ever saying "you're lonely." that constraint shaped everything.</p>
+          <p class="learned-card__body">To find the right words for the users. With every screen, every label, every CTA, I had to design for a student who would close the app the moment it made him feel defined by his struggle. The product had to say "you're not alone" without ever saying "you're lonely." That constraint shaped everything.</p>
         </div>
       </div>
     </div>
@@ -1086,12 +1057,12 @@
     <div class="row">
       <div class="row__label"><span class="row__label-text">what comes next</span></div>
       <div>
-        <p class="next-body reveal">signals is designed for the first 90 days. what happens after week 12 is intentionally unanswered - because by then, the app should no longer be the most important relationship in a student's life.</p>
-        <p class="next-body reveal" style="margin-top:24px;">three numbers would tell us if it worked.</p>
-        <p class="next-body reveal" style="margin-top:20px;"><strong>day 7 retention</strong> - does the habit survive the first week, or does aarav open it twice and disappear?</p>
-        <p class="next-body reveal" style="margin-top:16px;"><strong>buddy connection rate</strong> - of every daily move completed, how many lead to a matched pair? this is the product's core bet: that action precedes friendship.</p>
-        <p class="next-body reveal" style="margin-top:16px;"><strong>wall-to-name ratio</strong> - how many students who read the signal wall anonymously eventually reveal who they are?</p>
-        <p class="next-body reveal" style="margin-top:24px;">V2 explores city mapping, group challenges, and a senior mentor layer. but those come after one student has helped one other student find a laundromat, or sat somewhere new for lunch, or sent a message that started with "i felt that too."</p>
+        <p class="next-body reveal">Signals is designed for the first 90 days. What happens after week 12 is intentionally unanswered - because by then, the app should no longer be the most important relationship in a student's life.</p>
+        <p class="next-body reveal" style="margin-top:24px;">Three numbers would tell us if it worked.</p>
+        <p class="next-body reveal" style="margin-top:20px;"><strong>Day 7 retention</strong> - does the habit survive the first week, or does Aarav open it twice and disappear?</p>
+        <p class="next-body reveal" style="margin-top:16px;"><strong>Buddy connection rate</strong> - of every daily move completed, how many lead to a matched pair? This is the product's core bet: that action precedes friendship.</p>
+        <p class="next-body reveal" style="margin-top:16px;"><strong>Wall-to-name ratio</strong> - how many students who read the signal wall anonymously eventually reveal who they are?</p>
+        <p class="next-body reveal" style="margin-top:24px;">V2 explores city mapping, group challenges, and a senior mentor layer. But those come after one student has helped one other student find a laundromat, or sat somewhere new for lunch, or sent a message that started with "I felt that too."</p>
       </div>
     </div>
 
@@ -1099,7 +1070,7 @@
     <a href="access-healthcare.html" class="next-project reveal">
       <div class="next-project__lbl">next project</div>
       <div class="next-project__row">
-        <div class="next-project__name">access healthcare – website redesign</div>
+        <div class="next-project__name">Access Healthcare – Website Redesign</div>
         <div class="next-project__arrow">→</div>
       </div>
     </a>
@@ -1176,50 +1147,50 @@
     'onboarding': [
       {
         pill: 'endowment effect',
-        title: 'the challenge appears before sign-up',
-        body: '"before you set up your profile - try this today." the move exists before aarav has an account to attach it to. by the time sign-up appears, he already has something to protect - and people overvalue what they already possess.',
+        title: 'The challenge appears before sign-up',
+        body: '"Before you set up your profile - try this today." The move exists before Aarav has an account to attach it to. By the time sign-up appears, he already has something to protect - and people overvalue what they already possess.',
         element: 'challenge card, shown pre-auth'
       },
       {
         pill: 'default effect',
-        title: 'the buddy is already there',
-        body: 'priya appears on the challenge card before aarav has opted into anything. the default is a paired experience. opting out takes more energy than going along.',
+        title: 'The buddy is already there',
+        body: 'Priya appears on the challenge card before Aarav has opted into anything. The default is a paired experience. Opting out takes more energy than going along.',
         element: 'buddy chip, pre-matched before consent'
       }
     ],
     'buddy-connect': [
       {
         pill: 'default effect',
-        title: 'the pre-filled first message',
-        body: 'the blank box after "say hi" is where most people close the app. signals writes the first line. editable, but most people send it as-is - the best default is the one that makes doing nothing harder than doing something.',
+        title: 'The pre-filled first message',
+        body: 'The blank box after "say hi" is where most people close the app. Signals writes the first line. Editable, but most people send it as-is - the best default is the one that makes doing nothing harder than doing something.',
         element: 'pre-filled message, bottom sheet'
       }
     ],
     'journey': [
       {
         pill: 'zeigarnik effect',
-        title: 'hollow dots, never crossed out',
-        body: 'the unfilled sunday dot stays hollow - never marked as failed or crossed out. incomplete arcs pull you forward. broken ones push you away. one pixel difference is the difference between "i\'m still going" and "i\'ve already quit."',
+        title: 'Hollow dots, never crossed out',
+        body: 'The unfilled Sunday dot stays hollow - never marked as failed or crossed out. Incomplete arcs pull you forward. Broken ones push you away. One pixel difference is the difference between "I\'m still going" and "I\'ve already quit."',
         element: 'weekly day dots, hollow incomplete state'
       },
       {
         pill: 'social proof',
-        title: 'a classmate\'s reflection as a nudge',
-        body: '"seeing my classmates complete their move made me go out." the reflection isn\'t a notification or a push - it\'s a peer moment, surfaced quietly. it works because it doesn\'t try to.',
+        title: 'A classmate\'s reflection as a nudge',
+        body: '"Seeing my classmates complete their move made me go out." The reflection isn\'t a notification or a push - it\'s a peer moment, surfaced quietly. It works because it doesn\'t try to.',
         element: 'weekly reflection card, peer activity visible'
       }
     ],
     'signal-wall': [
       {
         pill: 'progressive disclosure',
-        title: 'anonymous by default, identity earned',
-        body: 'aarav won\'t say he\'s lonely. but he\'ll resonate with someone who signals the same thing. no name required to read - the modal only surfaces a connection after shared resonance is established.',
+        title: 'Anonymous by default, identity earned',
+        body: 'Aarav won\'t say he\'s lonely. But he\'ll resonate with someone who signals the same thing. No name required to read - the modal only surfaces a connection after shared resonance is established.',
         element: 'signal wall, anonymous read state'
       },
       {
         pill: 'earned trust',
-        title: 'say hello only after something is shared',
-        body: 'the connection prompt appears after both users have resonated with the same signal - not before. the product earns the ask before making it. "want to connect anonymously?" is five words that only land because of everything that came before them.',
+        title: 'Say hello only after something is shared',
+        body: 'The connection prompt appears after both users have resonated with the same signal - not before. The product earns the ask before making it. "Want to connect anonymously?" is five words that only land because of everything that came before them.',
         element: 'connection modal, post-resonance trigger'
       }
     ]
@@ -1242,17 +1213,23 @@
     };
   }
 
-  function getMobOverlay(panelId) {
+  function getImgRef(panelId) {
     var panel = document.getElementById('dtmp-' + panelId);
-    return panel ? panel.querySelector('.dtm-mob-overlay') : null;
+    return panel ? panel.querySelector('.dtm-img-ref') : null;
+  }
+
+  function clearInlineTip(panelId) {
+    var imgRef = getImgRef(panelId);
+    if(!imgRef) return;
+    var tip = imgRef.querySelector('.dtm-inline-tip');
+    if(tip) tip.classList.remove('is-visible');
   }
 
   function clear(panelId) {
     var e = getEls(panelId); if(!e) return;
     e.hint.style.display = 'flex';
     e.card.style.display = 'none';
-    var ov = getMobOverlay(panelId);
-    if(ov) ov.classList.remove('is-active');
+    clearInlineTip(panelId);
     e.pins.forEach(function(p){ p.classList.remove('is-active'); });
     e.dots.forEach(function(d){ d.classList.remove('is-active'); });
     activePin[panelId] = -1;
@@ -1264,15 +1241,33 @@
     var p = DATA[panelId][idx]; if(!p) return;
 
     if(window.innerWidth < 600) {
-      var ov = getMobOverlay(panelId);
-      if(ov) {
-        ov.querySelector('.dtm-pill').textContent        = p.pill;
-        ov.querySelector('.dtm-card__title').textContent = p.title;
-        ov.querySelector('.dtm-card__body').textContent  = p.body;
-        ov.classList.add('is-active');
+      var pin = e.pins[idx];
+      var imgRef = getImgRef(panelId);
+      if(imgRef && pin) {
+        var tip = imgRef.querySelector('.dtm-inline-tip');
+        if(!tip) {
+          tip = document.createElement('div');
+          tip.className = 'dtm-inline-tip';
+          imgRef.appendChild(tip);
+        }
+        tip.innerHTML =
+          '<span class="dtm-inline-tip__pill">' + p.pill + '</span>' +
+          '<div class="dtm-inline-tip__title">' + p.title + '</div>' +
+          '<div class="dtm-inline-tip__body">' + p.body + '</div>';
+
+        var pinLeft = parseFloat(pin.style.left);
+        var pinTop  = parseFloat(pin.style.top);
+        if(pinLeft > 50) {
+          tip.style.right = (100 - pinLeft + 3) + '%';
+          tip.style.left  = 'auto';
+        } else {
+          tip.style.left  = (pinLeft + 3) + '%';
+          tip.style.right = 'auto';
+        }
+        tip.style.top    = Math.max(5, pinTop - 5) + '%';
+        tip.style.bottom = 'auto';
+        tip.classList.add('is-visible');
       }
-      e.hint.style.display = 'none';
-      e.card.style.display = 'none';
     } else {
       e.pill.textContent   = p.pill;
       e.title.textContent  = p.title;
@@ -1287,7 +1282,8 @@
   }
 
   document.querySelectorAll('.dtm-pin').forEach(function(pin){
-    pin.addEventListener('click', function(){
+    pin.addEventListener('click', function(e){
+      if(window.innerWidth < 600) e.stopPropagation();
       select(pin.dataset.panel, parseInt(pin.dataset.idx, 10));
     });
   });
@@ -1303,10 +1299,23 @@
       var id = tab.dataset.dtmTab;
       document.querySelectorAll('.dtm-tab').forEach(function(t){ t.classList.remove('is-active'); });
       tab.classList.add('is-active');
-      document.querySelectorAll('.dtm-panel').forEach(function(p){ p.style.display = 'none'; });
+      document.querySelectorAll('.dtm-panel').forEach(function(p){
+        p.style.display = 'none';
+        var tip = p.querySelector('.dtm-inline-tip');
+        if(tip) tip.classList.remove('is-visible');
+      });
+      Object.keys(activePin).forEach(function(k){ activePin[k] = -1; });
+      document.querySelectorAll('.dtm-pin').forEach(function(p){ p.classList.remove('is-active'); });
       var panel = document.getElementById('dtmp-' + id);
       if(panel) panel.style.display = 'block';
     });
+  });
+
+  document.addEventListener('click', function(){
+    if(window.innerWidth >= 600) return;
+    Object.keys(DATA).forEach(function(panelId){ clearInlineTip(panelId); });
+    document.querySelectorAll('.dtm-pin').forEach(function(p){ p.classList.remove('is-active'); });
+    Object.keys(activePin).forEach(function(k){ activePin[k] = -1; });
   });
 })();
 </script>
@@ -1322,38 +1331,43 @@
   var tipBody = tip.querySelector('.cmap__tip-body');
   var TIP_W = 210, TIP_H = 140;
 
+  function showTip(dot) {
+    tipName.textContent = dot.dataset.name;
+    tipSub.textContent  = dot.dataset.sub;
+    var isSignals = dot.classList.contains('cmap__dot--signals');
+    tipBody.innerHTML = isSignals
+      ? dot.dataset.body
+      : '<span class="cmap__tip-prefix">gap → </span>' + dot.dataset.body;
+    var wW  = wrap.offsetWidth;
+    var wH  = wrap.offsetHeight;
+    var cx  = parseFloat(dot.style.getPropertyValue('--cx')) / 100 * wW;
+    var cy  = parseFloat(dot.style.getPropertyValue('--cy')) / 100 * wH;
+    var sz  = parseFloat(dot.style.getPropertyValue('--sz'));
+    var off = sz / 2 + 12;
+    var left = cx + off;
+    if(left + TIP_W > wW - 8) left = cx - off - TIP_W;
+    if(left < 8) left = 8;
+    var top = cy - TIP_H / 2;
+    if(top < 8) top = 8;
+    if(top + TIP_H > wH - 8) top = wH - TIP_H - 8;
+    tip.style.left = left + 'px';
+    tip.style.top  = top  + 'px';
+    tip.classList.add('is-visible');
+  }
+
   wrap.querySelectorAll('.cmap__dot').forEach(function(dot){
-    dot.addEventListener('mouseenter', function(){
-      tipName.textContent = dot.dataset.name;
-      tipSub.textContent  = dot.dataset.sub;
-      var isSignals = dot.classList.contains('cmap__dot--signals');
-      tipBody.innerHTML = isSignals
-        ? dot.dataset.body
-        : '<span class="cmap__tip-prefix">gap → </span>' + dot.dataset.body;
-
-      var wW  = wrap.offsetWidth;
-      var wH  = wrap.offsetHeight;
-      var cx  = parseFloat(dot.style.getPropertyValue('--cx')) / 100 * wW;
-      var cy  = parseFloat(dot.style.getPropertyValue('--cy')) / 100 * wH;
-      var sz  = parseFloat(dot.style.getPropertyValue('--sz'));
-      var off = sz / 2 + 12;
-
-      var left = cx + off;
-      if(left + TIP_W > wW - 8) left = cx - off - TIP_W;
-      if(left < 8) left = 8;
-
-      var top = cy - TIP_H / 2;
-      if(top < 8) top = 8;
-      if(top + TIP_H > wH - 8) top = wH - TIP_H - 8;
-
-      tip.style.left = left + 'px';
-      tip.style.top  = top  + 'px';
-      tip.classList.add('is-visible');
-    });
-    dot.addEventListener('mouseleave', function(){
-      tip.classList.remove('is-visible');
+    dot.addEventListener('mouseenter', function(){ showTip(dot); });
+    dot.addEventListener('mouseleave', function(){ tip.classList.remove('is-visible'); tip._activeDot = null; });
+    dot.addEventListener('click', function(e){
+      e.stopPropagation();
+      if(tip._activeDot === dot && tip.classList.contains('is-visible')){
+        tip.classList.remove('is-visible'); tip._activeDot = null;
+      } else {
+        showTip(dot); tip._activeDot = dot;
+      }
     });
   });
+  document.addEventListener('click', function(){ tip.classList.remove('is-visible'); tip._activeDot = null; });
 })();
 </script>
 
