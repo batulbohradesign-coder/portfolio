@@ -1,0 +1,801 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>aquaculture asset management – work</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,300;12..96,400;12..96,500;12..96,600&family=Figtree:wght@300;400;500&display=swap" rel="stylesheet">
+  <link rel="icon" type="image/png" href="../assets/images/logo.png">
+  <style>
+    /* ─── TOKENS ─── */
+    :root {
+      --bg:      #FAF8F6;
+      --text:    #1A1A1A;
+      --text-2:  #555555;
+      --text-3:  #888888;
+      --accent:  #1C5B7A;
+      --border:  rgba(17,17,17,0.10);
+      --surface: #EEEAE4;
+      --surf-2:  #E4E0D9;
+      --f-head:  'Bricolage Grotesque', sans-serif;
+      --f-body:  'Figtree', sans-serif;
+      --ease:    cubic-bezier(0.16,1,0.3,1);
+      --max:     920px;
+      --px:      24px;
+    }
+    @media (min-width: 640px) { :root { --px: 40px; } }
+
+    /* ─── RESET ─── */
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; }
+    body {
+      background: var(--bg); color: var(--text);
+      font-family: var(--f-body); font-size: 16px;
+      line-height: 1.7; -webkit-font-smoothing: antialiased;
+      overflow-x: hidden;
+    }
+    a { color: inherit; text-decoration: none; }
+    img { max-width: 100%; display: block; }
+
+    /* ─── CONTAINER ─── */
+    .wrap {
+      width: 100%; max-width: var(--max);
+      margin: 0 auto;
+      padding-left: var(--px); padding-right: var(--px);
+    }
+
+    /* ─── NAV ─── */
+    .nav {
+      position: sticky; top: 0; z-index: 100;
+      background: var(--bg); border-bottom: 1px solid var(--border);
+    }
+    .nav__inner {
+      max-width: 1280px; margin: 0 auto;
+      padding: 0 64px;
+      display: flex; justify-content: space-between;
+      align-items: center; height: 64px;
+    }
+    .nav__logo {
+      font-family: var(--f-head); font-size: 20px; font-weight: 500;
+      letter-spacing: -0.03em; display: inline-flex; align-items: baseline; overflow: hidden;
+    }
+    .nav__logo-rest {
+      display: inline-block; max-width: 0; opacity: 0; overflow: hidden; white-space: nowrap;
+      transition: max-width 700ms var(--ease), opacity 500ms var(--ease) 100ms;
+    }
+    .nav__logo-dot { display: inline-block; transition: opacity 400ms ease, width 400ms ease; }
+    .nav__logo:hover .nav__logo-rest { max-width: 200px; opacity: 1; }
+    .nav__logo:hover .nav__logo-dot  { opacity: 0; width: 0; overflow: hidden; }
+    .nav__links { display: flex; gap: 40px; list-style: none; }
+    .nav__link {
+      font-size: 16px; color: var(--text-2);
+      position: relative; transition: color 150ms var(--ease);
+    }
+    .nav__link::after {
+      content: ''; position: absolute; bottom: -2px; left: 0;
+      width: 0; height: 1px; background: var(--accent);
+      transition: width 300ms var(--ease);
+    }
+    .nav__link:hover { color: var(--text); }
+    .nav__link:hover::after { width: 100%; }
+    .hamburger { display: none; flex-direction: column; gap: 5px; cursor: pointer; padding: 4px; background: none; border: none; }
+    .hamburger span { display: block; width: 22px; height: 1.5px; background: var(--text); border-radius: 2px; transition: transform 300ms var(--ease), opacity 200ms; }
+    .hamburger.is-open span:nth-child(1) { transform: translateY(6.5px) rotate(45deg); }
+    .hamburger.is-open span:nth-child(2) { opacity: 0; }
+    .hamburger.is-open span:nth-child(3) { transform: translateY(-6.5px) rotate(-45deg); }
+    @media(max-width:767px) {
+      .hamburger { display: flex; margin-left: auto; }
+      .nav__inner { padding: 0 var(--px); }
+      .nav__links { display: none; flex-direction: column; gap: 0; position: absolute; top: 64px; left: 0; right: 0; background: var(--bg); border-bottom: 1px solid var(--border); padding: 8px 0; z-index: 200; }
+      .nav__links.is-open { display: flex; }
+      .nav__link { padding: 14px var(--px); font-size: 18px; }
+      .nav__link::after { display: none; }
+    }
+
+    /* ─── HERO ─── */
+    .hero { padding: 64px 0 48px; }
+    .hero__tags {
+      display: flex; gap: 0; flex-wrap: wrap;
+      margin-bottom: 16px; align-items: center;
+    }
+    .hero__tag {
+      font-size: 12px; font-weight: 500; letter-spacing: 0.08em;
+      text-transform: uppercase; color: var(--accent);
+    }
+    .hero__tag-dot { font-size: 12px; color: var(--accent); margin: 0 8px; }
+    .hero__title {
+      font-family: var(--f-head);
+      font-size: clamp(48px, 8vw, 80px);
+      font-weight: 500; line-height: 0.92; letter-spacing: -0.03em;
+    }
+    .hero__sub {
+      font-size: 18px; font-weight: 300; color: var(--text-2);
+      max-width: 540px; line-height: 1.6; margin-top: 20px;
+    }
+
+    /* ─── HERO IMAGE CARD ─── */
+    .hero-img-card {
+      width: 100%; border-radius: 24px; overflow: hidden;
+      background: var(--surf-2); aspect-ratio: 16/9;
+    }
+    .hero-img-card img {
+      width: 100%; height: 100%; object-fit: cover; object-position: top;
+      display: block;
+    }
+
+    /* ─── TWO-COL ROW ─── */
+    .row {
+      display: grid;
+      grid-template-columns: 160px 1fr;
+      gap: 0 40px;
+      padding: 48px 0;
+      align-items: start;
+    }
+    .row__label { padding-top: 2px; position: sticky; top: 72px; }
+    .row__label-text {
+      font-size: 11px; font-weight: 500;
+      letter-spacing: 0.08em; text-transform: uppercase;
+      color: var(--text-2); white-space: nowrap;
+    }
+    @media (max-width: 599px) {
+      .row { grid-template-columns: 1fr; gap: 12px; padding: 40px 0; }
+      .row__label { position: static; }
+      .row__label-text { white-space: normal; }
+    }
+
+    /* ─── TYPOGRAPHY ─── */
+    .body-text { font-size: 16px; font-weight: 300; line-height: 1.75; color: var(--text); }
+    .body-text + .body-text { margin-top: 16px; }
+
+    /* ─── STATS ─── */
+    .stats {
+      display: grid; grid-template-columns: repeat(3, 1fr);
+      gap: 4px; border-radius: 16px;
+    }
+    @media (max-width: 599px) { .stats { grid-template-columns: 1fr; } }
+    .stat {
+      background: var(--surface); padding: 28px 24px;
+      height: 200px; display: flex; flex-direction: column;
+      transition: transform 250ms var(--ease);
+    }
+    .stat:hover { transform: translateY(-3px); }
+    .stat:first-child { border-radius: 16px 0 0 16px; }
+    .stat:last-child  { border-radius: 0 16px 16px 0; }
+    .stat__num {
+      font-family: var(--f-head); font-size: 40px; font-weight: 600;
+      letter-spacing: -0.03em; color: var(--accent);
+      line-height: 1; margin-bottom: 12px;
+    }
+    .stat__text { font-size: 14px; font-weight: 300; color: var(--text); line-height: 1.55; flex: 1; }
+    @media (max-width: 599px) { .stat { border-radius: 16px !important; height: auto; } }
+
+    /* ─── WHAT I FOUND – SLIDESHOW ─── */
+    .slideshow-track { overflow: hidden; border-radius: 20px; }
+    .slideshow-inner { display: flex; transition: transform 500ms var(--ease); }
+    .slide {
+      min-width: 100%; position: relative;
+      background: var(--surf-2); border-radius: 20px;
+      aspect-ratio: 16/10.35;
+      display: flex; align-items: center; justify-content: center;
+      overflow: hidden;
+    }
+    .slide__img {
+      width: 100%; height: 100%; object-fit: cover; object-position: top center;
+      position: absolute; inset: 0; display: block;
+      border-radius: 20px;
+    }
+
+    /* Annotation pins */
+    .annotation { position: absolute; z-index: 10; cursor: pointer; }
+    .annotation__pin {
+      width: 32px; height: 32px; border-radius: 50%;
+      background: #E5312B; color: white;
+      font-size: 13px; font-weight: 700; font-family: var(--f-head);
+      display: flex; align-items: center; justify-content: center;
+      box-shadow: 0 0 0 3px rgba(255,255,255,0.85), 0 3px 14px rgba(229,49,43,0.55);
+      transition: transform 200ms var(--ease); flex-shrink: 0;
+    }
+    .annotation:hover .annotation__pin { transform: scale(1.12); }
+    .annotation__tooltip {
+      position: absolute;
+      top: calc(100% + 10px); left: 50%; transform: translateX(-50%);
+      background: #1A1A1A; color: rgba(255,255,255,0.88);
+      border-radius: 8px; padding: 10px 14px;
+      font-size: 13px; font-weight: 400; line-height: 1.6; width: 210px;
+      pointer-events: none; opacity: 0;
+      transition: opacity 200ms ease;
+      box-shadow: 0 4px 20px rgba(0,0,0,0.35); z-index: 20;
+    }
+    .annotation__tooltip::after {
+      content: ''; position: absolute;
+      bottom: 100%; left: 50%; transform: translateX(-50%);
+      border: 6px solid transparent; border-bottom-color: #1A1A1A;
+    }
+    .annotation:hover .annotation__tooltip { opacity: 1; }
+    .annotation--flip .annotation__tooltip { top: auto; bottom: calc(100% + 10px); }
+    .annotation--flip .annotation__tooltip::after {
+      bottom: auto; top: 100%;
+      border-bottom-color: transparent; border-top-color: #1A1A1A;
+    }
+
+    /* Slide controls + caption */
+    .slide-btn {
+      width: 40px; height: 40px; border-radius: 50%;
+      border: 1px solid var(--border); background: white;
+      cursor: pointer; display: flex; align-items: center; justify-content: center;
+      font-size: 16px; color: var(--text-2);
+      transition: all 200ms var(--ease); flex-shrink: 0;
+    }
+    .slide-btn:hover { background: var(--surface); color: var(--text); border-color: var(--text-3); }
+    .slide-btn:disabled { opacity: 0.3; cursor: not-allowed; }
+    .slide-counter { font-size: 13px; color: var(--text-3); font-weight: 300; min-width: 36px; text-align: center; }
+    .slide-caption {
+      display: grid; grid-template-columns: 160px 1fr;
+      gap: 0 40px; margin-top: 20px; align-items: start;
+    }
+    @media (max-width: 599px) { .slide-caption { grid-template-columns: 1fr; gap: 8px; } }
+    .slide-caption__label {
+      font-size: 11px; font-weight: 500; letter-spacing: 0.08em;
+      text-transform: uppercase; color: var(--text-3); padding-top: 3px;
+    }
+    .slide-caption__text { font-size: 15px; font-weight: 300; color: var(--text-2); line-height: 1.6; }
+    .slide-dots { display: flex; gap: 6px; margin-top: 16px; padding-left: 200px; }
+    @media (max-width: 599px) { .slide-dots { padding-left: 0; } }
+    .slide-dot {
+      width: 6px; height: 6px; border-radius: 50%;
+      background: var(--surf-2); border: 1px solid var(--text-3);
+      cursor: pointer; transition: all 200ms var(--ease);
+    }
+    .slide-dot.active { background: var(--accent); border-color: var(--accent); width: 20px; border-radius: 3px; }
+
+    /* ─── THE SHIFT — INSIGHT ─── */
+    .insight-section { padding: 48px 0; }
+    .insight {
+      background: var(--text); color: var(--bg);
+      border-radius: 20px; padding: 40px;
+    }
+    .insight__lbl {
+      font-size: 11px; font-weight: 500; letter-spacing: 0.10em;
+      text-transform: uppercase; color: rgba(250,248,246,0.35);
+      margin-bottom: 20px;
+    }
+    .insight__text {
+      font-family: var(--f-head);
+      font-size: 28px; font-weight: 500;
+      line-height: 1.4; letter-spacing: -0.01em;
+    }
+
+    /* ─── REDESIGN IMAGES ─── */
+    .redesign-pair {
+      display: grid; grid-template-columns: 1fr 1fr;
+      gap: 8px; margin-bottom: 8px;
+    }
+    @media (max-width: 599px) { .redesign-pair { grid-template-columns: 1fr; } }
+    .redesign-pair__cell {
+      background: var(--surf-2); border-radius: 16px; overflow: hidden;
+      position: relative; aspect-ratio: 4/3;
+    }
+    .redesign-pair__cell img {
+      width: 100%; height: 100%; object-fit: cover; object-position: top;
+      display: block;
+    }
+    .redesign-pair__cap {
+      position: absolute; bottom: 0; left: 0; right: 0;
+      padding: 9px 14px;
+      background: rgba(0,0,0,0.42); backdrop-filter: blur(8px);
+      font-size: 11px; font-weight: 400; color: rgba(255,255,255,0.75);
+      letter-spacing: 0.04em; text-transform: uppercase;
+    }
+    .redesign-ia {
+      background: var(--surf-2); border-radius: 16px; overflow: hidden;
+      margin-bottom: 8px;
+    }
+    .redesign-ia img { width: 100%; height: auto; display: block; }
+    .redesign-caption {
+      font-size: 15px; font-weight: 300; color: var(--text-2);
+      margin-bottom: 32px; padding-top: 12px;
+      line-height: 1.6;
+    }
+
+    /* ─── VIEW TABS ─── */
+    .view-tabs__bar {
+      display: flex; gap: 4px; margin-bottom: 12px;
+    }
+    .view-tab {
+      background: var(--surface); border: none; border-radius: 20px;
+      padding: 6px 18px; font-size: 12px; font-weight: 500;
+      font-family: var(--f-body); letter-spacing: 0.06em; text-transform: uppercase;
+      color: var(--text-3); cursor: pointer;
+      transition: background 180ms var(--ease), color 180ms var(--ease);
+    }
+    .view-tab.is-active { background: var(--text); color: var(--bg); }
+    .view-tab:hover:not(.is-active) { background: var(--surf-2); color: var(--text-2); }
+    .view-panel { display: none; border-radius: 16px; overflow: hidden; background: var(--surf-2); }
+    .view-panel.is-active { display: block; }
+    .view-panel img { width: 100%; height: auto; display: block; }
+
+    /* ─── COMPARISON TABLE ─── */
+    .compare-table {
+      background: var(--surface); border-radius: 20px; overflow: hidden;
+      margin-bottom: 32px;
+    }
+    .compare-table__head {
+      display: grid; grid-template-columns: 180px 1fr 1fr;
+      padding: 14px 24px;
+      background: var(--surf-2);
+      border-bottom: 1px solid var(--border);
+    }
+    .compare-table__head-cell {
+      font-size: 11px; font-weight: 500; letter-spacing: 0.10em;
+      text-transform: uppercase; color: var(--text-3);
+    }
+    .compare-table__head-cell:first-child { visibility: hidden; }
+    .compare-table__row {
+      display: grid; grid-template-columns: 180px 1fr 1fr;
+      padding: 16px 24px;
+      border-bottom: 1px solid var(--border);
+      transition: background 180ms var(--ease);
+      align-items: baseline;
+    }
+    .compare-table__row:last-child { border-bottom: none; }
+    .compare-table__row:hover { background: rgba(0,0,0,0.025); }
+    .compare-table__label {
+      font-size: 11px; font-weight: 500; letter-spacing: 0.07em;
+      text-transform: uppercase; color: var(--text-3);
+    }
+    .compare-table__old {
+      font-size: 14px; font-weight: 300; color: var(--text-2);
+      line-height: 1.55; padding-right: 20px;
+    }
+    .compare-table__new {
+      font-size: 14px; font-weight: 500; color: var(--accent);
+      line-height: 1.55;
+    }
+    @media (max-width: 599px) {
+      .compare-table__head { grid-template-columns: 1fr 1fr; }
+      .compare-table__head-cell:first-child { display: none; }
+      .compare-table__row { grid-template-columns: 1fr; gap: 4px; }
+      .compare-table__label { display: none; }
+    }
+
+    /* ─── THE RESISTANCE — BEATS ─── */
+    .beats { display: flex; flex-direction: column; }
+    .beat {
+      display: grid; grid-template-columns: 48px 1fr;
+      gap: 0 20px; padding: 28px 0;
+      border-bottom: 1px solid var(--border);
+      align-items: start;
+    }
+    .beat:last-child { border-bottom: none; padding-bottom: 0; }
+    .beat__num {
+      font-size: 11px; font-weight: 500; letter-spacing: 0.10em;
+      text-transform: uppercase; color: var(--accent); padding-top: 4px;
+    }
+    .beat__body {
+      font-size: 16px; font-weight: 300; line-height: 1.75; color: var(--text);
+    }
+    @media (max-width: 599px) {
+      .beat { grid-template-columns: 40px 1fr; gap: 0 12px; }
+    }
+
+    /* ─── WHAT I'D MEASURE ─── */
+    .measure-metrics { display: flex; flex-direction: column; gap: 4px; margin-top: 24px; }
+    .measure-metric {
+      display: grid; grid-template-columns: 180px 1fr;
+      gap: 0 16px; align-items: baseline;
+      background: var(--surface); border-radius: 12px;
+      padding: 18px 24px;
+    }
+    .measure-metric__label {
+      font-size: 13px; font-weight: 500; color: var(--accent);
+      line-height: 1.5;
+    }
+    .measure-metric__text {
+      font-size: 14px; font-weight: 300; color: var(--text-2); line-height: 1.6;
+    }
+    @media (max-width: 599px) {
+      .measure-metric { grid-template-columns: 1fr; gap: 4px; }
+    }
+
+    /* ─── NEXT PROJECT ─── */
+    .next-project {
+      background: var(--text); color: var(--bg);
+      border-radius: 14px; padding: 36px 40px;
+      display: flex; flex-direction: row;
+      justify-content: space-between; align-items: flex-end;
+      gap: 24px; margin-top: 64px; margin-bottom: 80px;
+      transition: background 250ms var(--ease);
+    }
+    .next-project:hover { background: #2A2A2A; }
+    .next-project__lbl {
+      font-size: 11px; letter-spacing: 0.10em; text-transform: uppercase;
+      color: rgba(250,248,246,0.35); margin-bottom: 8px;
+    }
+    .next-project__name { font-family: var(--f-head); font-size: 20px; font-weight: 500; letter-spacing: -0.02em; }
+    .next-project__arrow { font-size: 24px; color: #C85C3A; transition: transform 300ms var(--ease); flex-shrink: 0; }
+    .next-project:hover .next-project__arrow { transform: translateX(6px); }
+
+    /* ─── SCROLL REVEAL ─── */
+    .reveal {
+      opacity: 0; transform: translateY(16px);
+      transition: opacity 550ms var(--ease), transform 550ms var(--ease);
+    }
+    .reveal.visible { opacity: 1; transform: translateY(0); }
+    .d1 { transition-delay: 80ms; }
+    .d2 { transition-delay: 160ms; }
+
+    /* ─── ACTIVE NAV ─── */
+    .nav__link--active { color: var(--text); }
+    .nav__link--active::after { width: 100%; }
+
+    /* ─── BACK LINK ─── */
+    .back-link { display: inline-flex; align-items: center; gap: 4px; font-size: 13px; color: var(--text-2); padding-top: 20px; transition: color 150ms var(--ease), transform 150ms var(--ease); }
+    .back-link:hover { color: var(--accent); transform: translateX(-2px); }
+
+    /* ─── FOOTER ─── */
+    .cs-footer { background: #0D0D0D; color: #FAF8F6; padding: 48px 0; border-radius: 24px 24px 0 0; }
+    .cs-footer__inner { max-width: 920px; margin: 0 auto; padding: 0 32px; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 16px; }
+    .cs-footer__link { font-family: var(--f-body); font-size: 18px; font-weight: 300; color: rgba(250,248,246,.55); text-decoration: none; transition: color 150ms, transform 150ms; }
+    .cs-footer__link:hover { color: #FAF8F6; transform: translateX(4px); }
+    .cs-footer__links-r { display: flex; gap: 32px; }
+    @media(max-width:600px) { .cs-footer__inner { flex-direction: column; align-items: flex-start; gap: 12px; } .cs-footer__links-r { flex-direction: column; gap: 12px; } }
+  </style>
+</head>
+<body>
+
+<!-- NAV -->
+<header class="nav">
+  <div class="nav__inner">
+    <a href="../index.html" class="nav__logo">
+      <span>b</span><span class="nav__logo-rest">atul.design</span><span class="nav__logo-dot">.</span>
+    </a>
+    <button class="hamburger" id="hamburger" aria-label="Toggle menu">
+      <span></span><span></span><span></span>
+    </button>
+    <nav>
+      <ul class="nav__links" id="navLinks">
+        <li><a href="../index.html#work"    class="nav__link nav__link--active">work</a></li>
+        <li><a href="../index.html#about"   class="nav__link">about</a></li>
+        <li><a href="../index.html#contact" class="nav__link">contact</a></li>
+      </ul>
+    </nav>
+  </div>
+</header>
+
+<main>
+
+  <!-- BACK LINK -->
+  <div class="wrap" style="padding-bottom:0">
+    <a href="../index.html#work" class="back-link">← back</a>
+  </div>
+
+  <!-- HERO -->
+  <div class="wrap">
+    <section class="hero">
+      <div class="hero__tags reveal">
+        <span class="hero__tag">b2b</span>
+        <span class="hero__tag-dot">·</span>
+        <span class="hero__tag">enterprise software</span>
+        <span class="hero__tag-dot">·</span>
+        <span class="hero__tag">ux design</span>
+      </div>
+      <h1 class="hero__title reveal">rebuilding visibility</h1>
+      <p class="hero__sub reveal">a Nordic software company building enterprise asset management tools.</p>
+    </section>
+  </div>
+
+  <!-- HERO IMAGE -->
+  <div class="wrap" style="padding-bottom:0;">
+    <div class="hero-img-card reveal" style="transition-delay:120ms">
+      <img src="../rebuilduing%20visibility/hero-EAM.png" alt="aquaculture asset management interface" />
+    </div>
+  </div>
+
+  <div class="wrap">
+
+    <!-- OVERVIEW -->
+    <div class="row">
+      <div class="row__label"><span class="row__label-text">overview</span></div>
+      <div>
+        <p class="body-text reveal">i worked as a ux/ui designer for four months on a software product used by teams managing aquaculture operations across multiple sites in denmark. the software assigns tasks to field personnel and gives managers visibility into task status, deviations, and risk across locations.</p>
+      </div>
+    </div>
+
+    <!-- THE PROBLEM -->
+    <div class="row">
+      <div class="row__label"><span class="row__label-text">the problem</span></div>
+      <div>
+        <div class="stats">
+          <div class="stat reveal">
+            <div class="stat__num">3</div>
+            <p class="stat__text">separate software systems, different vendors, none sharing data.</p>
+          </div>
+          <div class="stat reveal d1">
+            <div class="stat__num">12</div>
+            <p class="stat__text">data-type views on one dashboard, with location only available as a filter on top.</p>
+          </div>
+          <div class="stat reveal d2">
+            <div class="stat__num">18</div>
+            <p class="stat__text">separate widgets on a single asset's dashboard, most of them empty.</p>
+          </div>
+        </div>
+        <p class="body-text reveal" style="margin-top:32px;">the old systems organised by data type, not place. location was a filter, not a structure. a manager checking on one specific site still had to dig through unrelated categories one at a time, even after choosing a location.</p>
+        <p class="body-text reveal">each category led to its own view, designed for a manager who already knew what kind of data he was looking for - but most managers just wanted to know what was happening at a place.</p>
+      </div>
+    </div>
+
+  </div><!-- /wrap -->
+
+  <!-- WHAT I FOUND – SLIDESHOW -->
+  <div class="wrap">
+    <div class="row">
+      <div class="row__label">
+        <span class="row__label-text">what i found</span>
+      </div>
+      <div>
+        <div class="reveal" style="display:flex;justify-content:flex-end;align-items:center;gap:12px;margin-bottom:16px;">
+          <button class="slide-btn" id="prev-btn" onclick="changeSlide(-1)" disabled>←</button>
+          <span class="slide-counter" id="slide-counter">1 / 2</span>
+          <button class="slide-btn" id="next-btn" onclick="changeSlide(1)">→</button>
+        </div>
+
+        <div class="slideshow-track reveal">
+          <div class="slideshow-inner" id="slideshow-inner">
+
+            <!-- SLIDE 1 – asset dashboard, all annotations here -->
+            <div class="slide" id="slide-0">
+              <img class="slide__img" src="../rebuilduing%20visibility/old%20asset%20dashboard.png" alt="old asset dashboard" />
+              <div class="annotation annotation--flip" style="top:52%;left:48%;">
+                <div class="annotation__pin">1</div>
+                <div class="annotation__tooltip">eighteen widgets, most reading zero - no way to tell at a glance what actually needs attention</div>
+              </div>
+              <div class="annotation" style="top:18%;left:22%;">
+                <div class="annotation__pin">2</div>
+                <div class="annotation__tooltip">location lives in a dropdown filter at the top - everything below it stays organised by data type, not by place</div>
+              </div>
+              <div class="annotation annotation--flip" style="top:68%;left:72%;">
+                <div class="annotation__pin">3</div>
+                <div class="annotation__tooltip">five separate work order views split by time and status - the same information, fragmented five ways</div>
+              </div>
+            </div>
+
+            <!-- SLIDE 2 – IA diagram, general caption only -->
+            <div class="slide" id="slide-1">
+              <img class="slide__img" src="../rebuilduing%20visibility/old%20Maintenance%20IA%20diagram.png" alt="old maintenance IA diagram" />
+            </div>
+
+          </div>
+        </div>
+
+        <div class="slide-caption reveal">
+          <div class="slide-caption__label" id="slide-label">01 / 02</div>
+          <p class="slide-caption__text" id="slide-caption-text">the single-asset dashboard. eighteen counters and status widgets fill the screen, most showing nothing.</p>
+        </div>
+        <div class="slide-dots reveal" id="slide-dots"></div>
+
+
+      </div>
+    </div>
+  </div><!-- /wrap -->
+
+  <!-- THE SHIFT -->
+  <div class="wrap">
+    <div class="insight-section">
+      <div class="insight reveal">
+        <div class="insight__lbl">the shift</div>
+        <p class="insight__text">location used to sit behind a filter. the goal was to make it the first thing a manager saw.</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="wrap">
+    <div class="row" style="padding-bottom:16px;">
+      <div class="row__label"><span class="row__label-text">the redesign</span></div>
+      <div>
+        <p class="body-text reveal">the redesign starts with where, not what kind of data. picking a location surfaces what matters about that place immediately, instead of narrowing down a list of unrelated categories.</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- REDESIGN IMAGES — edge-to-edge within wrap -->
+  <div class="wrap" style="padding-bottom:0;">
+
+    <div class="view-tabs reveal">
+      <div class="view-tabs__bar">
+        <button class="view-tab is-active" data-view="map">map</button>
+        <button class="view-tab" data-view="list">list</button>
+      </div>
+      <div class="view-panel is-active" id="view-map">
+        <img src="../rebuilduing%20visibility/location-map.png" alt="map view of all locations" />
+      </div>
+      <div class="view-panel" id="view-list">
+        <img src="../rebuilduing%20visibility/location-list.png" alt="list view of all locations" />
+      </div>
+    </div>
+    <p class="redesign-caption reveal">a manager lands on a map of every location, or switches to a list view with the same data, shaped differently. only one view shows at a time, toggled with this control.</p>
+
+    <div class="redesign-ia reveal">
+      <img src="../rebuilduing%20visibility/new%20IA.png" alt="simplified IA structure" />
+    </div>
+    <p class="redesign-caption reveal">simplified structure - location first, all detail nested underneath.</p>
+
+    <!-- COMPARISON TABLE -->
+    <div class="compare-table reveal">
+      <div class="compare-table__head">
+        <div class="compare-table__head-cell">–</div>
+        <div class="compare-table__head-cell">old</div>
+        <div class="compare-table__head-cell">new</div>
+      </div>
+      <div class="compare-table__row">
+        <div class="compare-table__label">entry point</div>
+        <div class="compare-table__old">dashboard with twelve data-type views</div>
+        <div class="compare-table__new">map of locations</div>
+      </div>
+      <div class="compare-table__row">
+        <div class="compare-table__label">location</div>
+        <div class="compare-table__old">a filter applied on top</div>
+        <div class="compare-table__new">the starting point</div>
+      </div>
+      <div class="compare-table__row">
+        <div class="compare-table__label">checking status</div>
+        <div class="compare-table__old">open the right category, find the right filter</div>
+        <div class="compare-table__new">click a pin, see it instantly</div>
+      </div>
+      <div class="compare-table__row">
+        <div class="compare-table__label">asset view</div>
+        <div class="compare-table__old">eighteen widgets, most reading zero</div>
+        <div class="compare-table__new">one health score, one risk plot</div>
+      </div>
+      <div class="compare-table__row">
+        <div class="compare-table__label">flagging a problem</div>
+        <div class="compare-table__old">buried in a separate messages tab</div>
+        <div class="compare-table__new">logged next to the data it relates to</div>
+      </div>
+      <div class="compare-table__row">
+        <div class="compare-table__label">systems involved</div>
+        <div class="compare-table__old">three, none connected</div>
+        <div class="compare-table__new">one</div>
+      </div>
+    </div>
+
+    <p class="body-text reveal" style="margin-bottom:48px;">at the asset level, a manager used to scroll past a wall of counters, most of them at zero, looking for the one that wasn't. Now they see a health score and a risk plot first, so the assets that need attention stand out without anyone having to scan for them. Tasks list their location right there, instead of somewhere else. And if something actually goes wrong at a site, the note about it sits on the same page as the data, not buried in a separate messages tab.</p>
+
+  </div><!-- /wrap -->
+
+  <div class="wrap">
+
+    <!-- GETTING BUY-IN -->
+    <div class="row">
+      <div class="row__label"><span class="row__label-text" style="white-space:normal;">the resistance</span></div>
+      <div>
+        <div class="beats">
+          <div class="beat reveal">
+            <div class="beat__num">01</div>
+            <div class="beat__body">before testing, the client-side point of contact resisted the new structure. the concern wasn't the design itself - it was <strong>adoption risk</strong>. long-time managers were used to the old system, and a transition risked <strong>slowing down task execution exactly when it mattered most</strong>.</div>
+          </div>
+          <div class="beat reveal">
+            <div class="beat__num">02</div>
+            <div class="beat__body">the new structure was tested with the field managers who'd actually use it daily. <strong>they pushed back too</strong> - not because anything was broken, but because <strong>the structure was unfamiliar</strong>. they wanted certainty they were doing things correctly, and a new look threatened that.</div>
+          </div>
+          <div class="beat reveal">
+            <div class="beat__num">03</div>
+            <div class="beat__body">what actually moved both groups was <strong>time, not a better argument</strong>. a multi-day, section-by-section walkthrough ran over video calls, deliberately paced so people could <strong>sit with the change rather than approve it on the spot</strong> - paired with <strong>concrete proof</strong>. managers reached key actions in fewer steps. risk appeared immediately instead of staying buried.</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- WHAT I'D MEASURE -->
+    <div class="row">
+      <div class="row__label"><span class="row__label-text" style="white-space:normal;">what i'd measure</span></div>
+      <div>
+        <p class="body-text reveal">no instrumentation existed to track this quantitatively during the project. if it had, two numbers worth watching:</p>
+        <div class="measure-metrics">
+          <div class="measure-metric reveal">
+            <div class="measure-metric__label">task completion rate</div>
+            <div class="measure-metric__text">on the assignment flow - does a field operative reach confirmation without backtracking or dropping out?</div>
+          </div>
+          <div class="measure-metric reveal d1">
+            <div class="measure-metric__label">time-to-locate</div>
+            <div class="measure-metric__text">how many clicks a manager needs to reach the current status of a specific site from a cold start. under the old structure, this required choosing a category before choosing a place.</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- NEXT PROJECT -->
+    <a href="signals.html" class="next-project reveal">
+      <div>
+        <div class="next-project__lbl">next project</div>
+        <div class="next-project__name">signals – a college guide</div>
+      </div>
+      <div class="next-project__arrow">→</div>
+    </a>
+
+  </div><!-- /wrap -->
+
+</main>
+
+<footer class="cs-footer">
+  <div class="cs-footer__inner">
+    <a href="https://mail.google.com/mail/?view=cm&to=batulbohra.design@gmail.com" target="_blank" rel="noopener" class="cs-footer__link">batulbohra.design@gmail.com</a>
+    <div class="cs-footer__links-r">
+      <a href="https://www.linkedin.com/in/batul-bohra-0336b3179" class="cs-footer__link" target="_blank" rel="noopener">linkedin</a>
+      <a href="../resume.pdf" class="cs-footer__link" target="_blank" rel="noopener">resume</a>
+    </div>
+  </div>
+</footer>
+
+<script>
+  /* ─── HAMBURGER ─── */
+  (function(){
+    var btn=document.getElementById('hamburger'), links=document.getElementById('navLinks');
+    if(!btn||!links) return;
+    btn.addEventListener('click',function(){ btn.classList.toggle('is-open'); links.classList.toggle('is-open'); });
+    links.querySelectorAll('a').forEach(function(a){
+      a.addEventListener('click',function(){ btn.classList.remove('is-open'); links.classList.remove('is-open'); });
+    });
+  })();
+
+  /* ─── SCROLL REVEAL ─── */
+  var obs = new IntersectionObserver(function(entries){
+    entries.forEach(function(e){
+      if(e.isIntersecting){ e.target.classList.add('visible'); obs.unobserve(e.target); }
+    });
+  }, { threshold: 0.08, rootMargin: '0px 0px -20px 0px' });
+  document.querySelectorAll('.reveal').forEach(function(el){ obs.observe(el); });
+
+  /* ─── WHAT I FOUND SLIDESHOW ─── */
+  var slideCount = 2;
+  var current = 0;
+  var captions = [
+    'the single-asset dashboard. eighteen counters and status widgets fill the screen, most showing nothing.',
+    'the structure behind that screen. data type sits at the top. location sits underneath it, several layers down.'
+  ];
+
+  function buildDots() {
+    var container = document.getElementById('slide-dots');
+    for(var i=0;i<slideCount;i++){
+      var d=document.createElement('div');
+      d.className='slide-dot'+(i===0?' active':'');
+      (function(idx){ d.onclick=function(){ goToSlide(idx); }; })(i);
+      container.appendChild(d);
+    }
+  }
+
+  function goToSlide(n) {
+    current = n;
+    document.getElementById('slideshow-inner').style.transform = 'translateX(-' + (current * 100) + '%)';
+    document.getElementById('slide-counter').textContent = (current + 1) + ' / ' + slideCount;
+    document.getElementById('slide-label').textContent = '0' + (current + 1) + ' / 0' + slideCount;
+    document.getElementById('slide-caption-text').textContent = captions[current];
+    document.getElementById('prev-btn').disabled = current === 0;
+    document.getElementById('next-btn').disabled = current === slideCount - 1;
+    document.querySelectorAll('#slide-dots .slide-dot').forEach(function(d, i) {
+      d.classList.toggle('active', i === current);
+    });
+  }
+
+  function changeSlide(dir) {
+    var next = current + dir;
+    if (next < 0 || next >= slideCount) return;
+    goToSlide(next);
+  }
+
+  buildDots();
+
+  /* ─── VIEW TABS ─── */
+  document.querySelectorAll('.view-tab').forEach(function(tab) {
+    tab.addEventListener('click', function() {
+      document.querySelectorAll('.view-tab').forEach(function(t) { t.classList.remove('is-active'); });
+      document.querySelectorAll('.view-panel').forEach(function(p) { p.classList.remove('is-active'); });
+      tab.classList.add('is-active');
+      document.getElementById('view-' + tab.dataset.view).classList.add('is-active');
+    });
+  });
+</script>
+
+</body>
+</html>

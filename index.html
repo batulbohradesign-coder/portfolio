@@ -100,8 +100,8 @@
     @media(max-width:767px){.section{padding-top:56px;padding-bottom:56px;}}
 
     /* WORK */
-    .work-layout{display:grid;grid-template-columns:1fr 1fr;gap:48px;margin-top:48px;align-items:start;}
-    .work-visual{border-radius:24px;overflow:hidden;aspect-ratio:1730/1600;position:sticky;top:88px;align-self:start;width:100%;}
+    .work-layout{display:grid;grid-template-columns:1fr 1fr;gap:48px;margin-top:48px;margin-bottom:48px;align-items:start;}
+    .work-visual{border-radius:24px;overflow:hidden;position:sticky;top:88px;width:100%;aspect-ratio:1730/1600;}
     /* ─── WORK PANELS ─── */
     .wv-panel{position:absolute;inset:0;opacity:0;pointer-events:none;transition:opacity 350ms var(--ease);border-radius:24px;overflow:hidden;}
     .wv-panel.is-active{opacity:1;pointer-events:auto;}
@@ -158,12 +158,14 @@
     .wvp-figmeet .wv-label{color:white;text-shadow:none;}
     /* Access Healthcare */
     .wvp-ah{background:#0A5C5C;}
+    /* Rebuilding Visibility */
+    .wvp-rv{background:#1C5B7A;}
 
     /* Panel images — 1730×1600 source, center so nothing is cut */
     .wv-panel img{width:100%;height:100%;object-fit:cover;object-position:center;display:block;}
     .work-visual__inner{width:100%;height:100%;display:flex;flex-direction:column;justify-content:flex-end;padding:32px;background:linear-gradient(to top,rgba(0,0,0,.18) 0%,transparent 60%);}
     .work-visual__title{font-family:var(--f-head);font-size:28px;font-weight:500;letter-spacing:-.02em;color:white;line-height:1.2;}
-    .work-list{display:flex;flex-direction:column;}
+    .work-list{display:flex;flex-direction:column;padding-bottom:24px;}
     .work-item{cursor:pointer;flex-shrink:0;}
     .work-item+.work-item{border-top:1px solid var(--border);}
     .work-item__header{display:flex;justify-content:space-between;align-items:center;padding:24px 0;transition:color 200ms var(--ease);}
@@ -192,6 +194,7 @@
     @media(max-width:767px){.work-cards{grid-template-columns:1fr;gap:10px;}}
     .work-card{border-radius:24px;overflow:hidden;display:flex;flex-direction:column;background:var(--bg);text-decoration:none;color:inherit;transition:transform 300ms var(--ease);}
     .work-card:hover{transform:translateY(-5px);}
+    .work-card:active{transform:translateY(-2px);}
     .work-card__visual{overflow:hidden;flex-shrink:0;aspect-ratio:4/3;display:flex;align-items:center;justify-content:center;}
     .work-card__visual img,.work-card__visual video{width:100%;height:100%;object-fit:contain;object-position:center;display:block;}
     .work-card__body{padding:24px 28px 28px;display:flex;flex-direction:column;gap:6px;border-top:1px solid var(--border);}
@@ -330,6 +333,10 @@
         <!-- LEFT: sticky visual -->
         <div class="work-visual" id="workVisual">
 
+          <div class="wv-panel wvp-rv" id="wvp-rv">
+            <img src="5.png" alt="Rebuilding visibility – aquaculture asset management">
+          </div>
+
           <div class="wv-panel wvp-signals" id="wvp-signals">
             <img src="1.avif" alt="College guide app">
           </div>
@@ -343,13 +350,28 @@
           </div>
 
           <div class="wv-panel wvp-ah" id="wvp-ah">
-            <img src="4.avif" alt="Access Healthcare website redesign" />
+            <img src="4.png" alt="Access Healthcare website redesign" />
           </div>
 
         </div>
 
         <!-- RIGHT: accordion list -->
         <div id="workList" class="work-list">
+
+          <div class="work-item" data-panel="rv">
+            <div class="work-item__header">
+              <span class="work-item__name">rebuilding visibility</span>
+              <div class="work-item__meta">
+                <span class="work-item__tag">b2b</span>
+                <span class="work-item__icon">+</span>
+              </div>
+            </div>
+            <div class="work-item__body">
+              <div class="work-item__visual-mobile" style="background:#1C5B7A;"></div>
+              <p class="work-item__desc">ux design for a nordic software company managing aquaculture operations across multiple sites.</p>
+              <a href="case-studies/rebuilding-visibility.html" class="link-arrow">read more →</a>
+            </div>
+          </div>
 
           <div class="work-item" data-panel="signals">
             <div class="work-item__header">
@@ -375,7 +397,7 @@
               </div>
             </div>
             <div class="work-item__body">
-              <div class="work-item__visual-mobile"><img src="4.avif" alt="Website redesign"></div>
+              <div class="work-item__visual-mobile"><img src="4.png" alt="Website redesign"></div>
               <p class="work-item__desc">visual redesign for a $1B+ RCM company. a brand finally in line with the AI-forward company it actually is.</p>
               <a href="case-studies/access-healthcare.html" class="link-arrow">read more →</a>
             </div>
